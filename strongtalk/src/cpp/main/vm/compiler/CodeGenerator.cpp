@@ -154,17 +154,17 @@ public:
         // determine changes & notify ScopeDescriptorRecorder if necessary
         ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
 
-        for ( std::int32_t i = _locations->length(); i-- > 0; ) {
+        for ( std::size_t i = _locations->length(); i-- > 0; ) {
 
             PseudoRegister *pseudoRegister = _pseudoRegisters->at( i );
             bool           present         = _present->at( i );
             Location       old_loc         = location_at( i );
             Location       new_loc         = present ? mapping->locationFor( pseudoRegister ) : Location::ILLEGAL_LOCATION;
 
-            if ( ( not present and old_loc not_eq Location::ILLEGAL_LOCATION ) or
-                 // pseudoRegister not present anymore but has been there before
+            if ( ( not present and old_loc not_eq Location::ILLEGAL_LOCATION ) or // pseudoRegister not present anymore but has been there before
                  ( present and old_loc == Location::ILLEGAL_LOCATION ) or    // pseudoRegister present but has not been there before
                  ( present and old_loc not_eq new_loc ) ) {        // pseudoRegister present but has changed location
+
                 // pseudoRegister location has changed => notify ScopeDescriptorRecorder
                 NameNode *nameNode;
                 if ( new_loc == Location::ILLEGAL_LOCATION ) {
@@ -172,9 +172,9 @@ public:
                 } else {
                     nameNode = new LocationName( new_loc );
                 }
-                // debugging
+
                 if ( PrintDebugInfoGeneration ) {
-                    SPDLOG_INFO( "{:5d}: {:20s} @ {}", pc_offset, pseudoRegister->name(), new_loc.name() );
+                    SPDLOG_INFO( "{:5d} from [{:20s}] to [{}]", pc_offset, pseudoRegister->name(), new_loc.name() );
                 }
                 rec->changeLogicalAddress( pseudoRegister->logicalAddress(), nameNode, pc_offset );
             }
@@ -412,12 +412,12 @@ void CodeGenerator::initialize( InlinedScope *scope ) {
 
     // setup arguments
 //    std::int32_t       i;
-    for ( std::int32_t i = 0; i < scope->nofArguments(); i++ ) {
+    for ( std::size_t i = 0; i < scope->nofArguments(); i++ ) {
         _currentMapping->mapToArgument( scope->argument( i )->pseudoRegister(), i );
     }
 
     // setup temporaries (finalize() generates initialization code)
-    for ( std::int32_t i = 0; i < scope->nofTemporaries(); i++ ) {
+    for ( std::size_t i = 0; i < scope->nofTemporaries(); i++ ) {
         _currentMapping->mapToTemporary( scope->temporary( i )->pseudoRegister(), i );
     }
 
@@ -1507,7 +1507,7 @@ void CodeGenerator::aContextCreateNode( ContextCreateNode *node ) {
 
 void CodeGenerator::aContextInitNode( ContextInitNode *node ) {
     // initialize context temporaries (parent has been initialized in the ContextCreateNode)
-    for ( std::int32_t i = node->nofTemps(); i-- > 0; ) {
+    for ( std::size_t i = node->nofTemps(); i-- > 0; ) {
         PseudoRegister *src = node->initialValue( i )->pseudoRegister();
         PseudoRegister *dst;
         if ( src->isBlockPseudoRegister() ) {
@@ -1565,7 +1565,7 @@ void CodeGenerator::copyIntoContexts( BlockCreateNode *node ) {
     BlockPseudoRegister       *blk    = node->block();
     GrowableArray<Location *> *copies = blk->contextCopies();
     if ( copies not_eq nullptr ) {
-        for ( std::int32_t i = copies->length(); i-- > 0; ) {
+        for ( std::size_t i = copies->length(); i-- > 0; ) {
 
             Location       *l                = copies->at( i );
             InlinedScope   *scopeWithContext = theCompiler->scopes->at( l->scopeID() );

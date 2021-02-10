@@ -19,7 +19,7 @@ std::array<PeriodicTask *, max_tasks> tasks;
 bool pending_tasks( std::int32_t delay_time ) {
     bool result = false;
 
-    for ( std::int32_t i = 0; i < num_tasks; i++ ) {
+    for ( std::size_t i = 0; i < num_tasks; i++ ) {
         result = tasks[ i ]->is_pending( delay_time ) or result;
     }
     return result;
@@ -37,7 +37,7 @@ void real_time_tick( std::int32_t delay_time ) {
         if ( not Process::external_suspend_current() )
             return;
 
-        for ( std::int32_t i = 0; i < num_tasks; i++ ) {
+        for ( std::size_t i = 0; i < num_tasks; i++ ) {
             PeriodicTask *task = tasks[ i ];
             if ( task->_counter >= task->_interval ) {
                 task->task();
@@ -64,7 +64,7 @@ PeriodicTask::~PeriodicTask() {
 
 
 bool PeriodicTask::is_enrolled() const {
-    for ( std::int32_t i = 0; i < num_tasks; i++ )
+    for ( std::size_t i = 0; i < num_tasks; i++ )
         if ( tasks[ i ] == this )
             return true;
     return false;

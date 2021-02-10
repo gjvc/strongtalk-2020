@@ -28,7 +28,7 @@ PRIM_DECL_2( DoubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argumen
     if ( SmallIntegerOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
-    std::int32_t length = SmallIntegerOop( argument )->value();
+    std::size_t length = SmallIntegerOop( argument )->value();
 
     KlassOop            k        = KlassOop( receiver );
     std::int32_t        ni_size  = k->klass_part()->non_indexable_size();
@@ -41,7 +41,7 @@ PRIM_DECL_2( DoubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argumen
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
     obj->set_length( length );
 
-    for ( std::int32_t i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         obj->double_at_put( i, 0.0 );
     }
 

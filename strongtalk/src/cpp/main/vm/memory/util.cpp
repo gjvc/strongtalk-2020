@@ -18,7 +18,7 @@ std::int32_t Indent = 0;
 
 
 void printIndent() {
-    for ( std::int32_t i = 0; i < Indent; i++ )
+    for ( std::size_t i = 0; i < Indent; i++ )
         SPDLOG_INFO( "  " );
 }
 

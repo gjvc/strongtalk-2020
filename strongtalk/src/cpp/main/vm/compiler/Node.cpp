@@ -158,7 +158,7 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
     }
 
     //
-    for ( std::int32_t i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         for ( std::int32_t j = i + 1; j < len; j++ ) {
             st_assert( classes->at( i ) not_eq classes->at( j ), "duplicate class" );
         }
@@ -315,7 +315,7 @@ void AbstractMergeNode::removeMe() {
 
 
 void AbstractMergeNode::movePrev( Node *from, Node *to ) {
-    for ( std::int32_t i = _prevs->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _prevs->length() - 1; i >= 0; i-- ) {
         if ( _prevs->at( i ) == from ) {
             _prevs->at_put( i, to );
             return;
@@ -326,7 +326,7 @@ void AbstractMergeNode::movePrev( Node *from, Node *to ) {
 
 
 bool AbstractMergeNode::isPredecessor( const Node *n ) const {
-    for ( std::int32_t i = _prevs->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _prevs->length() - 1; i >= 0; i-- ) {
         if ( _prevs->at( i ) == n )
             return true;
     }
@@ -624,7 +624,7 @@ std::int32_t ContextInitNode::positionOfContextTemp( std::int32_t n ) const {
     // return position of ith context temp in compiled (physical) context
     std::int32_t pos = 0;
 
-    for ( std::int32_t i = 0; i < n; i++ ) {
+    for ( std::size_t i = 0; i < n; i++ ) {
         PseudoRegister *p = contents()->at( i )->pseudoRegister();
         if ( p->_location.isContextLocation() )
             pos++;
@@ -661,7 +661,7 @@ void ContextInitNode::notifyNoContext() {
     _src->removeUse( bb(), _srcUse );
     _src = nullptr;
     if ( _materializedBlocks ) {
-        for ( std::int32_t i = _materializedBlocks->length() - 1; i >= 0; i-- ) {
+        for ( std::size_t i = _materializedBlocks->length() - 1; i >= 0; i-- ) {
             // remove the block materialization node
             BlockMaterializeNode *n = _materializedBlocks->at( i );
             n->eliminate( n->bb(), nullptr, true, false );
@@ -1176,14 +1176,14 @@ void PrologueNode::makeUses( BasicBlock *bb ) {
     }
     // build initial definitions for incoming args
 
-    for ( std::int32_t i = 0; i < _nofArgs; i++ ) {
+    for ( std::size_t i = 0; i < _nofArgs; i++ ) {
         Expression *a = s->argument( i );
         if ( a )
             bb->addDef( this, a->pseudoRegister() );
     }
 
     // build initial definitions for locals (initalization to nil)
-    for ( std::int32_t i = 0; i < _nofTemps; i++ ) {
+    for ( std::size_t i = 0; i < _nofTemps; i++ ) {
         Expression *t = s->temporary( i );
         if ( t )
             bb->addDef( this, t->pseudoRegister() );
@@ -1302,7 +1302,7 @@ void CallNode::makeUses( BasicBlock *bb ) {
     if ( args ) {
         std::int32_t len = args->length();
         argUses          = new GrowableArray<Usage *>( len );
-        for ( std::int32_t i = 0; i < len; i++ ) {
+        for ( std::size_t i = 0; i < len; i++ ) {
             argUses->append( bb->addUse( this, args->at( i ) ) );
         }
     }
@@ -1372,7 +1372,7 @@ void ContextCreateNode::makeUses( BasicBlock *bb ) {
     if ( _parentContexts ) {
         std::int32_t len   = _parentContexts->length();
         _parentContextUses = new GrowableArray<Usage *>( len, len, nullptr );
-        for ( std::int32_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
+        for ( std::size_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
             Usage *u = bb->addUse( this, _parentContexts->at( i ) );
             _parentContextUses->at_put( i, u );
         }
@@ -1549,7 +1549,7 @@ void CallNode::removeUses( BasicBlock *bb ) {
         std::int32_t i = uplevelUses->length() - 1;
         for ( ; i >= 0; i-- )
             uplevelUsed->at( i )->removeUse( bb, uplevelUses->at( i ) );
-        for ( std::int32_t i = uplevelDefs->length() - 1; i >= 0; i-- )
+        for ( std::size_t i = uplevelDefs->length() - 1; i >= 0; i-- )
             uplevelDefd->at( i )->removeDef( bb, uplevelDefs->at( i ) );
     }
     NonTrivialNode::removeUses( bb );
@@ -2496,7 +2496,7 @@ bool InlinedPrimitiveNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegist
 
 
 bool ContextInitNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
-    for ( std::int32_t i = nofTemps() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = nofTemps() - 1; i >= 0; i-- ) {
         if ( _initializerUses->at( i ) == u ) {
             Expression     *initExpression = _initializers->at( i );
             PseudoRegister *initPR         = initExpression->pseudoRegister();
@@ -2596,7 +2596,7 @@ void TArithRRNode::markAllocated( std::int32_t *use_count, std::int32_t *def_cou
 void CallNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     D_CHECK( _dest );
     // CallNode trashes all regs
-    for ( std::int32_t i = 0; i < REGISTER_COUNT; i++ ) {
+    for ( std::size_t i = 0; i < REGISTER_COUNT; i++ ) {
         use_count[ i ]++;
         def_count[ i ]++;
     }
@@ -2622,7 +2622,7 @@ void ContextCreateNode::markAllocated( std::int32_t *use_count, std::int32_t *de
     if ( _src )
         U_CHECK( _src ); // no src if there's no incoming context
     if ( _parentContexts ) {
-        for ( std::int32_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
+        for ( std::size_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
             U_CHECK( _parentContexts->at( i ) );
         }
     }
@@ -3321,7 +3321,7 @@ const char *BranchNode::toString( char *buf, bool printAddress ) const {
 const char *TypeTestNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf( buf, " TypeTest %s, ", _src->safeName() );
-    for ( std::int32_t i = 1; i <= _classes->length(); i++ ) {
+    for ( std::size_t i = 1; i <= _classes->length(); i++ ) {
         KlassOop m = _classes->at( i - 1 );
         my_sprintf( buf, m->print_value_string() );
         my_sprintf( buf, " : N%ld; ", ( i < nSuccessors() and next( i ) not_eq nullptr ) ? next( i )->id() : -1 );
@@ -3393,11 +3393,11 @@ const char *LoopHeaderNode::toString( char *buf, bool printAddress ) const {
         }
         if ( _registerCandidates not_eq nullptr ) {
             my_sprintf( buf, " reg vars = " );
-            for ( std::int32_t i = 0; i < _registerCandidates->length(); i++ )
+            for ( std::size_t i = 0; i < _registerCandidates->length(); i++ )
                 my_sprintf( buf, " %s ", _registerCandidates->at( i )->pseudoRegister()->name() );
         }
         if ( _tests not_eq nullptr ) {
-            for ( std::int32_t i = 0; i < _tests->length(); i++ ) {
+            for ( std::size_t i = 0; i < _tests->length(); i++ ) {
                 HoistedTypeTest *t = _tests->at( i );
                 if ( t->_testedPR->_location not_eq Location::UNALLOCATED_LOCATION ) {
                     StringOutputStream s( 50 );
@@ -3432,7 +3432,7 @@ const char *ContextInitNode::toString( char *buf, bool printAddress ) const {
         my_sprintf( buf, " (optimized away) " );
     } else {
         my_sprintf( buf, " %s { ", _src->safeName() );
-        for ( std::int32_t i = 0; i < contents()->length(); i++ ) {
+        for ( std::size_t i = 0; i < contents()->length(); i++ ) {
             my_sprintf( buf, "  %s := ", contents()->at( i )->pseudoRegister()->safeName() );
             Expression *e = _initializers->at( i );
             my_sprintf( buf, "  %s; ", e->pseudoRegister()->safeName() );

@@ -94,7 +94,7 @@ public:
         dst->set_identity_hash( src->identity_hash() );
 
         // Instance variables
-        for ( std::int32_t i = 0; i < _mapping->length(); i += 2 ) {
+        for ( std::size_t i = 0; i < _mapping->length(); i += 2 ) {
             std::int32_t from = _mapping->at( i );
             std::int32_t to   = _mapping->at( i + 1 );
             dst->raw_at_put( to, src->raw_at( from ) );
@@ -172,9 +172,9 @@ public:
     void transfer( MemOop src, MemOop dst ) {
         memConverter::transfer( src, dst );
         if ( _sourceIsByteArray ) {
-            std::int32_t length = ByteArrayOop( src )->length();
+            std::size_t length = ByteArrayOop( src )->length();
 
-            for ( std::int32_t i = 1; i <= length; i++ ) {
+            for ( std::size_t i = 1; i <= length; i++ ) {
                 ByteArrayOop( dst )->byte_at_put( i, ByteArrayOop( src )->byte_at( i ) );
             }
         }
@@ -205,9 +205,9 @@ public:
     void transfer( MemOop src, MemOop dst ) {
         memConverter::transfer( src, dst );
         if ( _sourceIsDoubleByteArray ) {
-            std::int32_t length = DoubleByteArrayOop( src )->length();
+            std::size_t length = DoubleByteArrayOop( src )->length();
 
-            for ( std::int32_t i = 1; i <= length; i++ ) {
+            for ( std::size_t i = 1; i <= length; i++ ) {
                 DoubleByteArrayOop( dst )->doubleByte_at_put( i, DoubleByteArrayOop( src )->doubleByte_at( i ) );
             }
 
@@ -240,9 +240,9 @@ public:
         memConverter::transfer( src, dst );
         if ( _sourceIsObjectArray ) {
 
-            std::int32_t length = ObjectArrayOop( src )->length();
+            std::size_t length = ObjectArrayOop( src )->length();
 
-            for ( std::int32_t i = 1; i <= length; i++ ) {
+            for ( std::size_t i = 1; i <= length; i++ ) {
                 ObjectArrayOop( dst )->obj_at_put( i, ObjectArrayOop( src )->obj_at( i ) );
             }
 
@@ -272,9 +272,9 @@ public:
     void transfer( MemOop src, MemOop dst ) {
         memConverter::transfer( src, dst );
         if ( source_is_obj_array ) {
-            std::int32_t length = DoubleValueArrayOop( src )->length();
+            std::size_t length = DoubleValueArrayOop( src )->length();
 
-            for ( std::int32_t i = 1; i <= length; i++ ) {
+            for ( std::size_t i = 1; i <= length; i++ ) {
                 DoubleValueArrayOop( dst )->double_at_put( i, DoubleValueArrayOop( src )->double_at( i ) );
             }
         }

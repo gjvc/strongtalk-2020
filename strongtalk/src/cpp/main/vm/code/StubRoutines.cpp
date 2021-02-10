@@ -111,7 +111,7 @@ void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument
     // print arguments
     Oop *arg_ptr = last_argument + ( nof_arguments - 1 );
 
-    for ( std::int32_t i = 1; i <= nof_arguments; i++, arg_ptr-- ) {
+    for ( std::size_t i = 1; i <= nof_arguments; i++, arg_ptr-- ) {
         Oop arg = *arg_ptr;
         _console->print( "%6d. ", i );
         if ( arg->isSmallIntegerOop() ) {
@@ -1415,7 +1415,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
     // edx: receiver klass
     // tos: return address of POLYMORPHIC send in compiled code
     masm->bind( loop );
-    for ( std::int32_t i = 0; i < pic_size; i++ ) {
+    for ( std::size_t i = 0; i < pic_size; i++ ) {
         // compare receiver klass with klass in PolymorphicInlineCache table at index
         masm->cmpl( edx, Address( ebx, i * static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_klass_offset ) ) );
         masm->movl( ecx, Address( ebx, i * static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_offset ) ) );

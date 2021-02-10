@@ -79,7 +79,7 @@ struct CodeTableEntry : ValueObject {
     // memory operations
     void deallocate();
 
-    std::int32_t length();   // returns the number of NativeMethod in this bucket.
+    std::size_t length();   // returns the number of NativeMethod in this bucket.
 
     bool verify( std::int32_t i );
 };

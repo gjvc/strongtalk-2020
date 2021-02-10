@@ -59,7 +59,7 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
         // sort begByteCodeIndexs & distribute to scopes
         regs->sort( &compare_pseudoRegisterBegs );
         st_assert( regs->isEmpty() or regs->first()->begByteCodeIndex() <= regs->last()->begByteCodeIndex(), "wrong sort order" );
-        for ( std::int32_t i = 0; i < len; i++ ) {
+        for ( std::size_t i = 0; i < len; i++ ) {
             PseudoRegister *r = regs->at( i );
             st_assert( r->begByteCodeIndex() not_eq IllegalByteCodeIndex, "illegal begByteCodeIndex" );
             st_assert( r->endByteCodeIndex() not_eq IllegalByteCodeIndex, "illegal endByteCodeIndex" );
@@ -69,7 +69,7 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
         // sort endByteCodeIndexs & distribute to scopes
         regs->sort( &compare_pseudoRegisterEnds );
         st_assert( regs->isEmpty() or regs->first()->endByteCodeIndex() <= regs->last()->endByteCodeIndex(), "wrong sort order" );
-        for ( std::int32_t i = 0; i < len; i++ ) {
+        for ( std::size_t i = 0; i < len; i++ ) {
             PseudoRegister *r = regs->at( i );
             r->scope()->addToPseudoRegistersEndSorted( r );
         }

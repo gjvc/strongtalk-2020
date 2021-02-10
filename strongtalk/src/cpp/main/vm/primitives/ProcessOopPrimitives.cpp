@@ -332,7 +332,7 @@ PRIM_DECL_2( ProcessOopPrimitives::stack, Oop receiver, Oop limit ) {
 
     VirtualFrame *vf = ProcessOop( receiver )->process()->last_delta_vframe();
 
-    for ( std::int32_t i = 1; i <= l and vf; i++ ) {
+    for ( std::size_t i = 1; i <= l and vf; i++ ) {
         stack->push( OopFactory::new_vframe( process, i ) );
         vf = vf->sender();
     }

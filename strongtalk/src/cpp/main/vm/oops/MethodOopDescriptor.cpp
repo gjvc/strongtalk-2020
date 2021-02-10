@@ -87,7 +87,7 @@ void MethodOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     set_counters( 0, 0 );
     stream->read_oop( (Oop *) &addr()->_size_and_flags );
 
-    for ( std::int32_t i = 1; i <= size_of_codes() * 4; ) {
+    for ( std::size_t i = 1; i <= size_of_codes() * 4; ) {
         uint8_t nextByte = stream->read_uint8_t();
         if ( nextByte == '4' ) {
             byte_at_put( i, stream->read_uint8_t() );
@@ -366,9 +366,9 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
                     out.put_word( c.word_at( 1 ) );
                     break;
                 case ByteCodes::Format::BBS: {
-                    std::int32_t length = c.byte_at( 1 ) == 0 ? 256 : c.byte_at( 1 );
+                    std::size_t length = c.byte_at( 1 ) == 0 ? 256 : c.byte_at( 1 );
                     out.put_byte( length );
-                    for ( std::int32_t i = 0; i < length; i++ ) {
+                    for ( std::size_t i = 0; i < length; i++ ) {
                         out.put_byte( c.byte_at( 2 + i ) );
                     }
                     break;
@@ -647,7 +647,7 @@ GrowableArray<std::int32_t> *MethodOopDescriptor::expression_stack_mapping( std:
 
     GrowableArray<std::int32_t> *result = new GrowableArray<std::int32_t>( mapping->length() );
 
-    for ( std::int32_t i = mapping->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = mapping->length() - 1; i >= 0; i-- ) {
         result->push( mapping->at( i ) );
     }
 
@@ -702,7 +702,7 @@ MethodOop MethodOopDescriptor::methodOop_from_hcode( std::uint8_t *hp ) {
 std::int32_t MethodOopDescriptor::end_byteCodeIndex() const {
     std::int32_t last_entry = this->size_of_codes() * 4;
 
-    for ( std::int32_t i = 0; i < 4; i++ )
+    for ( std::size_t i = 0; i < 4; i++ )
         if ( byte_at( last_entry - i ) not_eq static_cast<std::int32_t>( ByteCodes::Code::halt ) )
             return last_entry + 1 - i;
 

@@ -138,7 +138,7 @@ void ContextKlass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
     stream->print( " home: " );
     con->print_home_on( stream );
     stream->cr();
-    for ( std::int32_t i = 0; i < con->length(); i++ ) {
+    for ( std::size_t i = 0; i < con->length(); i++ ) {
         stream->print( " - %d: ", i );
         con->obj_at( i )->print_value_on( stream );
         stream->cr();

@@ -31,7 +31,7 @@ void CostModel::set_default_costs() {
 
 
 void CostModel::set_cost_for_all( std::int32_t cost ) {
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         _cost[ i ] = cost;
     }
 }
@@ -44,7 +44,7 @@ void CostModel::set_cost_for_code( ByteCodes::Code code, std::int32_t cost ) {
 
 
 void CostModel::set_cost_for_type( ByteCodes::CodeType type, std::int32_t cost ) {
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         if ( ByteCodes::code_type( ByteCodes::Code( i ) ) == type ) {
             _cost[ i ] = cost;
         }
@@ -53,7 +53,7 @@ void CostModel::set_cost_for_type( ByteCodes::CodeType type, std::int32_t cost )
 
 
 void CostModel::set_cost_for_send( ByteCodes::SendType type, std::int32_t cost ) {
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         if ( ByteCodes::send_type( ByteCodes::Code( i ) ) == type ) {
             _cost[ i ] = cost;
         }
@@ -64,7 +64,7 @@ void CostModel::set_cost_for_send( ByteCodes::SendType type, std::int32_t cost )
 void CostModel::print() {
 
     SPDLOG_INFO( "%40s: %s", "Bytecode", "Cost" );
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         ByteCodes::Code code = ByteCodes::Code( i );
         if ( ByteCodes::is_defined( code ) ) {
             SPDLOG_INFO( "%40s: {}", ByteCodes::name( code ), cost_for( code ) );

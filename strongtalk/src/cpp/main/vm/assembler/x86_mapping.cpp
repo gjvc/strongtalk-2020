@@ -19,13 +19,13 @@ void Mapping::initialize() {
     _localRegisters[ 1 ] = asLocation( edi );
     _localRegisters[ 2 ] = asLocation( esi );
 
-    for ( std::int32_t i = 0; i < REGISTER_COUNT; i++ )
+    for ( std::size_t i = 0; i < REGISTER_COUNT; i++ )
         _localRegisterIndex[ i ] = -1;
 
-    for ( std::int32_t i = 0; i < nofLocalRegisters; i++ )
+    for ( std::size_t i = 0; i < nofLocalRegisters; i++ )
         _localRegisterIndex[ _localRegisters[ i ].number() ] = i;
 
-    for ( std::int32_t i = 0; i < nofLocalRegisters; i++ ) {
+    for ( std::size_t i = 0; i < nofLocalRegisters; i++ ) {
         Register r = asRegister( _localRegisters[ i ] );
         st_assert( ( r not_eq temp1 ) and ( r not_eq temp2 ) and ( r not_eq temp3 ), "local registers must be disjoint from temporary registers" );
     }

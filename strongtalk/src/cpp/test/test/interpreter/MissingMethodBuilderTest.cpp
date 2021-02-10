@@ -122,7 +122,7 @@ TEST_F( MissingMethodBuilderTests, buildWithNoArgSelectorShouldBuildCorrectBytes
 
     EXPECT_EQ( 52, bytes->length() ) << "wrong length";
 
-    for ( std::int32_t index = 0; index < 52; index++ ) {
+    for ( std::size_t index = 0; index < 52; index++ ) {
         std::uint8_t expected = expectedBytes[ index ];
         std::uint8_t actual   = bytes->byte_at( index + 1 );
         sprintf( msg, "Incorrect byte at %d. Expected: %d, but was: %d", index, expected, actual );
@@ -157,7 +157,7 @@ TEST_F( MissingMethodBuilderTests, buildWithNoArgSelectorShouldBuildCorrectOops 
 
     };
 
-    for ( std::int32_t index = 0; index < 5; index++ ) {
+    for ( std::size_t index = 0; index < 5; index++ ) {
         CHECK_OOPS( expectedOops, oops, index );
     }
 
@@ -383,7 +383,7 @@ TEST_F( MissingMethodBuilderTests, buildWithOneArgSelectorShouldBuildCorrectByte
     sprintf( msg, "Wrong length. Expected: %d, but was: %d", 65, bytes->length() );
     EXPECT_EQ( 80, bytes->length() ) << msg;
 
-    for ( std::int32_t index = 0; index < 80; index++ ) {
+    for ( std::size_t index = 0; index < 80; index++ ) {
         std::uint8_t expected = expectedBytes[ index ];
         std::uint8_t actual   = bytes->byte_at( index + 1 );
         sprintf( msg, "Incorrect byte at %d. Expected: %d, but was: %d", index, expected, actual );
@@ -421,7 +421,7 @@ TEST_F( MissingMethodBuilderTests, buildWithOneArgSelectorShouldBuildCorrectOops
     MissingMethodBuilder builder( selector );
     builder.build();
     ObjectArrayOop     oops  = builder.oops();
-    for ( std::int32_t index = 0; index < 20; index++ ) {
+    for ( std::size_t index = 0; index < 20; index++ ) {
         CHECK_OOPS( expectedOops, oops, index );
     }
 }
@@ -534,7 +534,7 @@ TEST_F( MissingMethodBuilderTests, buildWithTwoArgSelectorShouldBuildCorrectByte
     ByteArrayOop bytes       = builder.bytes();
     sprintf( msg, "Wrong length. Expected: %d, but was: %d", 93, bytes->length() );
     EXPECT_EQ( 96, bytes->length() ) << msg;
-    for ( std::int32_t index = 0; index < 96; index++ ) {
+    for ( std::size_t index = 0; index < 96; index++ ) {
         std::uint8_t expected = expectedBytes[ index ];
         std::uint8_t actual   = bytes->byte_at( index + 1 );
         sprintf( msg, "Incorrect byte at %d. Expected: %d, but was: %d", index, expected, actual );
@@ -669,7 +669,7 @@ TEST_F( MissingMethodBuilderTests, buildWithThreeArgSelectorShouldBuildCorrectBy
     sprintf( msg, "Wrong length. Expected: %d, but was: %d", 110, bytes->length() );
 
     EXPECT_EQ( 112, bytes->length() ) << msg;
-    for ( std::int32_t index = 0; index < 112; index++ ) {
+    for ( std::size_t index = 0; index < 112; index++ ) {
         std::uint8_t expected = expectedBytes[ index ];
         std::uint8_t actual   = bytes->byte_at( index + 1 );
         sprintf( msg, "Incorrect byte at %d. Expected: %d, but was: %d", index, expected, actual );

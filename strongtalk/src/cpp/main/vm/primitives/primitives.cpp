@@ -97,7 +97,7 @@ void Primitives::print_table() {
     SPDLOG_INFO( "primitive-table:  INDEX  NAME                                                                ARGUMENT COUNT ----.  |||||||||  CATEGORY" );
 
     //
-    for ( std::int32_t i = 0; i < size_of_primitive_table; i++ ) {
+    for ( std::size_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
         SPDLOG_INFO( "primitive-table:  {:5d}  {:<84}  {:2d}  {}{}{}{}{}{}{}{}{}  {}",
                       i,
@@ -270,7 +270,7 @@ void primitives_init() {
     Primitives::initialize();
     PrimitiveDescriptor *prev = nullptr;
 
-    for ( std::int32_t index = 0; index < size_of_primitive_table; index++ ) {
+    for ( std::size_t index = 0; index < size_of_primitive_table; index++ ) {
         PrimitiveDescriptor *e = primitive_table[ index ];
         SPDLOG_INFO( "%primitives-init:  primitive_table: {0:3d}  {}", index, e->name() );
         e->verify();
@@ -430,7 +430,7 @@ bool InterpretedPrimitiveCache::has_failure_code() const {
 
 
 PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
-    for ( std::int32_t i = 0; i < size_of_primitive_table; i++ ) {
+    for ( std::size_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
         if ( e->fn() == fn )
             return e;

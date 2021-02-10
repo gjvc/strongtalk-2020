@@ -13,7 +13,7 @@
 class Array : public ResourceObject {
 
 private:
-    std::int32_t _index;     //
+    std::size_t  _index;     //
     std::int32_t _size;      //
     std::int32_t _offset;    //
     std::int32_t *_values;   //
@@ -24,10 +24,12 @@ public:
     virtual ~Array() = default;
     Array( const Array & ) = default;
     Array &operator=( const Array & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
 
-    std::int32_t length() {
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
+    std::size_t length() {
         return _index;
     }
 
@@ -35,7 +37,7 @@ public:
     void extend( std::int32_t newSize );
 
     std::int32_t insertIfAbsent( std::int32_t value );  // returns index for value
-    void copy_to( std::int32_t *&addr );
+    void copy_to( std::size_t *&addr );
 };
 
 
@@ -43,8 +45,8 @@ class ByteArray : public ResourceObject {
 
 private:
     std::uint8_t *_array;
-    std::int32_t  _top;
-    std::int32_t  _max;
+    std::int32_t _top;
+    std::int32_t _max;
 
     void extend();
 
@@ -64,8 +66,9 @@ public:
     virtual ~ByteArray() = default;
     ByteArray( const ByteArray & ) = default;
     ByteArray &operator=( const ByteArray & ) = default;
-    void operator delete( void *ptr ) { (void)ptr; }
 
+
+    void operator delete( void *ptr ) { (void) ptr; }
 
 
     void appendByte( std::uint8_t p ) {
@@ -99,5 +102,5 @@ public:
 
     void alignToWord();
 
-    void copy_to( std::int32_t *&addr );
+    void copy_to( std::size_t *&addr );
 };

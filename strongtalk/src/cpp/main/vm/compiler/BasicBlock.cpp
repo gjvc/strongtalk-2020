@@ -80,7 +80,7 @@ NonTrivialNode *findDefinitionOf( Node *endNode, const PseudoRegister *r, std::i
     // search backwards for a definition of r
     Node *current = endNode;
 
-    for ( std::int32_t i = 0; i < max and current not_eq nullptr; i++ ) {
+    for ( std::size_t i = 0; i < max and current not_eq nullptr; i++ ) {
 
         if ( current->_deleted )
             continue;
@@ -184,7 +184,7 @@ bool regAssignedBetween( const PseudoRegister *r, const Node *startNode, Node *e
 void BasicBlock::bruteForceCopyPropagate() {
     const std::int32_t len = duInfo.info->length();
 
-    for ( std::int32_t i = 0; i < len; i++ ) {        // forall def/use info lists
+    for ( std::size_t i = 0; i < len; i++ ) {        // forall def/use info lists
         DefinitionUsageInfo  *dui = duInfo.info->at( i );
         const PseudoRegister *r   = dui->_pseudoRegister;
         if ( not r->isSinglyAssignedPseudoRegister() or not r->_location.equals( Location::UNALLOCATED_LOCATION ) ) {
@@ -234,7 +234,7 @@ void BasicBlock::localCopyPropagate() {
     SimpleBitVector    used      = 0;        // hardwired registers used
     SimpleBitVector    usedTwice = 0;
 
-    for ( std::int32_t i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
         if ( not r->_location.equals( Location::UNALLOCATED_LOCATION ) and r->_location.isRegisterLocation() ) {
             if ( used.isAllocated( r->_location.number() ) ) {
@@ -246,7 +246,7 @@ void BasicBlock::localCopyPropagate() {
         }
     }
 
-    for ( std::int32_t i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         constexpr std::int32_t BIG  = 9999999;
         DefinitionUsageInfo    *dui = duInfo.info->at( i );
         PseudoRegister         *r   = dui->_pseudoRegister;
@@ -459,7 +459,7 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
     std::int32_t use_count[REGISTER_COUNT], def_count[REGISTER_COUNT];
 //    std::array <std::int32_t, REGISTER_COUNT> use_count, def_count;
 
-    for ( std::int32_t i = 0; i < REGISTER_COUNT; i++ ) {
+    for ( std::size_t i = 0; i < REGISTER_COUNT; i++ ) {
         use_count[ i ] = def_count[ i ] = 0;
     }
 
@@ -553,7 +553,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
     // clear temporary data structures
     localRegs->clear();
     lives->clear();
-    for ( std::int32_t i = 0; i < nofLocalRegisters; i++ ) {
+    for ( std::size_t i = 0; i < nofLocalRegisters; i++ ) {
         hardwired->at( i )->setLength( _nodeCount );
         hardwired->at( i )->clear();
     }
@@ -561,7 +561,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
     // localRegs: collects all PseudoRegisters that could be allocated locally
     // lives: for each reg in localRegs, holds live range (bit vector with one bit per node)
 
-    for ( std::int32_t i = 0; i < duInfo.info->length(); i++ ) {
+    for ( std::size_t i = 0; i < duInfo.info->length(); i++ ) {
         // collect local regs
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
         if ( r->isLocalTo( this ) ) {
@@ -602,7 +602,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
         SimpleBitVector v = n->trashedMask();
         if ( v.isEmpty() )
             continue;    // nothing trashed (normal case)
-        for ( std::int32_t i = 0; i < nofLocalRegisters; i++ ) {
+        for ( std::size_t i = 0; i < nofLocalRegisters; i++ ) {
             if ( v.isAllocated( i ) )
                 hardwired->at( i )->add( n->num() );
         }
@@ -612,7 +612,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
     // cycle through the temp registers to (hopefully) allow more optimizations later (e.g. scheduling)
     std::int32_t lastTemp = 0;
 
-    for ( std::int32_t i = 0; i < localRegs->length(); i++ ) {
+    for ( std::size_t i = 0; i < localRegs->length(); i++ ) {
         // try to allocate localRegs[i] to a local (temp) register
         PseudoRegister *r = localRegs->at( i );
         if ( not r->_location.equals( Location::UNALLOCATED_LOCATION ) ) {
@@ -708,7 +708,7 @@ void BasicBlock::print_short() {
 
     SPDLOG_INFO( "BasicBlock %-3ld [{}] {0:x} (%ld, %ld); prevs ", id(), _loopDepth, static_cast<void *>(this), _first->id(), _last->id() );
 
-    for ( std::int32_t i = 0; i < nPredecessors(); i++ ) {
+    for ( std::size_t i = 0; i < nPredecessors(); i++ ) {
         printPrevBBs( prev( i ), ( i == nPredecessors() - 1 ) ? " : " : ", " );
     }
 
@@ -717,7 +717,7 @@ void BasicBlock::print_short() {
         SPDLOG_INFO( "next BasicBlock%ld", next()->id() );
     }
 
-    for ( std::int32_t i = 1; i < nSuccessors(); i++ ) {
+    for ( std::size_t i = 1; i < nSuccessors(); i++ ) {
         printPrevBBs( next( i ), ( i == nSuccessors() - 1 ) ? " : " : ", " );
     }
 
@@ -831,14 +831,14 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth 
     //
     std::int32_t n = _last->nSuccessors();
 
-    for ( std::int32_t i = 0; i < n; i++ ) {
+    for ( std::size_t i = 0; i < n; i++ ) {
         Node       *next   = _last->next( i );
         BasicBlock *nextBB = next->newBasicBlock();
         static_cast<void>( nextBB );
     }
 
     //
-    for ( std::int32_t i = nSuccessors() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = nSuccessors() - 1; i >= 0; i-- ) {
         BasicBlock *nextBB = next( i );
         // only follow the link if next->bb hasn't been visited yet
         if ( nextBB->id() == 0 ) {

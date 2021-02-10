@@ -26,7 +26,7 @@ void DoubleByteArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_object( stream );
     stream->read_oop( length_addr() );
 
-    for ( std::int32_t i = 1; i <= length(); i++ ) {
+    for ( std::size_t i = 1; i <= length(); i++ ) {
         doubleByte_at_put( i, stream->read_uint16_t() );
     }
 
@@ -124,7 +124,7 @@ bool DoubleByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int3
         is_truncated = true;
     }
 
-    for ( std::int32_t i = 0; i < len; i++ )
+    for ( std::size_t i = 0; i < len; i++ )
         buffer[ i ] = (char) doubleByte_at( i + 1 );
 
     buffer[ len ] = '\0';

@@ -57,7 +57,7 @@ class BitVector : public PrintableResourceObject {
 
 protected:
     std::int32_t _maxLength; // max # bits
-    std::int32_t length;     // number of bits, not words
+    std::size_t length;     // number of bits, not words
     std::int32_t *_bits;     // array containing the bits
 
     std::int32_t indexFromNumber( std::int32_t i ) {
@@ -145,7 +145,7 @@ public:
     }
 
 
-    bool includes( std::int32_t i ) {
+    bool includes( std::size_t i ) {
         //st_assert( this, "shouldn't be a null pointer" );
         st_assert( i < length, "not in range" );
         bool b = getBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
@@ -153,7 +153,7 @@ public:
     }
 
 
-    void add( std::int32_t i ) {
+    void add( std::size_t i ) {
         //st_assert( this, "shouldn't be a null pointer" );
         st_assert( i < length, "not in range" );
         setBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );

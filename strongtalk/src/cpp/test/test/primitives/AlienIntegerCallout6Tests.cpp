@@ -292,7 +292,7 @@ protected:
         setAddress( functionAlien, functionArray[ argIndex ] );
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ )
+        for ( std::size_t index = 0; index < argCount; index++ )
             arg[ index ]          = argIndex == index ? asOop( argValue ) : smi0;
         Oop                result = callout( arg );
 
@@ -305,7 +305,7 @@ protected:
         setAddress( functionAlien, functionArray[ argIndex ] );
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ )
+        for ( std::size_t index = 0; index < argCount; index++ )
             arg[ index ]          = argIndex == index ? pointer : smi0;
         Oop                result = callout( arg );
 
@@ -317,7 +317,7 @@ protected:
     void checkIllegalArgnPassed( std::int32_t argIndex, Oop pointer ) {
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ )
+        for ( std::size_t index = 0; index < argCount; index++ )
             arg[ index ] = argIndex == index ? pointer : smi0;
 
         Oop result = callout( arg );

@@ -74,7 +74,7 @@ class Thread : CHeapAllocatedObject {
 
     public:
         static Thread * find( pthread_t threadId ) {
-            for ( std::int32_t index = 0; index < _threads->length(); index++ ) {
+            for ( std::size_t index = 0; index < _threads->length(); index++ ) {
                 Thread * candidate = _threads->at( index );
                 if ( candidate == nullptr )
                     continue;

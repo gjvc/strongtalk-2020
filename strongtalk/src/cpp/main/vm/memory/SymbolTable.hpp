@@ -91,7 +91,7 @@ public:
 
     void deallocate();
 
-    std::int32_t length();
+    std::size_t length();
 };
 
 

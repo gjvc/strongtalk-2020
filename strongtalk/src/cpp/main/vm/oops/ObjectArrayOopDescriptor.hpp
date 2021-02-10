@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "vm/oops/Klass.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
+#include "vm/oops/Klass.hpp"
 
 
 // ObjectArrays are arrays containing oops
@@ -34,7 +34,7 @@ public:
     }
 
 
-    bool is_within_bounds( std::int32_t index ) const {
+    bool is_within_bounds( std::size_t index ) const {
         return 1 <= index and index <= length();
     }
 
@@ -44,7 +44,7 @@ public:
     }
 
 
-    Oop *objs( std::int32_t which ) const {
+    Oop *objs( std::size_t which ) const {
         return &length_addr()[ which ];
     }
 
@@ -54,7 +54,7 @@ public:
     }
 
 
-    std::int32_t length() const {
+    std::size_t length() const {
         Oop len = *length_addr();
         st_assert( len->isSmallIntegerOop(), "length of indexable should be small_int_t" );
         auto value = SmallIntegerOop( len )->value();
@@ -67,13 +67,13 @@ public:
     }
 
 
-    Oop obj_at( std::int32_t which ) const {
+    Oop obj_at( std::size_t which ) const {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         return *objs( which );
     }
 
 
-    void obj_at_put( std::int32_t which, Oop contents, bool cs = true ) {
+    void obj_at_put( std::size_t which, Oop contents, bool cs = true ) {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         st_assert( not isSymbol(), "shouldn't be modifying a canonical string" );
         st_assert( contents->verify(), "check contents" );

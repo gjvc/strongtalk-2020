@@ -620,7 +620,7 @@ const char *InterpreterGenerator::with_context_temp( bool store, std::int32_t te
         _macroAssembler->decb( ebx );
         _macroAssembler->jcc( Assembler::Condition::notZero, _loop );
     } else {
-        for ( std::int32_t i = 0; i < contextNo; i++ )
+        for ( std::size_t i = 0; i < contextNo; i++ )
             _macroAssembler->movl( ecx, Address( ecx, ContextOopDescriptor::parent_byte_offset() ) );
     }
 
@@ -693,7 +693,7 @@ const char *InterpreterGenerator::copy_params_into_context( bool self, std::int3
         _macroAssembler->decb( eax );
         _macroAssembler->jcc( Assembler::Condition::notZero, _loop );
     } else {
-        for ( std::int32_t i = 0; i < paramsCount; i++ ) {
+        for ( std::size_t i = 0; i < paramsCount; i++ ) {
             _macroAssembler->movb( ebx, Address( esi, 1 + i ) );    // get i.th parameter index
             _macroAssembler->movl( edx, arg_addr( ebx ) );                     // get parameter
             Address slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + OOP_SIZE * ( i + oneIfSelf ) );
@@ -1271,7 +1271,7 @@ const char *InterpreterGenerator::float_op( std::int32_t nof_args, bool returns_
     _macroAssembler->leal( edx, float_addr( ebx ) );        // get float address
     _macroAssembler->movb( ebx, Address( esi, -1 ) );        // get function number
     _macroAssembler->movl( ecx, Address( noreg, ebx, Address::ScaleFactor::times_4, std::int32_t( Floats::_function_table[ 0 ] ), RelocationInformation::RelocationType::external_word_type ) );
-    for ( std::int32_t i = 0; i < nof_args; i++ )
+    for ( std::size_t i = 0; i < nof_args; i++ )
         _macroAssembler->fld_d( Address( edx, -i * SIZEOF_FLOAT ) );
     _macroAssembler->call( ecx );                // invoke operation
     load_ebx();                    // get next byte code
@@ -2472,7 +2472,7 @@ const char *InterpreterGenerator::normal_send( ByteCodes::Code code, bool allow_
     bool                    pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    std::int32_t length      = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
+    std::size_t length      = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
     Address      method_addr = Address( esi, -2 * OOP_SIZE );
     Address      klass_addr  = Address( esi, -1 * OOP_SIZE );
 
@@ -2572,7 +2572,7 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     ByteCodes::ArgumentSpec arg_spec = ByteCodes::argument_spec( code );
 
     // inline cache layout
-    std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
+    std::size_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
     bool         pop_tos       = ByteCodes::pop_tos( code );
     Address      selector_addr = Address( esi, -2 * OOP_SIZE );
 //    Address      klass_addr    = Address( esi, -1 * OOP_SIZE );
@@ -2671,7 +2671,7 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     bool                    pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    std::int32_t length   = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
+    std::size_t length   = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
 //    Address      selector_addr = Address( esi, -2 * OOP_SIZE );
     Address      pic_addr = Address( esi, -1 * OOP_SIZE );
 
@@ -3475,7 +3475,7 @@ void InterpreterGenerator::generate_all() {
     // generate individual instructions
     _console->cr();
 
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
 
         const char *start = _macroAssembler->pc();
         const char *entry = generate_instruction( (ByteCodes::Code) i );
@@ -3486,7 +3486,7 @@ void InterpreterGenerator::generate_all() {
 
         ByteCodes::set_entry_point( ByteCodes::Code( i ), entry );
         if ( PrintInterpreter ) {
-            std::int32_t length = _macroAssembler->pc() - start;
+            std::size_t length = _macroAssembler->pc() - start;
             const char   *name  = ByteCodes::name( (ByteCodes::Code) i );
             SPDLOG_INFO( "bytecode # [0x%02x], address[0x{0:x}], size [0x%04x], name[{}]", i, entry, length, name );
             _macroAssembler->code()->decode();

@@ -45,7 +45,7 @@ char *ByteArrayOopDescriptor::copy_null_terminated( std::int32_t &Clength ) {
     small_int_t t = length();               // Copy and 'escape' null chars.
 //    small_int_t              i;
 
-    for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) == '\0' ) {
             t++;
         }
@@ -55,7 +55,7 @@ char *ByteArrayOopDescriptor::copy_null_terminated( std::int32_t &Clength ) {
     res = new_resource_array<char>( t + 1 );
     res[ t-- ] = '\0';
     Clength = t;
-    for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) not_eq '\0' ) {
             res[ t-- ] = byte_at( i );
         } else {
@@ -77,7 +77,7 @@ char *ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
     small_int_t t = length();               // Copy and 'escape' null chars.
 //    small_int_t              i;
 
-    for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) == '\0' ) {
             t++;
         }
@@ -86,7 +86,7 @@ char *ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
     // t is total length of result string.
     char *res = new_c_heap_array<char>( t + 1 );
     res[ t-- ] = '\0';
-    for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) not_eq '\0' ) {
             res[ t-- ] = byte_at( i );
         } else {
@@ -112,7 +112,7 @@ bool ByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int32_t ma
         is_truncated = true;
     }
 
-    for ( std::int32_t i = 0; i < len; i++ )
+    for ( std::size_t i = 0; i < len; i++ )
         buffer[ i ] = byte_at( i + 1 );
 
     buffer[ len ] = '\0';
@@ -125,7 +125,7 @@ void ByteArrayOopDescriptor::bootstrap_object( Bootstrap *bootstrap ) {
     MemOopDescriptor::bootstrap_object( bootstrap );
 
     bootstrap->read_oop( length_addr() );
-    for ( std::int32_t i = 1; i <= length(); i++ ) {
+    for ( std::size_t i = 1; i <= length(); i++ ) {
         byte_at_put( i, bootstrap->read_uint8_t() );
     }
 }
@@ -179,7 +179,7 @@ std::int32_t ByteArrayOopDescriptor::compare_doubleBytes( DoubleByteArrayOop arg
     std::int32_t s2 = arg->length();
     std::int32_t n  = s1 < s2 ? s1 : s2;
 
-    for ( std::int32_t i = 1; i <= n; i++ ) {
+    for ( std::size_t i = 1; i <= n; i++ ) {
         std::int32_t result = sub_sign( byte_at( i ), arg->doubleByte_at( i ) );
         if ( result not_eq 0 )
             return result;
@@ -215,7 +215,7 @@ const char *ByteArrayOopDescriptor::as_string() {
     std::int32_t len  = length();
     char         *str = new_resource_array<char>( len + 1 );
 
-    for ( std::int32_t index = 0; index < len; index++ ) {
+    for ( std::size_t index = 0; index < len; index++ ) {
         str[ index ] = byte_at( index + 1 );
     }
 
@@ -234,7 +234,7 @@ const char *ByteArrayOopDescriptor::as_string() {
 //
 //    std::string s{};
 //
-//    for ( std::int32_t index = 0; index < length(); index++ ) {
+//    for ( std::size_t index = 0; index < length(); index++ ) {
 //        s += byte_at( index + 1 );
 //    }
 //    s += '\0';
@@ -252,7 +252,7 @@ std::int32_t ByteArrayOopDescriptor::number_of_arguments() const {
         return 1;
 
     // Return number of colons
-    for ( std::int32_t i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         if ( byte_at( i ) == ':' )
             result++;
 
@@ -263,7 +263,7 @@ std::int32_t ByteArrayOopDescriptor::number_of_arguments() const {
 bool ByteArrayOopDescriptor::is_unary() const {
     if ( is_binary() )
         return false;
-    for ( std::int32_t i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         if ( byte_at( i ) == ':' )
             return false;
     return true;
@@ -281,7 +281,7 @@ bool ByteArrayOopDescriptor::is_keyword() const {
     if ( is_binary() )
         return false;
 
-    for ( std::int32_t i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         if ( byte_at( i ) == ':' )
             return true;
 

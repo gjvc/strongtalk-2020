@@ -84,7 +84,7 @@ void DoubleByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *str
     std::int32_t       len   = array->length();
     std::int32_t       n     = min( MaxElementPrintSize, len );
     stream->print( "'" );
-    for ( std::int32_t i = 1; i <= n; i++ ) {
+    for ( std::size_t i = 1; i <= n; i++ ) {
         std::int32_t c = array->doubleByte_at( i );
         if ( isprint( c ) )
             stream->print( "%c", c );
@@ -106,7 +106,7 @@ void DoubleByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk
     MemOopKlass::oop_layout_iterate( obj, blk );
     blk->do_oop( "length", l );
     blk->begin_indexables();
-    for ( std::int32_t i = 1; i <= len; i++ ) {
+    for ( std::size_t i = 1; i <= len; i++ ) {
         blk->do_indexable_doubleByte( i, p++ );
     }
     blk->end_indexables();

@@ -160,7 +160,7 @@ void Bootstrap::extend_oop_table() {
     SPDLOG_INFO( "bootstrap-expand: expanding oop_table to [0x{08:x}]", new_size );
     Oop *new_oop_table = new_c_heap_array<Oop>( new_size );
 
-    for ( std::int32_t i = 0; i < _max_number_of_oops; i++ ) {
+    for ( std::size_t i = 0; i < _max_number_of_oops; i++ ) {
         new_oop_table[ i ] = _oop_table[ i ];
     }
 
@@ -500,7 +500,7 @@ double Bootstrap::read_double() {
     double       value{ 0 };
     std::uint8_t *str = (std::uint8_t *) &value;
 
-    for ( std::int32_t i = 0; i < 8; i++ ) {
+    for ( std::size_t i = 0; i < 8; i++ ) {
         char c{ 0 };
         _stream.get( c );
 

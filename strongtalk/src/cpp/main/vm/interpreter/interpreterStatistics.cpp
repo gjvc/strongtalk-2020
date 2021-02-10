@@ -24,7 +24,7 @@ void InterpreterStatistics::reset_bytecode_counters() {
 
 
 void InterpreterStatistics::reset_bytecode_generation_order() {
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         _bytecode_generation_order[ i ] = i;
     }
 }

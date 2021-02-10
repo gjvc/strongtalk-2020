@@ -40,7 +40,7 @@ GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int3
         _data = new_resource_array<void *>( _maxLength );
     }
 
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         _data[ i ] = filler;
     }
 
@@ -65,7 +65,7 @@ void GenericGrowableArray::grow( std::int32_t j ) {
         newData = new_resource_array<void *>( _maxLength );
     }
 
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         newData[ i ] = _data[ i ];
     }
     _data = newData;
@@ -73,7 +73,7 @@ void GenericGrowableArray::grow( std::int32_t j ) {
 
 
 bool GenericGrowableArray::raw_contains( const void *elem ) const {
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem ) {
             return true;
         }
@@ -92,14 +92,14 @@ GenericGrowableArray *GenericGrowableArray::raw_copy() const {
 
 
 void GenericGrowableArray::raw_appendAll( GenericGrowableArray *l ) {
-    for ( std::int32_t i = 0; i < l->_length; i++ ) {
+    for ( std::size_t i = 0; i < l->_length; i++ ) {
         raw_at_put_grow( _length, l->_data[ i ], nullptr );
     }
 }
 
 
 std::int32_t GenericGrowableArray::raw_find( const void *elem ) const {
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem ) {
             return i;
         }
@@ -109,7 +109,7 @@ std::int32_t GenericGrowableArray::raw_find( const void *elem ) const {
 
 
 std::int32_t GenericGrowableArray::raw_find( void *token, growableArrayFindFn f ) const {
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         if ( f( token, _data[ i ] ) )
             return i;
     }
@@ -118,7 +118,7 @@ std::int32_t GenericGrowableArray::raw_find( void *token, growableArrayFindFn f 
 
 
 void GenericGrowableArray::raw_remove( const void *elem ) {
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem ) {
             for ( std::int32_t j = i + 1; j < _length; j++ ) {
                 _data[ j - 1 ] = _data[ j ];
@@ -132,7 +132,7 @@ void GenericGrowableArray::raw_remove( const void *elem ) {
 
 
 void GenericGrowableArray::raw_apply( voidDoFn f ) const {
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         f( _data[ i ] );
     }
 }
@@ -169,7 +169,7 @@ void GenericGrowableArray::raw_at_put_grow( std::int32_t i, const void *p, const
 void GenericGrowableArray::print() {
     print_short();
     SPDLOG_INFO( ": length %ld (max {0:d}) { ", _length, _maxLength );
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         SPDLOG_INFO( "0x{0:x} ", (std::int32_t) _data[ i ] );
     }
     SPDLOG_INFO( "}" );
@@ -191,7 +191,7 @@ void GenericGrowableArray::clear() {
 }
 
 
-std::int32_t GenericGrowableArray::length() const {
+std::size_t GenericGrowableArray::length() const {
     return _length;
 }
 

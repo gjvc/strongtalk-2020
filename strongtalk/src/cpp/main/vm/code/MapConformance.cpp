@@ -69,7 +69,7 @@ void MapConformance::push_temporary( Variable var ) {
 
 
 void MapConformance::push( Variable src, std::int32_t n ) {
-    for ( std::int32_t i = 0; i < n; i++ ) {
+    for ( std::size_t i = 0; i < n; i++ ) {
         push( src );
     }
 }
@@ -182,7 +182,7 @@ void MappingTask::process_task( MapConformance *mc, MappingTask *p ) {
 
     // Is anybody dependent on source?
     set_parent( p );
-    for ( std::int32_t i = 0; i < mc->_mappings->length(); i++ ) {
+    for ( std::size_t i = 0; i < mc->_mappings->length(); i++ ) {
         MappingTask *task = mc->_mappings->at( i );
         if ( not task->is_processed() and is_dependent( mc, task ) ) {
             task->process_task( mc, this );
@@ -333,7 +333,7 @@ void MapConformance::pop( Variable dst ) {
 
 void MapConformance::print() {
     SPDLOG_INFO( "MapConformance" );
-    for ( std::int32_t i = 0; i < _mappings->length(); i++ ) {
+    for ( std::size_t i = 0; i < _mappings->length(); i++ ) {
         _mappings->at( i )->print( i );
     }
 }
@@ -373,7 +373,7 @@ void MapConformance::simplify() {
 
 
 void MapConformance::process_tasks() {
-    for ( std::int32_t i = 0; i < _mappings->length(); i++ ) {
+    for ( std::size_t i = 0; i < _mappings->length(); i++ ) {
         _mappings->at( i )->process_task( this, nullptr );
     }
 }

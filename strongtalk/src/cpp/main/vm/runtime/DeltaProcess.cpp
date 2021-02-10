@@ -359,8 +359,9 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread 
               : os::starting_thread( &_thread_id );
 
     _stack_limit = (char *) os::stack_limit( _thread );
+    SPDLOG_INFO( "stack limit is [{:d}] bytes", _stack_limit );
 
-    SPDLOG_INFO( "creating process 0x{0:x}", static_cast<const void *>( this ) );
+    SPDLOG_INFO( "creating DeltaProcess 0x{0:x}", static_cast<const void *>( this ) );
 
     set_last_delta_fp( nullptr );
     set_last_delta_sp( nullptr );
@@ -765,7 +766,7 @@ extern "C" void unpack_frame_array() {
 
     Oop          *current_sp = new_sp;
     std::int32_t pos         = 3;
-    std::int32_t length      = frame_array->length();
+    std::size_t length      = frame_array->length();
     bool         first       = true;
     Frame        current;
     // unpack one frame at at time from most recent to least recent
@@ -785,7 +786,7 @@ extern "C" void unpack_frame_array() {
         current = Frame( current_sp, (std::int32_t *) current_sp + locals + 2 );
 
         // fill in the locals
-        for ( std::int32_t i = 0; i < locals; i++ ) {
+        for ( std::size_t i = 0; i < locals; i++ ) {
             current.set_temp( i, frame_array->obj_at( pos++ ) );
         }
 

@@ -23,7 +23,7 @@ GrowableArray<MemOop> *Reflection::_converted = nullptr;
 bool Reflection::needs_schema_change() {
     bool result = false;
 
-    for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         bool sub_result = _classChanges->at( i )->needs_schema_change();
         if ( TraceApplyChange and sub_result ) {
             _classChanges->at( i )->old_klass()->print_value();
@@ -59,7 +59,7 @@ bool Reflection::has_methods_changed( MixinOop new_mixin, MixinOop old_mixin ) {
         return true;
     }
 
-    for ( std::int32_t i = 1; i <= new_mixin->number_of_methods(); i++ ) {
+    for ( std::size_t i = 1; i <= new_mixin->number_of_methods(); i++ ) {
         if ( not old_mixin->includes_method( new_mixin->method_at( i ) ) )
             return true;
     }
@@ -73,7 +73,7 @@ bool Reflection::has_class_vars_changed( MixinOop new_mixin, MixinOop old_mixin 
     if ( new_mixin->number_of_classVars() not_eq old_mixin->number_of_classVars() )
         return true;
 
-    for ( std::int32_t i = 1; i <= new_mixin->number_of_classVars(); i++ ) {
+    for ( std::size_t i = 1; i <= new_mixin->number_of_classVars(); i++ ) {
         if ( not old_mixin->includes_classVar( new_mixin->classVar_at( i ) ) ) {
             return true;
         }
@@ -85,7 +85,7 @@ bool Reflection::has_class_vars_changed( MixinOop new_mixin, MixinOop old_mixin 
 
 ClassChange *Reflection::find_change_for( KlassOop klass ) {
 
-    for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         ClassChange *e = _classChanges->at( i );
         if ( e->old_klass() == klass ) {
             return e;
@@ -99,9 +99,9 @@ ClassChange *Reflection::find_change_for( KlassOop klass ) {
 void Reflection::register_class_changes( MixinOop new_mixin, ObjectArrayOop invocations ) {
 
     _classChanges = new GrowableArray<ClassChange *>( 100 );
-    std::int32_t length = invocations->length();
+    std::size_t length = invocations->length();
 
-    for ( std::int32_t i = invocations_offset(); i <= length; i++ ) {
+    for ( std::size_t i = invocations_offset(); i <= length; i++ ) {
         ObjectArrayOop invocation = ObjectArrayOop( invocations->obj_at( i ) );
         st_assert( invocation->isObjectArray(), "type check" );
 
@@ -120,7 +120,7 @@ void Reflection::register_class_changes( MixinOop new_mixin, ObjectArrayOop invo
 
 
 void Reflection::invalidate_classes( bool value ) {
-    for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         KlassOop old_klass = _classChanges->at( i )->old_klass();
         old_klass->set_invalid( value );
         old_klass->klass()->set_invalid( value );
@@ -129,7 +129,7 @@ void Reflection::invalidate_classes( bool value ) {
 
 
 void Reflection::update_classes( bool class_vars_changed, bool instance_methods_changed, bool class_methods_changed ) {
-    for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         _classChanges->at( i )->update_class( class_vars_changed, instance_methods_changed, class_methods_changed );
     }
 }
@@ -138,12 +138,12 @@ void Reflection::update_classes( bool class_vars_changed, bool instance_methods_
 void Reflection::setup_schema_change() {
 
     //
-    for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         _classChanges->at( i )->setup_schema_change();
     }
 
     //
-    for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         // Mark old class for schema change
         _classChanges->at( i )->old_klass()->klass_part()->mark_for_schema_change();
         // Mark old metaclass for schema change
@@ -209,7 +209,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
         // NotificationQueue::oops_do(&follow_root);
 
         // Reset the marks for the converted objects
-        for ( std::int32_t j = 0; j < _converted->length(); j++ ) {
+        for ( std::size_t j = 0; j < _converted->length(); j++ ) {
             MemOop obj = _converted->at( j );
             if ( TraceApplyChange ) {
                 SPDLOG_INFO( "Old: 0x%lx, 0x%lx", static_cast<const void *>(obj), static_cast<const void *>(obj->mark()) );
@@ -251,7 +251,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
     // [3 - n] = invocations <Array>
 
     // Check array format
-    std::int32_t length = change->length();
+    std::size_t length = change->length();
 
     if ( length < 3 )
         return markSymbol( vmSymbols::argument_is_invalid() );
@@ -264,7 +264,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
     if ( not old_mixin->is_mixin() )
         return markSymbol( vmSymbols::argument_is_invalid() );
 
-    for ( std::int32_t i = 3; i <= length; i++ ) {
+    for ( std::size_t i = 3; i <= length; i++ ) {
         ObjectArrayOop array = ObjectArrayOop( change->obj_at( i ) );
 
         if ( not array->isObjectArray() )

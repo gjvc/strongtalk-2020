@@ -202,7 +202,7 @@ void FlatProfiler::record_tick() {
 
 void FlatProfiler::allocate_table() {
     _table = new_c_heap_array<ProfiledNode *>( _tableSize );
-    for ( std::int32_t i = 0; i < _tableSize; i++ )
+    for ( std::size_t i = 0; i < _tableSize; i++ )
         _table[ i ] = nullptr;
 }
 
@@ -211,7 +211,7 @@ void FlatProfiler::reset() {
     _deltaProcess     = nullptr;
     _flatProfilerTask = nullptr;
 
-    for ( std::int32_t i = 0; i < _tableSize; i++ ) {
+    for ( std::size_t i = 0; i < _tableSize; i++ ) {
         ProfiledNode *n = _table[ i ];
         if ( n ) {
             delete n;
@@ -277,7 +277,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
 
     GrowableArray<ProfiledNode *> *array = new GrowableArray<ProfiledNode *>( 200 );
 
-    for ( std::int32_t i = 0; i < _tableSize; i++ ) {
+    for ( std::size_t i = 0; i < _tableSize; i++ ) {
         for ( ProfiledNode *node = _table[ i ]; node; node = node->next() )
             array->append( node );
     }
@@ -287,7 +287,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
     // compute total
     std::int32_t total = total_ticks();
 
-    for ( std::int32_t index = 0; index < array->length(); index++ ) {
+    for ( std::size_t index = 0; index < array->length(); index++ ) {
         total += array->at( index )->ticks.total();
     }
 
@@ -332,7 +332,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
     bool        has_compiled_ticks = false;
     TickCounter compiled_ticks;
 
-    for ( std::int32_t i = 0; i < array->length(); i++ ) {
+    for ( std::size_t i = 0; i < array->length(); i++ ) {
         ProfiledNode *n = array->at( i );
         if ( n->is_compiled() ) {
             compiled_ticks.add( &n->ticks );

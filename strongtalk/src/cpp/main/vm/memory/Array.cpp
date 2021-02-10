@@ -25,7 +25,7 @@ Array::Array( std::int32_t sz ) :
 
 
 std::int32_t Array::insertIfAbsent( std::int32_t value ) {
-    for ( std::int32_t i = 0; i < _index; i++ ) {
+    for ( std::size_t i = 0; i < _index; i++ ) {
         if ( _values[ i ] == value ) {
             return i;
         }
@@ -43,7 +43,7 @@ std::int32_t Array::insertIfAbsent( std::int32_t value ) {
 void Array::extend( std::int32_t newSize ) {
     std::int32_t *newValues = new_resource_array<std::int32_t>( newSize );
 
-    for ( std::int32_t i = 0; i < _index; i++ ) {
+    for ( std::size_t i = 0; i < _index; i++ ) {
         newValues[ i ] = _values[ i ];
     }
 
@@ -52,8 +52,9 @@ void Array::extend( std::int32_t newSize ) {
 }
 
 
-void Array::copy_to( std::int32_t *&addr ) {
-    for ( std::int32_t i = 0; i < length(); i++ ) {
+
+void Array::copy_to( std::size_t *&addr ) {
+    for ( std::size_t i = 0; i < length(); i++ ) {
         *addr++ = _values[ i ];
     }
 }
@@ -73,7 +74,7 @@ void ByteArray::extend() {
     std::uint8_t *newArray = new_resource_array<std::uint8_t>( newMax );
 
     //
-    for ( std::int32_t i = 0; i < _top; i++ ) {
+    for ( std::size_t i = 0; i < _top; i++ ) {
         newArray[ i ] = _array[ i ];
     }
 
@@ -118,18 +119,18 @@ void ByteArray::appendWord( std::int32_t p ) {
 void ByteArray::alignToWord() {
     std::int32_t fill_size = ( sizeof( std::int32_t ) - ( size() % sizeof( std::int32_t ) ) ) % sizeof( std::int32_t );
 
-    for ( std::int32_t i = 0; i < fill_size; i++ ) {
+    for ( std::size_t i = 0; i < fill_size; i++ ) {
         appendByte( 0 );
     }
 
 }
 
 
-void ByteArray::copy_to( std::int32_t *&addr ) {
-    std::int32_t *fromAddr = (std::int32_t *) start();
-    std::int32_t len       = size() / sizeof( std::int32_t );
+void ByteArray::copy_to( std::size_t *&addr ) {
+    std::size_t *fromAddr = (std::size_t *) start();
+    std::size_t len       = size() / sizeof( std::size_t );
 
-    for ( std::int32_t i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         *addr++ = *fromAddr++;
     }
 }

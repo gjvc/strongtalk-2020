@@ -45,7 +45,7 @@ JumpTable::JumpTable() :
 void JumpTable::init() {
     // free list: firstFree keeps first free index
     // entries[firstFree] keeps index of next free element, etc.
-    for ( std::int32_t i = 0; i < length; i++ ) {
+    for ( std::size_t i = 0; i < length; i++ ) {
         major_at( i )->initialize_as_unused( i + 1 );
     }
 }
@@ -64,7 +64,7 @@ JumpTableID JumpTable::allocate( std::int32_t number_of_entries ) {
         // Initialize the first entry as a NativeMethod stub
         jump_entry_for_at( new_block, 0 )->initialize_NativeMethod_stub( nullptr );
         // initialize the rest as block closure stubs
-        for ( std::int32_t i = 1; i < number_of_entries; i++ ) {
+        for ( std::size_t i = 1; i < number_of_entries; i++ ) {
             jump_entry_for_at( new_block, i )->initialize_block_closure_stub();
         }
         entry->initialize_as_link( new_block );
@@ -120,7 +120,7 @@ void JumpTable::freeID( std::int32_t index ) {
 
 void JumpTable::print() {
     SPDLOG_INFO( "JumpTable 0x{0:x}: capacity{0:d} (%ld used)", static_cast<const void *>(this), length, usedIDs );
-    for ( std::int32_t i = 0; i < length; i++ ) {
+    for ( std::size_t i = 0; i < length; i++ ) {
         if ( not major_at( i )->is_unused() ) {
             _console->print( " %3d: ", i );
             major_at( i )->print();
@@ -407,7 +407,7 @@ void JumpTableEntry::verify() {
         NativeMethod *nm = method();
         if ( not nm->has_noninlined_blocks() )
             report_verify_error( "NativeMethod must have noninlined blocks" );
-        for ( std::int32_t i = 1; i <= nm->number_of_noninlined_blocks(); i++ ) {
+        for ( std::size_t i = 1; i <= nm->number_of_noninlined_blocks(); i++ ) {
             JumpTableEntry *son = JumpTable::jump_entry_for_at( link(), i );
             if ( not son->is_block_closure_stub() )
                 report_verify_error( "must be block closure stub" );

@@ -196,12 +196,12 @@ void uncommon_trap() {
 
             while ( not done ) {
                 done = true;
-                for ( std::int32_t i = 0; i < elements->length() and done; i++ ) {
+                for ( std::size_t i = 0; i < elements->length() and done; i++ ) {
                     FrameAndContextElement *e = elements->at( i );
                     if ( e and e->_context->unoptimized_context() ) {
                         process->deoptimize_stretch( &e->_frame, &e->_frame );
 
-                        for ( std::int32_t j = 0; j < elements->length(); j++ ) {
+                        for ( std::size_t j = 0; j < elements->length(); j++ ) {
                             if ( elements->at( j ) and elements->at( j )->_frame.fp() == e->_frame.fp() ) {
                                 elements->at_put( j, nullptr );
                             }

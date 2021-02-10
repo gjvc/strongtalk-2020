@@ -115,7 +115,7 @@ void LongRegisterMask::print() {
 std::int32_t findFirstUnused( LongRegisterMask ** masks, std::int32_t len, std::int32_t start ) {
     // currently quite unoptimized
     BitVector * b = masks[ 0 ]->bv->copy( masks[ 0 ]->bv->maxLength );
-    for ( std::int32_t i = 1; i < len; i++ ) {
+    for ( std::size_t i = 1; i < len; i++ ) {
         b->unionWith( masks[ i ]->bv );
     }
     std::int32_t       i = start;

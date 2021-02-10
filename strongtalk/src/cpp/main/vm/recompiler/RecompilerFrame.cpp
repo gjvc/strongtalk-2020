@@ -163,7 +163,7 @@ GrowableArray<BlockClosureOop> *RecompilerFrame::blockArgs() const {
     GrowableArray<BlockClosureOop> *blocks = new GrowableArray<BlockClosureOop>( nargs );
     if ( not vf )
         return blocks;
-    for ( std::int32_t i = 0; i < nargs; i++ ) {
+    for ( std::size_t i = 0; i < nargs; i++ ) {
         Oop b = vf->argument_at( i );
         if ( b->is_block() )
             blocks->append( BlockClosureOop( b ) );

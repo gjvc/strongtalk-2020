@@ -170,7 +170,7 @@ static bool print_selector_with_arguments( PrettyPrintStream *output, SymbolOop 
         return false;
     }
 
-    for ( std::int32_t i = 1; i <= selector->length(); i++ ) {
+    for ( std::size_t i = 1; i <= selector->length(); i++ ) {
         std::int32_t c = selector->byte_at( i );
         output->print_char( c );
         if ( c == ':' ) {
@@ -425,7 +425,7 @@ public:
             output->space();
         }
 
-        for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
             _elements->at( i )->print( output );
             output->space();
         }
@@ -441,7 +441,7 @@ public:
         if ( _beginSym )
             w += output->width_of_string( _beginSym ) + output->width_of_space();
 
-        for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
             w += _elements->at( i )->width( output ) + output->width_of_space();
         }
 
@@ -1007,7 +1007,7 @@ bool codeNode::print( PrettyPrintStream *output ) {
 
     bool first = true;
 
-    for ( std::int32_t i = 0; i < _statements->length(); i++ ) {
+    for ( std::size_t i = 0; i < _statements->length(); i++ ) {
         astNode *s = _statements->at( i );
         if ( not first ) {
             output->print( "." );
@@ -1324,7 +1324,7 @@ public:
         std::int32_t arg = _selector->number_of_arguments();
         std::int32_t w   = output->width_of_string( _selector->as_string() ) + arg * output->width_of_space();
 
-        for ( std::int32_t i = 0; i < _arguments->length(); i++ ) {
+        for ( std::size_t i = 0; i < _arguments->length(); i++ ) {
             w += _arguments->at( i )->width( output );
         }
 
@@ -1709,7 +1709,7 @@ public:
         _isOuter  = is_outer;
         _elements = new GrowableArray<astNode *>( 10 );
 
-        for ( std::int32_t i = 1; i <= value->length(); i++ ) {
+        for ( std::size_t i = 1; i <= value->length(); i++ ) {
             _elements->push( get_literal_node( value->obj_at( i ), byteCodeIndex, scope ) );
         }
     }
@@ -1728,7 +1728,7 @@ public:
         HIGHLIGHT
         astNode::print( output );
         output->print( "#(" );
-        for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
             _elements->at( i )->print( output );
             if ( i < _elements->length() - 1 )
                 output->space();
@@ -1741,7 +1741,7 @@ public:
     std::int32_t width( PrettyPrintStream *output ) {
         std::int32_t w = output->width_of_string( "#(" ) + output->width_of_string( ")" );
 
-        for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
             w += _elements->at( i )->width( output );
             if ( i < _elements->length() - 1 )
                 w += output->width_of_space();
@@ -1802,7 +1802,7 @@ public:
         output->space();
         _funcName->print( output );
         output->print( ">" );
-        for ( std::int32_t i = _arguments->length() - 1; i >= 0; i-- ) {
+        for ( std::size_t i = _arguments->length() - 1; i >= 0; i-- ) {
             _arguments->at( i )->print( output );
             if ( i < _arguments->length() - 1 )
                 output->print( ", " );
@@ -2068,7 +2068,7 @@ public:
     bool print( PrettyPrintStream *output ) {
         _receiver->print( output );
         output->inc_newline();
-        for ( std::int32_t i = 0; i < _messages->length(); i++ ) {
+        for ( std::size_t i = 0; i < _messages->length(); i++ ) {
             if ( i == 0 )
                 output->print( "  " );
             else
@@ -2127,7 +2127,7 @@ void PrettyPrintStream::print() {
 
 
 void DefaultPrettyPrintStream::indent() {
-    for ( std::int32_t i = 0; i < _indentation; i++ ) {
+    for ( std::size_t i = 0; i < _indentation; i++ ) {
         space();
         space();
     }
@@ -2135,7 +2135,7 @@ void DefaultPrettyPrintStream::indent() {
 
 
 void DefaultPrettyPrintStream::print( const char *str ) {
-    for ( std::int32_t i = 0; str[ i ]; i++ )
+    for ( std::size_t i = 0; str[ i ]; i++ )
         print_char( str[ i ] );
 }
 
@@ -2149,7 +2149,7 @@ void DefaultPrettyPrintStream::print_char( char c ) {
 std::int32_t DefaultPrettyPrintStream::width_of_string( const char *str ) {
     std::int32_t w = 0;
 
-    for ( std::int32_t i = 0; str[ i ]; i++ ) {
+    for ( std::size_t i = 0; str[ i ]; i++ ) {
         w += width_of_char( str[ i ] );
     }
 
@@ -2519,7 +2519,7 @@ void MethodPrettyPrinter::normal_send( SymbolOop selector, bool is_prim ) {
     for ( std::int32_t       i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( std::int32_t i = 0; i < nargs; i++ )
+    for ( std::size_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_receiver( _pop() );
@@ -2536,7 +2536,7 @@ void MethodPrettyPrinter::special_send( astNode *receiver, SymbolOop selector, b
     for ( std::int32_t       i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( std::int32_t i = 0; i < nargs; i++ )
+    for ( std::size_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_receiver( receiver );
@@ -2700,7 +2700,7 @@ void MethodPrettyPrinter::dll_call_node( DLLCallNode *node ) {
     for ( std::int32_t       i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( std::int32_t i = 0; i < nargs; i++ )
+    for ( std::size_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_proxy( _pop() );
@@ -2788,7 +2788,7 @@ void ByteArrayPrettyPrintStream::print_char( char c ) {
 ByteArrayOop ByteArrayPrettyPrintStream::asByteArray() {
     std::int32_t       l = _buffer->length();
     ByteArrayOop       a = OopFactory::new_byteArray( l );
-    for ( std::int32_t i = 0; i < l; i++ ) {
+    for ( std::size_t i = 0; i < l; i++ ) {
         a->byte_at_put( i + 1, (char) _buffer->at( i ) );
     }
     return a;

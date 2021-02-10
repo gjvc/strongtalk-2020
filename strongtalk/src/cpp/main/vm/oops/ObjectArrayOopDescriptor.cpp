@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -21,10 +22,10 @@ bool ObjectArrayOopDescriptor::verify() {
 
 
 void ObjectArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
-    SPDLOG_INFO( "ObjectArrayOopDescriptor::bootstrap_object" );
+//    SPDLOG_INFO( "ObjectArrayOopDescriptor::bootstrap_object" );
     MemOopDescriptor::bootstrap_object( stream );
     stream->read_oop( length_addr() );
-    for ( std::int32_t i = 1; i <= length(); i++ ) {
+    for ( std::size_t i = 1; i <= length(); i++ ) {
         stream->read_oop( objs( i ) );
     }
 }
@@ -35,11 +36,11 @@ ObjectArrayOop ObjectArrayOopDescriptor::copy_remove( std::int32_t index, std::i
     ObjectArrayOop new_array = OopFactory::new_objectArray( length() - number );
     // copy [1..i-1]
 
-    for ( std::int32_t i = 1; i < index; i++ )
+    for ( std::size_t i = 1; i < index; i++ )
         new_array->obj_at_put( i, obj_at( i ) );
 
     // copy  [index+number..length]
-    for ( std::int32_t i = index; i <= length() - number; i++ )
+    for ( std::size_t i = index; i <= length() - number; i++ )
         new_array->obj_at_put( i, obj_at( i + number ) );
 
     return new_array;
@@ -49,7 +50,7 @@ ObjectArrayOop ObjectArrayOopDescriptor::copy_remove( std::int32_t index, std::i
 ObjectArrayOop ObjectArrayOopDescriptor::copy() {
     ObjectArrayOop new_array = OopFactory::new_objectArray( length() );
 
-    for ( std::int32_t i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         new_array->obj_at_put( i, obj_at( i ) );
 
     return new_array;
@@ -104,12 +105,12 @@ void ObjectArrayOopDescriptor::replace_from_to( std::int32_t from, std::int32_t 
     std::int32_t other_index = start;
     if ( start < to ) {
         // copy up
-        for ( std::int32_t i = from; i <= to; i++ ) {
+        for ( std::size_t i = from; i <= to; i++ ) {
             source->obj_at_put( other_index++, obj_at( i ) );
         }
     } else {
         // copy down
-        for ( std::int32_t i = to; i >= from; i-- ) {
+        for ( std::size_t i = to; i >= from; i-- ) {
             source->obj_at_put( other_index--, obj_at( i ) );
         }
     }
@@ -118,19 +119,19 @@ void ObjectArrayOopDescriptor::replace_from_to( std::int32_t from, std::int32_t 
 
 void ObjectArrayOopDescriptor::replace_and_fill( std::int32_t from, std::int32_t start, ObjectArrayOop source ) {
     // Fill the first part
-    for ( std::int32_t i = 1; i < from; i++ ) {
+    for ( std::size_t i = 1; i < from; i++ ) {
         obj_at_put( i, nilObject );
     }
 
     // Fill the middle part
     std::int32_t to = min( source->length() - start + 1, length() );
 
-    for ( std::int32_t i = from; i <= to; i++ ) {
+    for ( std::size_t i = from; i <= to; i++ ) {
         obj_at_put( i, source->obj_at( start + i - from ) );
     }
 
     // Fill the last part
-    for ( std::int32_t i = to + 1; i <= length(); i++ ) {
+    for ( std::size_t i = to + 1; i <= length(); i++ ) {
         obj_at_put( i, nilObject );
     }
 }
@@ -140,7 +141,7 @@ void WeakArrayOopDescriptor::scavenge_contents_after_registration() {
     Oop          *p  = objs( 1 );
     std::int32_t len = length();
 
-    for ( std::int32_t i = 1; i <= len; i++ )
+    for ( std::size_t i = 1; i <= len; i++ )
         scavenge_tenured_oop( p++ );
 }
 
@@ -149,6 +150,6 @@ void WeakArrayOopDescriptor::follow_contents_after_registration() {
     Oop          *p  = objs( 1 );
     std::int32_t len = length();
 
-    for ( std::int32_t i = 1; i <= len; i++ )
+    for ( std::size_t i = 1; i <= len; i++ )
         scavenge_tenured_oop( p++ );
 }

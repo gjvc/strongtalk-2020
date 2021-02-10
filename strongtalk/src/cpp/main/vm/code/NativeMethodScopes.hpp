@@ -176,7 +176,7 @@ public:
     }
 
 
-    std::int32_t length() const {
+    std::size_t length() const {
         return unpack_word_aligned( _length );
     }
 

@@ -575,7 +575,7 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
         ObjectArrayOop args    = OopFactory::new_objectArray( nofArgs );
 
         //
-        for ( std::int32_t i = 1; i <= nofArgs; i++ ) {
+        for ( std::size_t i = 1; i <= nofArgs; i++ ) {
             args->obj_at_put( i, f->expr( nofArgs - i ) );
         }
 

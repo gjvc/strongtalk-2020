@@ -257,7 +257,7 @@ protected:
         setAddress( functionAlien, functionArray[ argIndex ] );
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ )
+        for ( std::size_t index = 0; index < argCount; index++ )
             arg[ index ] = argIndex == index ? asOop( argValue ) : smi0;
 
         Oop result = ByteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
@@ -271,7 +271,7 @@ protected:
         setAddress( functionAlien, functionArray[ argIndex ] );
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ )
+        for ( std::size_t index = 0; index < argCount; index++ )
             arg[ index ] = argIndex == index ? pointer : smi0;
 
         Oop result = ByteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
@@ -285,7 +285,7 @@ protected:
 
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ )
+        for ( std::size_t index = 0; index < argCount; index++ )
             arg[ index ] = argIndex == index ? pointer : smi0;
 
         Oop result = ByteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );

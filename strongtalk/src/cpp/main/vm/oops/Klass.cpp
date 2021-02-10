@@ -113,7 +113,7 @@ bool Klass::has_same_layout_as( KlassOop klass ) {
         return false;
 
     // Check instance variables
-    for ( std::int32_t i = oop_header_size(); i < non_indexable_size(); i++ ) {
+    for ( std::size_t i = oop_header_size(); i < non_indexable_size(); i++ ) {
         if ( inst_var_name_at( i ) not_eq klass->klass_part()->inst_var_name_at( i ) )
             return false;
     }
@@ -220,7 +220,7 @@ SymbolOop Klass::inst_var_name_at( std::int32_t offset ) const {
     std::int32_t current_offset = non_indexable_size();
     do {
         MixinOop           m = current_klass->mixin();
-        for ( std::int32_t i = m->number_of_instVars(); i > 0; i-- ) {
+        for ( std::size_t i = m->number_of_instVars(); i > 0; i-- ) {
             current_offset--;
             if ( offset == current_offset )
                 return m->instVar_at( i );
@@ -433,7 +433,7 @@ bool Klass::is_method_holder_for( MethodOop method ) {
         st_assert( mixin()->is_mixin(), "must be mixin" );
         array = mixin()->methods();
 
-        for ( std::int32_t i = 1; i <= array->length(); i++ ) {
+        for ( std::size_t i = 1; i <= array->length(); i++ ) {
             st_assert( array->obj_at( i )->is_method(), "must be method" );
             if ( MethodOop( array->obj_at( i ) ) == m )
                 return true;
@@ -489,7 +489,7 @@ char *Klass::delta_name() {
             return nullptr;
     }
 
-    std::int32_t length    = name->length() + ( meta ? 7 : 1 );
+    std::size_t length    = name->length() + ( meta ? 7 : 1 );
     char         *toReturn = new_resource_array<char>( length );
     strncpy( toReturn, name->chars(), name->length() );
 

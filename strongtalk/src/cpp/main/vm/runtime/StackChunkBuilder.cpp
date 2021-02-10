@@ -74,24 +74,24 @@ void StackChunkBuilder::append( DeltaVirtualFrame *f ) {
         }
     }
 
-    for ( std::int32_t i = con ? 1 : 0; i < number_of_temps; i++ )
+    for ( std::size_t i = con ? 1 : 0; i < number_of_temps; i++ )
         array->push( f->temp_at( i ) );
 
     // push expression stack
-    for ( std::int32_t i = stack->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = stack->length() - 1; i >= 0; i-- ) {
         array->push( stack->at( i ) );
     }
 }
 
 
 ObjectArrayOop StackChunkBuilder::as_objectArray() {
-    std::int32_t length = header_size() + array->length();
+    std::size_t length = header_size() + array->length();
 
     ObjectArrayOop result = OopFactory::new_objectArray( length );
     result->obj_at_put( 1, smiOopFromValue( _virtualFrameCount ) );
     result->obj_at_put( 2, smiOopFromValue( _localExpressionCount ) );
 
-    for ( std::int32_t i = 0; i < array->length(); i++ )
+    for ( std::size_t i = 0; i < array->length(); i++ )
         result->obj_at_put( i + header_size() + 1, array->at( i ) );
 
     return result;
@@ -105,7 +105,7 @@ void StackChunkBuilder::context_at_put( const CompiledVirtualFrame *frame, Conte
         return;
     }
 
-    for ( std::int32_t i = 0; i < frames->length(); i++ ) {
+    for ( std::size_t i = 0; i < frames->length(); i++ ) {
         st_assert( not frames->at( i )->equal( frame ), "should not be present" );
     }
 
@@ -123,7 +123,7 @@ ContextOop StackChunkBuilder::context_at( const CompiledVirtualFrame *frame ) {
         return nullptr;
 
     // See if it's stored
-    for ( std::int32_t i = 0; i < frames->length(); i++ ) {
+    for ( std::size_t i = 0; i < frames->length(); i++ ) {
         if ( frames->at( i )->equal( frame ) ) {
             return contexts->at( i );
         }

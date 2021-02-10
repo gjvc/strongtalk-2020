@@ -145,7 +145,7 @@ ScopeInfo ScopeDescriptorNode::find_scope( std::int32_t scope_id ) {
 
 void ScopeDescriptorNode::generate_solid( GrowableArray<LogicalAddress *> *list, ScopeDescriptorRecorder *rec ) {
     // Dump all the elements
-    for ( std::int32_t i = 0; i < list->length(); i++ ) {
+    for ( std::size_t i = 0; i < list->length(); i++ ) {
         st_assert( list->at( i ), "must be a solid array" );
         list->at( i )->generate( rec );
     }
@@ -156,7 +156,7 @@ void ScopeDescriptorNode::generate_solid( GrowableArray<LogicalAddress *> *list,
 
 void ScopeDescriptorNode::generate_sparse( GrowableArray<LogicalAddress *> *list, ScopeDescriptorRecorder *rec ) {
     // Dump all the elements
-    for ( std::int32_t i = 0; i < list->length(); i++ ) {
+    for ( std::size_t i = 0; i < list->length(); i++ ) {
         if ( list->at( i ) ) {
             list->at( i )->generate( rec );
             rec->genValue( i );

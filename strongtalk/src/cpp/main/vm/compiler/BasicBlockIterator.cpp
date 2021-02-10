@@ -36,9 +36,9 @@ void BasicBlockIterator::makeUses() {
     constexpr std::int32_t ExtraPseudoRegisters = 10;
     std::int32_t           n                    = PseudoRegister::currentNo + ExtraPseudoRegisters;
     pseudoRegisterTable = new GrowableArray<PseudoRegister *>( n );
-    for ( std::int32_t i = 0; i < n; i++ )
+    for ( std::size_t i = 0; i < n; i++ )
         pseudoRegisterTable->append( nullptr );
-    for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
+    for ( std::size_t i = 0; i < _basicBlockCount; i++ ) {
         _basicBlockTable->at( i )->makeUses();
     }
     _usesBuilt = true;
@@ -53,18 +53,18 @@ void BasicBlockIterator::localAlloc() {
         GrowableArray<PseudoRegister *> localRegs( BasicNode::currentID );
         GrowableArray<BitVector *>      lives( BasicNode::currentID );
 
-        for ( std::int32_t i = 0; i < nofLocalRegisters; i++ ) {
+        for ( std::size_t i = 0; i < nofLocalRegisters; i++ ) {
             hardwired.at_put( i, new BitVector( roundTo( BasicNode::currentID, BITS_PER_WORD ) ) );
         }
 
-        for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
+        for ( std::size_t i = 0; i < _basicBlockCount; i++ ) {
             _basicBlockTable->at( i )->localAlloc( &hardwired, &localRegs, &lives );
         }
     }
 
     std::int32_t done = 0;
     globals = new GrowableArray<PseudoRegister *>( pseudoRegisterTable->length() );
-    for ( std::int32_t i = 0; i < pseudoRegisterTable->length(); i++ ) {
+    for ( std::size_t i = 0; i < pseudoRegisterTable->length(); i++ ) {
         PseudoRegister *r = pseudoRegisterTable->at( i );
         if ( r ) {
             if ( r->isUnused() ) {
@@ -84,7 +84,7 @@ void BasicBlockIterator::localAlloc() {
 
 
 void BasicBlockIterator::print() {
-    for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
+    for ( std::size_t i = 0; i < _basicBlockCount; i++ ) {
         SPDLOG_INFO( "  " );
         _basicBlockTable->at( i )->print_short();
         SPDLOG_INFO( "" );
@@ -93,14 +93,14 @@ void BasicBlockIterator::print() {
 
 
 void BasicBlockIterator::localCopyPropagate() {
-    for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
+    for ( std::size_t i = 0; i < _basicBlockCount; i++ ) {
         _basicBlockTable->at( i )->localCopyPropagate();
     }
 }
 
 
 void BasicBlockIterator::bruteForceCopyPropagate() {
-    for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
+    for ( std::size_t i = 0; i < _basicBlockCount; i++ ) {
         _basicBlockTable->at( i )->bruteForceCopyPropagate();
     }
 }
@@ -119,7 +119,7 @@ void BasicBlockIterator::computeEscapingBlocks() {
     // block cannot be stack-allocated, and any uplevel-written variables cannot
     // be cached across calls.
     exposedBlks = new GrowableArray<BlockPseudoRegister *>( BlockPseudoRegister::numBlocks() );
-    for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
+    for ( std::size_t i = 0; i < _basicBlockCount; i++ ) {
         _basicBlockTable->at( i )->computeEscapingBlocks( exposedBlks );
     }
 }
@@ -180,7 +180,7 @@ void BasicBlockIterator::add_BBs_to_list( GrowableArray<BasicBlock *> &list, Gro
             BasicBlock *uncommon_next = bb_for( bb->_last->uncommonSuccessor() );
             st_assert( likely_next not_eq uncommon_next or likely_next == nullptr, "likely BasicBlock cannot be uncommon BasicBlock at the same time" );
             // first, push all other successors
-            for ( std::int32_t i = bb->nSuccessors(); i-- > 0; ) {
+            for ( std::size_t i = bb->nSuccessors(); i-- > 0; ) {
                 BasicBlock *next = (BasicBlock *) bb->next( i );
                 if ( next not_eq nullptr and not next->visited() and next not_eq likely_next and next not_eq uncommon_next ) {
                     work.push( next->after_visit() );
@@ -259,7 +259,7 @@ bool BasicBlockIterator::verifyLabels() {
 void BasicBlockIterator::globalCopyPropagate() {
     // do global copy propagation of singly-assigned PseudoRegisters
 
-    for ( std::int32_t i = 0; i < pseudoRegisterTable->length(); i++ ) {
+    for ( std::size_t i = 0; i < pseudoRegisterTable->length(); i++ ) {
         PseudoRegister *r = pseudoRegisterTable->at( i );
         if ( not r or r->isConstPseudoRegister() or not r->canCopyPropagate() )
             continue;
@@ -316,7 +316,7 @@ void BasicBlockIterator::globalCopyPropagate() {
 
 void BasicBlockIterator::eliminateUnneededResults() {
     // eliminate nodes producing results that are never used
-    for ( std::int32_t i = 0; i < pseudoRegisterTable->length(); i++ ) {
+    for ( std::size_t i = 0; i < pseudoRegisterTable->length(); i++ ) {
         PseudoRegister *r = pseudoRegisterTable->at( i );
         if ( r and r->isOnlySoftUsed() ) {
             r->eliminate( false );
@@ -326,7 +326,7 @@ void BasicBlockIterator::eliminateUnneededResults() {
 
 
 void BasicBlockIterator::apply( BBDoFn f ) {
-    for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
+    for ( std::size_t i = 0; i < _basicBlockCount; i++ ) {
         f( _basicBlockTable->at( i ) );
     }
 }
@@ -339,7 +339,7 @@ void BasicBlockIterator::verify() {
             _basicBlockTable->at( i )->verify();
         }
         if ( pseudoRegisterTable ) {
-            for ( std::int32_t i = 0; i < pseudoRegisterTable->length(); i++ ) {
+            for ( std::size_t i = 0; i < pseudoRegisterTable->length(); i++ ) {
                 if ( pseudoRegisterTable->at( i ) )
                     pseudoRegisterTable->at( i )->verify();
             }
@@ -370,7 +370,7 @@ void BasicBlockIterator::buildBBs() {
     // now, the list contains the BBs in reverse order
     _basicBlockCount = list->length();
     _basicBlockTable = new GrowableArray<BasicBlock *>( _basicBlockCount );
-    for ( std::int32_t i = _basicBlockCount - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _basicBlockCount - 1; i >= 0; i-- ) {
         BasicBlock *bb = list->at( i );
         bb->_id = _basicBlockCount - i - 1;
         _basicBlockTable->append( bb );

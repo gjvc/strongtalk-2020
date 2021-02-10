@@ -38,11 +38,11 @@ address_t LookupCache::secondary_cache_address() {
 void LookupCache::flush() {
 
     // Clear primary cache
-    for ( std::int32_t i = 0; i < primary_cache_size; i++ )
+    for ( std::size_t i = 0; i < primary_cache_size; i++ )
         primary[ i ].clear();
 
     // Clear secondary cache
-    for ( std::int32_t i = 0; i < secondary_cache_size; i++ )
+    for ( std::size_t i = 0; i < secondary_cache_size; i++ )
         secondary[ i ].clear();
 
     // Clear counters
@@ -76,10 +76,10 @@ void LookupCache::flush( LookupKey *key ) {
 
 void LookupCache::verify() {
 
-    for ( std::int32_t i = 0; i < primary_cache_size; i++ )
+    for ( std::size_t i = 0; i < primary_cache_size; i++ )
         primary[ i ].verify();
 
-    for ( std::int32_t i = 0; i < secondary_cache_size; i++ )
+    for ( std::size_t i = 0; i < secondary_cache_size; i++ )
         secondary[ i ].verify();
 
 }

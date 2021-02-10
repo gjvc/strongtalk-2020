@@ -244,7 +244,7 @@ void MergeExpression::mergeInto( Expression *other, Node *n ) {
 //            std::int32_t i = 0;
         }
 
-        for ( std::int32_t i = 0; i < o->exprs->length(); i++ ) {
+        for ( std::size_t i = 0; i < o->exprs->length(); i++ ) {
             // must be careful when adding splittable exprs (e->next not_eq nullptr) to avoid creating loops in the ->next chain
             Expression *e = o->exprs->at( i );
             Expression *nexte;
@@ -282,7 +282,7 @@ void MergeExpression::add( Expression *e ) {
     }
     if ( not e->node() )
         setSplittable( false );
-    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         Expression *e1 = exprs->at( i );
         if ( ( e->hasKlass() and e1->hasKlass() and ( e->klass() == e1->klass() ) ) or e->equals( e1 ) ) {
             // an equivalent expression is already in our list
@@ -344,7 +344,7 @@ void MergeExpression::add( Expression *e ) {
 
 std::int32_t MergeExpression::nklasses() const {
     std::int32_t       n = 0;
-    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         n += exprs->at( i )->nklasses();
     }
     return n;
@@ -461,7 +461,7 @@ bool MergeExpression::containsUnknown() {
         return isContainingUnknown();
     }
     setUnknownSet( true );
-    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         if ( exprs->at( i )->isUnknownExpression() ) {
             setContainingUnknown( true );
             return true;
@@ -473,7 +473,7 @@ bool MergeExpression::containsUnknown() {
 
 
 UnknownExpression *MergeExpression::findUnknown() const {
-    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         if ( exprs->at( i )->isUnknownExpression() )
             return (UnknownExpression *) exprs->at( i );
     }
@@ -482,7 +482,7 @@ UnknownExpression *MergeExpression::findUnknown() const {
 
 
 Expression *MergeExpression::findKlass( KlassOop klass ) const {
-    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         Expression *e = exprs->at( i );
         if ( e->hasKlass() and e->klass() == klass )
             return e;
@@ -504,7 +504,7 @@ Expression *MergeExpression::makeUnknownUnlikely( InlinedScope *s ) {
     st_assert( DeferUncommonBranches, "shouldn't make unlikely" );
     _unlikelyScope         = s;
     _unlikelyByteCodeIndex = s->byteCodeIndex();
-    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         Expression *e;
         if ( ( e = exprs->at( i ) )->isUnknownExpression() ) {
             if ( not( (UnknownExpression *) e )->isUnlikely() ) {
@@ -651,7 +651,7 @@ void BlockExpression::print() {
 
 void MergeExpression::print() {
     SPDLOG_INFO( "MergeExpression %s(", isSplittable() ? "splittable " : "" );
-    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         SPDLOG_INFO( "\t0x{0:x}%s ", static_cast<void *>( exprs->at( i ) ), exprs->at( i )->next ? "*" : "" );
         exprs->at( i )->print();
     }
@@ -786,7 +786,7 @@ Expression *ExpressionStack::pop() {
 
 
 void ExpressionStack::pop( std::int32_t nofExprsToPop ) {
-    for ( std::int32_t i = 0; i < nofExprsToPop; i++ )
+    for ( std::size_t i = 0; i < nofExprsToPop; i++ )
         pop();
 }
 

@@ -75,7 +75,7 @@ TEST( IntegerOpsTest, test_integer_conversion ) {
     const std::int32_t l  = n * sizeof( std::int32_t );
     Integer            x, y, z;
 
-    for ( std::int32_t i = -10; i <= 10; i++ ) {
+    for ( std::size_t i = -10; i <= 10; i++ ) {
         EXPECT_EQ( std::int32_t( ( i == 0 ? 1 : 2 ) * sizeof( std::int32_t ) ), IntegerOps::int_to_Integer_result_size_in_bytes( i ) ) << "int_to_Integer_result_size failed";
         IntegerOps::int_to_Integer( i, z );
         EXPECT_TRUE( i == z.as_int32_t( ok ) ) << "int_to_Integer/Integer_to_int failed";
@@ -122,7 +122,7 @@ TEST( IntegerOpsTest, test_addition ) {
     bool    ok = true;
     Integer x, y, z;
 
-    for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
+    for ( std::size_t i = -12345; i <= 12345; i += 1234 ) {
         for ( std::int32_t j = -12345; j <= 12345; j += 1234 ) {
             IntegerOps::int_to_Integer( i, x );
             IntegerOps::int_to_Integer( j, y );
@@ -138,7 +138,7 @@ TEST( IntegerOpsTest, test_subtraction ) {
     bool    ok = true;
     Integer x, y, z;
 
-    for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
+    for ( std::size_t i = -12345; i <= 12345; i += 1234 ) {
         for ( std::int32_t j = -12345; j <= 12345; j += 1234 ) {
             x._signed_length = 0;
             x._first_digit   = 0;
@@ -158,7 +158,7 @@ TEST( IntegerOpsTest, test_multiplication ) {
     bool    ok = true;
     Integer x, y, z;
 
-    for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
+    for ( std::size_t i = -12345; i <= 12345; i += 1234 ) {
         for ( std::int32_t j = -12345; j <= 12345; j += 1234 ) {
             IntegerOps::int_to_Integer( i, x );
             IntegerOps::int_to_Integer( j, y );
@@ -181,7 +181,7 @@ static void check( bool p, char *s ) {
 static void factorial( std::int32_t n ) {
     Integer x, y, z;
     IntegerOps::int_to_Integer( 1, z );
-    for ( std::int32_t i = 2; i <= n; i++ ) {
+    for ( std::size_t i = 2; i <= n; i++ ) {
         IntegerOps::int_to_Integer( i, x );
         IntegerOps::copy( z, y );
         IntegerOps::mul( x, y, z );
@@ -212,7 +212,7 @@ TEST( IntegerOpsTest, test_factorial ) {
 static void unfactorial( std::int32_t n ) {
     Integer x, y, z;
     IntegerOps::int_to_Integer( 1, z );
-    for ( std::int32_t i = 2; i <= n; i++ ) {
+    for ( std::size_t i = 2; i <= n; i++ ) {
         IntegerOps::int_to_Integer( i, x );
         IntegerOps::copy( z, y );
         IntegerOps::mul( x, y, z );

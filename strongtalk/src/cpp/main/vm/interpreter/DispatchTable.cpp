@@ -120,7 +120,7 @@ std::uint8_t **DispatchTable::table() {
 
 
 void DispatchTable::reset() {
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>( ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::int32_t>( ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         dispatch_table[ i ] = original_table[ i ];
     }
     mode = Mode::normal_mode;
@@ -128,7 +128,7 @@ void DispatchTable::reset() {
 
 
 void DispatchTable::patch_with_sst_stub() {
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>( ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::int32_t>( ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         if ( ByteCodes::single_step( ByteCodes::Code( i ) ) ) {
             dispatch_table[ i ] = (doFn) StubRoutines::single_step_stub();
         } else {
@@ -186,7 +186,7 @@ void DispatchTable::intercept_for_return( std::int32_t *fr ) {
     frame_breakpoint = fr;
     if ( not in_return_mode() ) {
         reset();
-        for ( std::int32_t i = 0; i < return_codes_size; i++ ) {
+        for ( std::size_t i = 0; i < return_codes_size; i++ ) {
             ByteCodes::Code code = return_codes[ i ];
             if ( ByteCodes::single_step( code ) ) {
                 dispatch_table[ static_cast<std::int32_t>(code) ] = (doFn) StubRoutines::single_step_stub();
@@ -212,7 +212,7 @@ void intercept_for_single_step() {
 
 
 void print_dt() {
-    for ( std::int32_t i = 0; i < 255; i++ ) {
+    for ( std::size_t i = 0; i < 255; i++ ) {
         SPDLOG_INFO( "0x%02x: 0x%08x\n", i, ( (std::int32_t *) DispatchTable::table() )[ i ] );
     }
     SPDLOG_INFO( "" );

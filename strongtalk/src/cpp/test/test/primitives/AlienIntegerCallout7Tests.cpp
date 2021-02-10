@@ -241,7 +241,7 @@ protected:
         intPointerCalloutFunctions[ 5 ] = reinterpret_cast<void *>(returnSixthPointer7);
         intPointerCalloutFunctions[ 6 ] = reinterpret_cast<void *>(returnSeventhPointer7);
 
-        for ( std::int32_t index = 0; index < argCount; index++ )
+        for ( std::size_t index = 0; index < argCount; index++ )
             zeroes[ index ] = smi0;
     }
 
@@ -348,7 +348,7 @@ protected:
 
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ ) {
+        for ( std::size_t index = 0; index < argCount; index++ ) {
             arg[ index ] = argIndex == index ? asOop( argValue ) : smi0;
         }
 
@@ -364,7 +364,7 @@ protected:
 
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ )
+        for ( std::size_t index = 0; index < argCount; index++ )
             arg[ index ] = argIndex == index ? pointer : smi0;
 
         Oop result = callout( arg );
@@ -378,7 +378,7 @@ protected:
 
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ ) {
+        for ( std::size_t index = 0; index < argCount; index++ ) {
             arg[ index ] = argIndex == index ? pointer : smi0;
         }
 
@@ -427,7 +427,7 @@ TEST_F( AlienIntegerCallout7Tests, alienCallResult7ShouldCallIntArgFunction ) {
 TEST_F( AlienIntegerCallout7Tests, alienCallResult7ShouldCallSumFunction ) {
     std::array<Oop, argCount> arg;
     ByteArrayPrimitives::alienSignedLongAtPut( asOop( -1 ), smi1, addressAlien->as_oop() );
-    for ( std::int32_t index = 0; index < argCount; index++ ) {
+    for ( std::size_t index = 0; index < argCount; index++ ) {
         arg[ index ] = addressAlien->as_oop();
     }
     ByteArrayPrimitives::alienSetAddress( asOop( (std::int32_t) &sum7 ), functionAlien->as_oop() );

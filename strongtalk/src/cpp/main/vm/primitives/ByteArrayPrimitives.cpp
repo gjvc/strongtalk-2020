@@ -211,9 +211,9 @@ PRIM_DECL_2( ByteArrayPrimitives::at_all_put, Oop receiver, Oop value ) {
     if ( v >= ( 1 << 8 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
-    std::int32_t length = ByteArrayOop( receiver )->length();
+    std::size_t length = ByteArrayOop( receiver )->length();
 
-    for ( std::int32_t i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         ByteArrayOop( receiver )->byte_at_put( i, v );
     }
 
@@ -499,7 +499,7 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerToString, Oop receiver, Oop base )
     BlockScavenge bs;
 
     ByteArrayOop x      = ByteArrayOop( receiver );
-    std::int32_t length = IntegerOps::Integer_to_string_result_size_in_bytes( x->number(), SmallIntegerOop( base )->value() );
+    std::size_t length = IntegerOps::Integer_to_string_result_size_in_bytes( x->number(), SmallIntegerOop( base )->value() );
 
     ByteArrayOop result = OopFactory::new_byteArray( length );
 

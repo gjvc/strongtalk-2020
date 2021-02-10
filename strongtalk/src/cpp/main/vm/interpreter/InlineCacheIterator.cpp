@@ -84,7 +84,7 @@ void InlineCache::print() {
 
 void InlineCacheIterator::goto_elem( std::int32_t n ) {
     init_iteration();
-    for ( std::int32_t i = 0; i < n; i++ )
+    for ( std::size_t i = 0; i < n; i++ )
         advance();
 }
 

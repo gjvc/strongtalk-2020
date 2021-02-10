@@ -22,12 +22,12 @@ constexpr std::size_t INITIAL_ARRAY_SIZE{ 32 };
 class GenericGrowableArray : public PrintableResourceObject {
 
 protected:
-    std::int32_t _length;                    // current length
-    std::int32_t _maxLength;                 // maximum length
-    void         **_data;                    // data array
-    bool         _allocatedOnSystemHeap;     // is data allocated on C heap?
+    std::size_t _length;                   // current length
+    std::size_t _maxLength;                // maximum length
+    void        **_data;                   // data array
+    bool        _allocatedOnSystemHeap;    // is data allocated on C heap?
 
-    void grow( std::int32_t j );     // grow data array (double length until j is a valid index)
+    void grow( std::int32_t j );            // grow data array (double length until j is a valid index)
 
     bool raw_contains( const void *p ) const;
 
@@ -65,7 +65,7 @@ public:
 
     void clear();
 
-    std::int32_t length() const;
+    std::size_t length() const;
 
     std::int32_t capacity() const;
 
@@ -111,6 +111,7 @@ public:
         _vector(),
         _array() {
     }
+
 
     auto operator<=>( const GrowableArray & ) const = default;
 
@@ -180,7 +181,7 @@ public:
 
 
     void apply( Closure<T> *c ) const {
-        for ( std::int32_t i = 0; i < _length; i++ ) {
+        for ( std::size_t i = 0; i < _length; i++ ) {
             c->do_it( (T) _data[ i ] );
         }
     }

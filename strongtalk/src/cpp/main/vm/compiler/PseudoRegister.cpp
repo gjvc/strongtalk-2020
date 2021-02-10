@@ -180,7 +180,7 @@ void PseudoRegister::removeAllUplevelAccessors() {
 
 ConstPseudoRegister *new_ConstPseudoRegister( InlinedScope *s, Oop c ) {
 
-    for ( std::int32_t i = 0; i < constants->length(); i++ ) {
+    for ( std::size_t i = 0; i < constants->length(); i++ ) {
         ConstPseudoRegister *r = constants->at( i );
         if ( r->constant == c ) {
             // needed to ensure high enough scope (otherwise will break assertions) but in reality it's not needed since ConstPseudoRegisters aren't register-allocated right now
@@ -201,7 +201,7 @@ ConstPseudoRegister *new_ConstPseudoRegister( InlinedScope *s, Oop c ) {
 ConstPseudoRegister *findConstPseudoRegister( Node *n, Oop c ) {
 
     // return const pseudoRegister for Oop or nullptr if none exists
-    for ( std::int32_t i = 0; i < constants->length(); i++ ) {
+    for ( std::size_t i = 0; i < constants->length(); i++ ) {
         ConstPseudoRegister *r = constants->at( i );
         if ( r->constant == c ) {
             return r->covers( n ) ? r : nullptr;
@@ -286,7 +286,7 @@ void PseudoRegister::removeUse( BasicBlock *bb, Usage *use ) {
         return;
     }
 
-    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -311,7 +311,7 @@ void PseudoRegister::removeDef( DefinitionUsageInfo *info, Definition *def ) {
 void PseudoRegister::removeDef( BasicBlock *bb, Definition *def ) {
     if ( def == nullptr )
         return;
-    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -344,7 +344,7 @@ Usage *PseudoRegister::addUse( DefinitionUsageInfo *info, NonTrivialNode *n ) {
 
 
 Usage *PseudoRegister::addUse( BasicBlock *bb, NonTrivialNode *n ) {
-    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -365,7 +365,7 @@ Definition *PseudoRegister::addDef( DefinitionUsageInfo *info, NonTrivialNode *n
 
 
 Definition *PseudoRegister::addDef( BasicBlock *bb, NonTrivialNode *n ) {
-    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -523,7 +523,7 @@ bool PseudoRegister::checkEquivalentDefs() const {
 
     PseudoRegister *rhs = nullptr;
 
-    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         BasicBlock                    *bb    = index->_basicBlock;
         DefinitionUsageInfo           *info  = bb->duInfo.info->at( index->_index );
@@ -653,7 +653,7 @@ bool BlockPseudoRegister::canBeEliminated( bool withUses ) const {
 void PseudoRegister::eliminate( bool withUses ) {
     if ( not canBeEliminated( withUses ) )
         return;
-    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         BasicBlock                    *bb    = index->_basicBlock;
         DefinitionUsageInfo           *info  = bb->duInfo.info->at( index->_index );
@@ -713,11 +713,11 @@ void BlockPseudoRegister::eliminate( bool withUses ) {
         // the block has been eliminated; remove the uplevel accesses
         // (needed to enable eliminating the accessed contexts)
         if ( _uplevelRead ) {
-            for ( std::int32_t i = _uplevelRead->length() - 1; i >= 0; i-- )
+            for ( std::size_t i = _uplevelRead->length() - 1; i >= 0; i-- )
                 _uplevelRead->at( i )->removeUplevelAccessor( this );
         }
         if ( _uplevelWritten ) {
-            for ( std::int32_t i = _uplevelWritten->length() - 1; i >= 0; i-- )
+            for ( std::size_t i = _uplevelWritten->length() - 1; i >= 0; i-- )
                 _uplevelWritten->at( i )->removeUplevelAccessor( this );
         }
     }
@@ -1096,11 +1096,11 @@ void BlockPseudoRegister::computeUplevelAccesses() {
     st_assert( not _uplevelWritten, "shouldn't be there" );
     _uplevelRead    = c._read;
     _uplevelWritten = c._written;
-    for ( std::int32_t i = _uplevelRead->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _uplevelRead->length() - 1; i >= 0; i-- ) {
         _uplevelRead->at( i )->addUplevelAccessor( this, true, false );
     }
 
-    for ( std::int32_t i = _uplevelWritten->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _uplevelWritten->length() - 1; i >= 0; i-- ) {
         _uplevelWritten->at( i )->addUplevelAccessor( this, false, true );
     }
 
@@ -1150,7 +1150,7 @@ void BlockPseudoRegister::print() {
     }
     if ( _escapeNodes ) {
         SPDLOG_INFO( "; escapes at: " );
-        for ( std::int32_t i = 0; i < _escapeNodes->length(); i++ )
+        for ( std::size_t i = 0; i < _escapeNodes->length(); i++ )
             SPDLOG_INFO( "N%d ", _escapeNodes->at( i )->id() );
     }
     SPDLOG_INFO( "" );
@@ -1179,7 +1179,7 @@ bool PseudoRegister::verify() const {
     }
     std::int32_t uses = 0, definitions = 0;
 
-    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         DefinitionUsageInfo           *info  = index->_basicBlock->duInfo.info->at( index->_index );
         definitions += info->_definitions.length();
@@ -1242,7 +1242,7 @@ bool BlockPseudoRegister::verify() const {
     bool ok = SinglyAssignedPseudoRegister::verify() and _closure->verify();
     // check uplevel-accessed vars: if they are blocks, they must be exposed
     if ( _uplevelRead ) {
-        for ( std::int32_t i = 0; i < _uplevelRead->length(); i++ ) {
+        for ( std::size_t i = 0; i < _uplevelRead->length(); i++ ) {
             if ( _uplevelRead->at( i )->isBlockPseudoRegister() ) {
                 BlockPseudoRegister *blk = (BlockPseudoRegister *) _uplevelRead->at( i );
                 if ( not blk->escapes() ) {
@@ -1251,7 +1251,7 @@ bool BlockPseudoRegister::verify() const {
                 }
             }
         }
-        for ( std::int32_t i = 0; i < _uplevelWritten->length(); i++ ) {
+        for ( std::size_t i = 0; i < _uplevelWritten->length(); i++ ) {
             if ( _uplevelWritten->at( i )->isBlockPseudoRegister() ) {
                 BlockPseudoRegister *blk = (BlockPseudoRegister *) _uplevelRead->at( i );
                 error( "BlockPseudoRegister 0x{0:x} is uplevel-written by escaping BlockPseudoRegister 0x{0:x}, but BlockPseudoRegisters should never be assigned", blk, this );

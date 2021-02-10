@@ -65,7 +65,7 @@ SymbolTable::SymbolTable() :
     first_free_link{ nullptr },
     end_block{ nullptr } {
 
-    for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
+    for ( std::size_t i = 0; i < symbol_table_size; i++ ) {
         buckets[ i ].clear();
     }
 
@@ -263,7 +263,7 @@ bool SymbolTableEntry::verify( std::int32_t i ) {
 
 void SymbolTable::verify() {
 
-    for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
+    for ( std::size_t i = 0; i < symbol_table_size; i++ ) {
         if ( not buckets[ i ].verify( i ) ) {
             SPDLOG_INFO( "\tof bucket %ld of symbol table", std::int32_t( i ) );
         }
@@ -305,7 +305,7 @@ bool SymbolTableLink::verify( std::int32_t i ) {
 }
 
 
-std::int32_t SymbolTableEntry::length() {
+std::size_t SymbolTableEntry::length() {
 
     if ( is_symbol() ) {
         return 1;
@@ -377,7 +377,7 @@ void SymbolTable::print_histogram() {
     std::int32_t max_symbols  = 0;
     std::int32_t out_of_range = 0;
 
-    for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
+    for ( std::size_t i = 0; i < symbol_table_size; i++ ) {
 
         SymbolTableEntry curr    = buckets[ i ];
         std::int32_t     counter = curr.length();
@@ -400,7 +400,7 @@ void SymbolTable::print_histogram() {
     SPDLOG_INFO( "{:s} {:29s}", "Length", "Number chains that length" );
 
 
-    for ( std::int32_t i = 0; i < results_length; i++ ) {
+    for ( std::size_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
             SPDLOG_INFO( "{:6d} {:10d}", i, results[ i ] );
         }
@@ -409,7 +409,7 @@ void SymbolTable::print_histogram() {
 
     std::int32_t line_length = 70;
     SPDLOG_INFO( "{} {:30s}", " Length", "Number chains that length" );
-    for ( std::int32_t i = 0; i < results_length; i++ ) {
+    for ( std::size_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
             SPDLOG_INFO( "{:4d}", i );
             for ( j = 0; ( j < results[ i ] ) and ( j < line_length ); j++ ) {

@@ -134,7 +134,7 @@ TEST( SystemPrimitivesTests, alienCallocContentsShouldBeZero ) {
     Oop        pointer  = SystemPrimitives::alienCalloc( smiOopFromValue( 4 ) );
     const char *address = (const char *) SmallIntegerOop( pointer )->value();
 
-    for ( std::int32_t index = 0; index < 4; index++ ) {
+    for ( std::size_t index = 0; index < 4; index++ ) {
         sprintf( message, "char %d should be zero", index );
         EXPECT_EQ( (std::int32_t) address[ index ], 0 ) << message;
     }

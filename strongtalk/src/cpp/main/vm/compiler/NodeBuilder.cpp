@@ -104,7 +104,7 @@ GrowableArray<PseudoRegister *> *NodeBuilder::copyCurrentExprStack() {
     std::int32_t l   = exprStack()->length();
     auto         *es = new GrowableArray<PseudoRegister *>( l );
 
-    for ( std::int32_t i = 0; i < l; i++ ) {
+    for ( std::size_t i = 0; i < l; i++ ) {
         es->push( exprStack()->at( i )->pseudoRegister() );
     }
 
@@ -669,7 +669,7 @@ void NodeBuilder::materialize( PseudoRegister *r, GrowableArray<BlockPseudoRegis
         materialized->append( blk );
         GrowableArray<PseudoRegister *> *reads = blk->uplevelRead();
         if ( reads ) {
-            for ( std::int32_t i = reads->length() - 1; i >= 0; i-- ) {
+            for ( std::size_t i = reads->length() - 1; i >= 0; i-- ) {
                 materialize( reads->at( i ), materialized );
             }
         }
@@ -951,7 +951,7 @@ void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
     if ( not exprsToSplit )
         return;
 
-    for ( std::int32_t i = exprsToSplit->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = exprsToSplit->length() - 1; i >= 0; i-- ) {
         Expression                      *e           = exprsToSplit->at( i );
         Node                            *start       = e->node();
         GrowableArray<NonTrivialNode *> *nodesToCopy = nodesBetween( start, test );
@@ -975,7 +975,7 @@ void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
         Node *current = start;
         bool found    = nodesToCopy->length() == 0;    // hard to test if no nodes to copy, so assume it's ok
 
-        for ( std::int32_t i = 0; i < nodesToCopy->length(); i++ ) {
+        for ( std::size_t i = 0; i < nodesToCopy->length(); i++ ) {
             NonTrivialNode *orig = nodesToCopy->at( i );
             Node           *copy = orig->copy( nullptr, nullptr );
             if ( CompilerDebug )
@@ -1041,7 +1041,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
 
     // check that no exprNode is along the path from any other exprNode to the test node
     // this should be #ifdef ASSERT but for now always check to make sure there are no lurking bugs  -Urs 4/27/96
-    for ( std::int32_t i = okExprs->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = okExprs->length() - 1; i >= 0; i-- ) {
         Node       *start = okExprs->at( i )->node()->next();
         for ( Node *n     = start; n not_eq (Node *) test; n = n->next() ) {
             if ( exprNodes->contains( n ) ) {
@@ -1049,7 +1049,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
                 m->print();
                 okExprs->at( i )->print();
                 printNodes( okExprs->at( i )->node() );
-                for ( std::int32_t j = 0; j < exprNodes->length(); j++ ) {
+                for ( std::size_t j = 0; j < exprNodes->length(); j++ ) {
                     exprNodes->at( j )->print();
                     SPDLOG_INFO( "" );
                 }

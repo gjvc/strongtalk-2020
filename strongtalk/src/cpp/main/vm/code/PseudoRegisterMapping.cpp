@@ -934,7 +934,7 @@ void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping *with ) {
 
 
 void PseudoRegisterMapping::iterate( PseudoRegisterClosure *closure ) {
-    for ( std::int32_t i = size(); i-- > 0; ) {
+    for ( std::size_t i = size(); i-- > 0; ) {
         PseudoRegister *pseudoRegister = _pseudoRegisters->at( i );
         if ( pseudoRegister not_eq nullptr ) {
             pseudoRegister->_map_index_cache = i;
@@ -1005,7 +1005,7 @@ void PseudoRegisterMapping::print() {
         _locations->print();
     if ( nofPseudoRegisters() > 0 ) {
         SPDLOG_INFO( "PseudoRegister mapping:" );
-        for ( std::int32_t i = 0; i < size(); i++ ) {
+        for ( std::size_t i = 0; i < size(); i++ ) {
             if ( used( i ) )
                 print( i );
         }
@@ -1015,7 +1015,7 @@ void PseudoRegisterMapping::print() {
     _console->cr();
     if ( _temporaryLocations->length() > 0 ) {
         SPDLOG_INFO( "Temporaries in use:" );
-        for ( std::int32_t i = 0; i < _temporaryLocations->length(); i++ ) {
+        for ( std::size_t i = 0; i < _temporaryLocations->length(); i++ ) {
             std::int32_t loc = _temporaryLocations->at( i );
             st_assert( _locations->isRegister( loc ), "temporaries must be in registers" );
             SPDLOG_INFO( "temp 0x%08x -> 0x%08x %s", i, loc, _locations->locationAsRegister( loc ).name() );

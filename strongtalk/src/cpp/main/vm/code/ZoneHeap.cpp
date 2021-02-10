@@ -58,7 +58,7 @@ void ChunkKlass::markSize( std::int32_t nChunks, chunkState s ) {
     } else {
         if ( nChunks < maxOneByteLen ) {
             st_assert( maxOneByteLen <= static_cast<std::int32_t>(chunkState::MaxDistance), "oops" );
-            for ( std::int32_t i = minHeaderSize; i < nChunks - minHeaderSize; i++ )
+            for ( std::size_t i = minHeaderSize; i < nChunks - minHeaderSize; i++ )
                 p[ i ] = i;
         } else {
             std::int32_t max = min( static_cast<std::int32_t>(nChunks - 4), static_cast<std::int32_t>( chunkState::MaxDistance ) );
@@ -166,7 +166,7 @@ HeapChunk *FreeList::get() {
 }
 
 
-std::int32_t FreeList::length() const {
+std::size_t FreeList::length() const {
     std::int32_t    i  = 0;
     HeapChunk       *f = anchor();
     for ( HeapChunk *p = f->next(); p not_eq f; p = p->next() )
@@ -225,7 +225,7 @@ void ZoneHeap::clear() {
     _ifrag     = 0;
 
     // initialize the free lists
-    for ( std::int32_t i = 0; i < nfree; i++ ) {
+    for ( std::size_t i = 0; i < nfree; i++ ) {
         _freeList[ i ].clear();
     }
     _bigList->clear();
@@ -391,7 +391,7 @@ const char *ZoneHeap::compact( void move( const char *from, char *to, std::int32
         INC( usedChunk, uSize );
     }
 
-    for ( std::int32_t i = 0; i < nfree; i++ )
+    for ( std::size_t i = 0; i < nfree; i++ )
         _freeList[ i ].clear();
 
     _bigList->clear();
@@ -605,7 +605,7 @@ void ZoneHeap::print() const {
     SPDLOG_INFO( "  grand total allocs = %ld bytes", _total );
     printIndent();
     SPDLOG_INFO( "  free lists: " );
-    for ( std::int32_t i = 0; i < nfree; i++ )
+    for ( std::size_t i = 0; i < nfree; i++ )
         SPDLOG_INFO( "%ld ", _freeList[ i ].length() );
     SPDLOG_INFO( "; %ld", _bigList->length() );
 }

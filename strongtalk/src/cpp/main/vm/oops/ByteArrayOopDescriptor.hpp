@@ -53,7 +53,7 @@ public:
     }
 
 
-    std::int32_t length() const {
+    std::size_t length() const {
         Oop len = *length_addr();
         st_assert( len->isSmallIntegerOop(), "length of indexable should be small_int_t" );
         auto value = SmallIntegerOop( len )->value();
@@ -76,13 +76,13 @@ public:
     }
 
 
-    std::uint8_t *byte_at_addr( std::int32_t which ) const {
+    std::uint8_t *byte_at_addr( std::size_t which ) const {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         return &bytes()[ which - 1 ];
     }
 
 
-    std::uint8_t byte_at( std::int32_t which ) const {
+    std::uint8_t byte_at( std::size_t which ) const {
         return *byte_at_addr( which );
     }
 
@@ -129,7 +129,7 @@ public:
     }
 
 
-    bool equals( const char *name, std::int32_t len ) {
+    bool equals( const char *name, std::size_t len ) {
         return len == length() and strncmp( chars(), name, len ) == 0;
     }
 

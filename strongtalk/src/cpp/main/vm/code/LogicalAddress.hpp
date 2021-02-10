@@ -56,5 +56,5 @@ public:
 
     void generate( ScopeDescriptorRecorder *rec );
 
-    std::int32_t length();
+    std::size_t length();
 };

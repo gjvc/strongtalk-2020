@@ -71,17 +71,17 @@ public:
 
     static std::int32_t last_non_zero_index( Digit *z, std::int32_t lastIndex );
 
-    static Digit scale( Digit *array, Digit factor, std::int32_t length );
+    static Digit scale( Digit *array, Digit factor, std::size_t length );
 
     static bool sd_all_zero( Digit *digits, std::int32_t start, std::int32_t stop );
 
-    static Digit *copyDigits( Digit *source, std::int32_t length, std::int32_t toCopy );
+    static Digit *copyDigits( Digit *source, std::size_t length, std::int32_t toCopy );
 
     static Digit *qr_decomposition( Integer &x, Integer &y );
 
     static Digit qr_estimate_digit_quotient( Digit &xhi, Digit xlo, Digit y );
 
-    static Digit *qr_decomposition_single_digit( Digit *qr, std::int32_t length, Digit divisor );
+    static Digit *qr_decomposition_single_digit( Digit *qr, std::size_t length, Digit divisor );
 
     static Digit qr_calculate_remainder( Digit *qr, Digit *divisor, Digit q, std::int32_t qrStart, std::int32_t stop );
 
@@ -91,7 +91,7 @@ public:
 
     static Digit qr_scaling_factor( Digit firstDivisorDigit );
 
-    static void qr_unscale_remainder( Digit *qr, Digit scalingFactor, std::int32_t length );
+    static void qr_unscale_remainder( Digit *qr, Digit scalingFactor, std::size_t length );
 
     static Digit last_digit( Integer &x, Digit b );            // divides x by b and returns x mod b
     static void first_digit( Integer &x, Digit base, Digit carry );        // multiplies x by b and adds c
@@ -174,6 +174,6 @@ public:
 
 std::int32_t length_in_bits( Digit x );
 
-void shift_left( Digit d[], std::int32_t length, std::int32_t shift_count );
+void shift_left( Digit d[], std::size_t length, std::int32_t shift_count );
 
-void shift_right( Digit d[], std::int32_t length, std::int32_t shift_count );
+void shift_right( Digit d[], std::size_t length, std::int32_t shift_count );

@@ -572,7 +572,7 @@ void CompiledLoop::checkForArraysDefinedInLoop() {
     GrowableArray<AbstractArrayAtNode *> arraysToRemove( 10 );
     std::int32_t                         len = _loopHeader->_arrayAccesses->length();
 
-    for ( std::int32_t i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         AbstractArrayAtNode *n = _loopHeader->_arrayAccesses->at( i );
         if ( defsInLoop( n->src() ) )
             arraysToRemove.append( n );
@@ -620,7 +620,7 @@ public:
         GrowableArray<NonTrivialNode *> *tests = s->typeTests();
         std::int32_t                    len    = tests->length();
 
-        for ( std::int32_t i = 0; i < len; i++ ) {
+        for ( std::size_t i = 0; i < len; i++ ) {
 
             NonTrivialNode *n = tests->at( i );
             st_assert( n->doesTypeTests(), "shouldn't be in list" );
@@ -636,7 +636,7 @@ public:
             GrowableArray<PseudoRegister *>          regs( 4 );
             GrowableArray<GrowableArray<KlassOop> *> klasses( 4 );
             n->collectTypeTests( regs, klasses );
-            for ( std::int32_t j = 0; j < regs.length(); j++ ) {
+            for ( std::size_t j = 0; j < regs.length(); j++ ) {
                 PseudoRegister *r = regs.at( j );
                 if ( theLoop->defsInLoop( r ) == 0 ) {
                     // this test can be hoisted
@@ -662,7 +662,7 @@ void CompiledLoop::hoistTypeTests() {
 
     GrowableArray<HoistedTypeTest *> *headerTests = new GrowableArray<HoistedTypeTest *>( _hoistableTests->length() );
 
-    for ( std::int32_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
 
         HoistedTypeTest *t      = _hoistableTests->at( i );
         PseudoRegister  *tested = t->_testedPR;
@@ -692,7 +692,7 @@ void CompiledLoop::hoistTypeTests() {
     }
 
     // now delete all hoisted type tests from loop body
-    for ( std::int32_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
         HoistedTypeTest *t = _hoistableTests->at( i );
         if ( not t->_invalid ) {
             t->_node->assert_pseudoRegister_type( t->_testedPR, t->_klasses, _loopHeader );
@@ -707,7 +707,7 @@ bool CompiledLoop::isEquivalentType( GrowableArray<KlassOop> *klasses1, Growable
     // are the two lists klasses1 and klasses2 equivalent (i.e., contain the same set of klasses)?
     if ( klasses1->length() not_eq klasses2->length() )
         return false;
-    for ( std::int32_t i = klasses2->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = klasses2->length() - 1; i >= 0; i-- ) {
         if ( klasses1->at( i ) not_eq klasses2->at( i )    // quick check
              and ( not klasses1->contains( klasses2->at( i ) ) or not klasses2->contains( klasses1->at( i ) ) ) ) { // slow check
             return false;
@@ -795,7 +795,7 @@ void CompiledLoop::findRegCandidates() {
             ncalls++;
         }
 
-        for ( std::int32_t j = 0; j < n; j++ ) {
+        for ( std::size_t j = 0; j < n; j++ ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( j );
             PseudoRegister      *r    = info->_pseudoRegister;
 
@@ -856,7 +856,7 @@ void HoistedTypeTest::print_test_on( ConsoleOutputStream *s ) {
 
     std::int32_t len = _klasses->length();
 
-    for ( std::int32_t j = 0; j < len; j++ ) {
+    for ( std::size_t j = 0; j < len; j++ ) {
         KlassOop m = _klasses->at( j );
         m->print_value_on( s );
         if ( j < len - 1 )

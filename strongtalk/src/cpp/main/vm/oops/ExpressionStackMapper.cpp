@@ -53,7 +53,7 @@ void ExpressionStackMapper::while_node( WhileNode *node ) {
 void ExpressionStackMapper::primitive_call_node( PrimitiveCallNode *node ) {
     std::int32_t nofArgsToPop = node->number_of_parameters();
 
-    for ( std::int32_t i = 0; i < nofArgsToPop; i++ ) {
+    for ( std::size_t i = 0; i < nofArgsToPop; i++ ) {
         map_pop();
     }
 
@@ -66,7 +66,7 @@ void ExpressionStackMapper::primitive_call_node( PrimitiveCallNode *node ) {
 
 void ExpressionStackMapper::dll_call_node( DLLCallNode *node ) {
 
-    for ( std::int32_t i = 0; i < node->nofArgs(); i++ )
+    for ( std::size_t i = 0; i < node->nofArgs(); i++ )
         map_pop();
 
 }

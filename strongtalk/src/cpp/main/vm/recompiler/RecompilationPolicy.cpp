@@ -23,7 +23,7 @@ RecompilationPolicy::RecompilationPolicy( RecompilerFrame *first ) :
 Recompilee *RecompilationPolicy::findRecompilee() {
     RecompilerFrame *rf = _stack->at( 0 );
     if ( PrintRecompilation2 ) {
-        for ( std::int32_t i = 0; i < 10 and rf; i++, rf = senderOf( rf ) );   // create 10 frames
+        for ( std::size_t i = 0; i < 10 and rf; i++, rf = senderOf( rf ) );   // create 10 frames
         printStack();
     }
     RecompilerFrame *r  = findTopInlinableFrame();
@@ -41,7 +41,7 @@ Recompilee *RecompilationPolicy::findRecompilee() {
 void RecompilationPolicy::cleanupStaleInlineCaches() {
     std::int32_t len = min( 20, _stack->length() );
 
-    for ( std::int32_t i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         _stack->at( i )->cleanupStaleInlineCaches();
     }
 }
@@ -322,7 +322,7 @@ RecompilerFrame *RecompilationPolicy::parentOfBlock( BlockClosureOop blk ) {
 
 
 void RecompilationPolicy::printStack() {    // for debugging
-    for ( std::int32_t i = 0; i < _stack->length(); i++ )
+    for ( std::size_t i = 0; i < _stack->length(); i++ )
         _stack->at( i )->print();
 }
 
@@ -367,7 +367,7 @@ bool RecompilationPolicy::shouldRecompileUncommonNativeMethod( NativeMethod *nm 
 std::int32_t RecompilationPolicy::uncommonNativeMethodInvocationLimit( std::int32_t version ) {
     std::int32_t n = UncommonInvocationLimit;
 
-    for ( std::int32_t i = 0; i < version; i++ )
+    for ( std::size_t i = 0; i < version; i++ )
         n *= UncommonAgeBackoffFactor;
     return n;
 }
@@ -376,7 +376,7 @@ std::int32_t RecompilationPolicy::uncommonNativeMethodInvocationLimit( std::int3
 std::int32_t RecompilationPolicy::uncommonNativeMethodAgeLimit( std::int32_t version ) {
     std::int32_t n = NativeMethodAgeLimit;
 
-    for ( std::int32_t i = 0; i < version; i++ )
+    for ( std::size_t i = 0; i < version; i++ )
         n *= UncommonAgeBackoffFactor;
     return n;
 }

@@ -20,11 +20,11 @@ class ProgramCounterDescriptorInfoClass : public ResourceObject {
 
 protected:
     ProgramCounterDescriptorNode *_nodes;
-    std::int32_t                 _end;
-    std::int32_t                 _size;
+    std::size_t                 _end;
+    std::size_t                 _size;
 
 public:
-    ProgramCounterDescriptorInfoClass( std::int32_t size );
+    ProgramCounterDescriptorInfoClass( std::size_t size );
 
     ProgramCounterDescriptorInfoClass() = default;
     virtual ~ProgramCounterDescriptorInfoClass() = default;
@@ -33,16 +33,16 @@ public:
     void operator delete( void *ptr ) { (void)(ptr); }
 
 
-    std::int32_t length() {
+    std::size_t length() {
         return _end;
     }
 
 
-    void extend( std::int32_t newSize );
+    void extend( std::size_t newSize );
 
-    void add( std::int32_t pcOffset, ScopeInfo scope, std::int32_t byteCodeIndex );
+    void add( std::int32_t pcOffset, ScopeInfo scope, std::size_t byteCodeIndex );
 
     void mark_scopes();
 
-    void copy_to( std::int32_t *&addr );
+    void copy_to( std::size_t *&addr );
 };

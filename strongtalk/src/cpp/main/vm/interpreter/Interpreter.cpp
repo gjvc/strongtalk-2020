@@ -159,7 +159,7 @@ extern "C" void inline_cache_miss() {
 extern "C" void verifyPIC( Oop pic ) {
     if ( not Universe::is_heap( (Oop *) pic ) ) st_fatal( "pic should be in heap" );
     if ( not pic->isObjectArray() ) st_fatal( "pic should be an objectArray" );
-    std::int32_t length = ObjectArrayOop( pic )->length();
+    std::size_t length = ObjectArrayOop( pic )->length();
     if ( not( 2 * size_of_smallest_interpreterPIC <= length and length <= 2 * size_of_largest_interpreterPIC ) ) st_fatal( "pic has wrong length field" );
 }
 

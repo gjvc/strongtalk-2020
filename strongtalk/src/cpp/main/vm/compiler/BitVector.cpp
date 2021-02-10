@@ -20,7 +20,7 @@ bool BitVector::unionWith( BitVector *other ) {
 
     bool changed = false;
 
-    for ( std::int32_t i = indexFromNumber( other->length - 1 ); i >= 0; i-- ) {
+    for ( std::size_t i = indexFromNumber( other->length - 1 ); i >= 0; i-- ) {
         std::int32_t old = _bits[ i ];
         _bits[ i ] |= other->_bits[ i ];
         changed |= ( old not_eq _bits[ i ] );
@@ -33,7 +33,7 @@ bool BitVector::unionWith( BitVector *other ) {
 bool BitVector::intersectWith( BitVector *other ) {
     bool changed = false;
 
-    for ( std::int32_t i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
+    for ( std::size_t i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
         std::int32_t old = _bits[ i ];
         _bits[ i ] &= other->_bits[ i ];
         changed |= ( old not_eq _bits[ i ] );
@@ -45,7 +45,7 @@ bool BitVector::intersectWith( BitVector *other ) {
 
 bool BitVector::isDisjointFrom( BitVector *other ) {
 
-    for ( std::int32_t i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
+    for ( std::size_t i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
         if ( ( _bits[ i ] & other->_bits[ i ] ) not_eq 0 ) {
             return false;
         }
@@ -71,14 +71,14 @@ void BitVector::addFromTo( std::int32_t first, std::int32_t last ) {
     } else {
         _bits[ startIndex ] |= AllBitsSet << offsetFromNumber( first );
 
-        for ( std::int32_t i = startIndex + 1; i < endIndex; i++ ) {
+        for ( std::size_t i = startIndex + 1; i < endIndex; i++ ) {
             _bits[ i ] = AllBitsSet;
         }
 
         _bits[ endIndex ] |= nthMask( offsetFromNumber( last ) + 1 );
     }
 
-    for ( std::int32_t i = first; i <= last; i++ ) {
+    for ( std::size_t i = first; i <= last; i++ ) {
         st_assert( includes( i ), "bit should be set" );
     }
 }
@@ -99,14 +99,14 @@ void BitVector::removeFromTo( std::int32_t first, std::int32_t last ) {
     } else {
         _bits[ startIndex ] &= ~( AllBitsSet << offsetFromNumber( first ) );
 
-        for ( std::int32_t i = startIndex + 1; i < endIndex; i++ ) {
+        for ( std::size_t i = startIndex + 1; i < endIndex; i++ ) {
             _bits[ i ] = 0;
         }
 
         _bits[ endIndex ] &= ~nthMask( offsetFromNumber( last ) + 1 );
     }
 
-    for ( std::int32_t i = first; i <= last; i++ ) {
+    for ( std::size_t i = first; i <= last; i++ ) {
         st_assert( not includes( i ), "bit shouldn't be set" );
     }
 
@@ -120,11 +120,11 @@ void BitVector::print_short() {
 
 void BitVector::doForAllOnes( intDoFn f ) {
 
-    for ( std::int32_t i = indexFromNumber( length - 1 ); i >= 0; i-- ) {
+    for ( std::size_t i = indexFromNumber( length - 1 ); i >= 0; i-- ) {
 
         std::int32_t b = _bits[ i ];
 
-        for ( std::int32_t j = 0; j < BITS_PER_WORD; j++ ) {
+        for ( std::size_t j = 0; j < BITS_PER_WORD; j++ ) {
             if ( isBitSet( b, j ) ) {
                 f( i * BITS_PER_WORD + j );
                 clearNthBit( b, j );

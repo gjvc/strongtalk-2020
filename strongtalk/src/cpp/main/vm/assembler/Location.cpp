@@ -176,7 +176,7 @@ void IntegerFreeList::release( std::int32_t i ) {
 }
 
 
-std::int32_t IntegerFreeList::length() {
+std::size_t IntegerFreeList::length() {
     return _list->length();
 }
 

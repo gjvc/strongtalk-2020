@@ -128,7 +128,7 @@ void ScopeDescriptorRecorder::generate() {
 void ScopeDescriptorRecorder::generateDependencies() {
     std::int32_t end_marker = 0;
 
-    for ( std::int32_t index = 0; index < _dependents->length(); index++ ) {
+    for ( std::size_t index = 0; index < _dependents->length(); index++ ) {
 
         std::int32_t i = _oops->insertIfAbsent( (std::int32_t) _dependents->at( index ) );
         if ( i > end_marker )
@@ -335,8 +335,8 @@ void ScopeDescriptorRecorder::copyTo( NativeMethod *nativeMethod ) {
     NativeMethodScopes *d = (NativeMethodScopes *) nativeMethod->scopes();
 
     // Copy the body part of the NativeMethodScopes
-    std::int32_t *start = ( std::int32_t * )( d + 1 );
-    std::int32_t *p     = start;
+    std::size_t *start = ( std::size_t * )( d + 1 );
+    std::size_t *p     = start;
 
     d->set_nativeMethodOffset( (const char *) d - (const char *) nativeMethod );
 

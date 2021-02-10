@@ -65,7 +65,7 @@ bool CodeScope::shouldSplit( SendInfo * info ) {
     // compute the cost of all nodes that would be copied (i.e. all exprs
     // with a map type)
     std::int32_t       i;
-    for ( std::int32_t i = 0; i < r->exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < r->exprs->length(); i++ ) {
         Expression * expr = r->exprs->at( i );
         if ( not expr->hasKlass() ) continue;    // won't copy these
         InlinedScope * theScope = expr->node()->scope();
@@ -139,7 +139,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
     GrowableArray <Node *>           * splitHeads = new GrowableArray <Node *>( 10 );    // first node of each branch
     bool needKlassLoad                          = false;
 
-    for ( std::int32_t i = 0; i < ncases; i++ ) {
+    for ( std::size_t i = 0; i < ncases; i++ ) {
         Expression * nth = r->exprs->at( i );
         assert( not nth->isConstantExpression() or nth->next == nullptr or
                 nth->constant() == nth->next->constant(),
@@ -254,7 +254,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
                          depth, "", selector_string( info->sel ) );
             }
         }
-        for ( std::int32_t j = 0; j < splitReceiverKlasss->length(); j++ ) {
+        for ( std::size_t j = 0; j < splitReceiverKlasss->length(); j++ ) {
             Node * n = new AssignNode( pr, splitReceivers->at( j ) );
             typeCase->append( j + 1, n );
             n->append( splitHeads->at( j ) );

@@ -149,7 +149,7 @@ void DeltaVirtualFrame::verify() const {
     // Make sure we do not have any context objects in the argument list
     std::int32_t number_of_arguments = method()->number_of_arguments();
 
-    for ( std::int32_t i = 0; i < number_of_arguments; i++ ) {
+    for ( std::size_t i = 0; i < number_of_arguments; i++ ) {
         Oop argument = argument_at( i );
         if ( argument->is_context() ) {
             SPDLOG_INFO( "Argument is a context" );
@@ -211,7 +211,7 @@ GrowableArray<Oop> *InterpretedVirtualFrame::expression_stack() const {
     st_assert( size >= 0, "expr stack size must be non-negative" );
     GrowableArray<Oop> *result = new GrowableArray<Oop>( size );
 
-    for ( std::int32_t i = 0; i < size; i++ ) {
+    for ( std::size_t i = 0; i < size; i++ ) {
         Oop value = expression_at( i );
         st_assert( not value->is_context(), "checking for contextOop on expression stack" );
         result->push( expression_at( i ) );
@@ -221,7 +221,7 @@ GrowableArray<Oop> *InterpretedVirtualFrame::expression_stack() const {
     if ( size not_eq computed_size ) {
         SPDLOG_WARN( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), size, computed_size );
         SPDLOG_INFO( "[expression stack:" );
-        for ( std::int32_t i = 0; i < result->length(); i++ ) {
+        for ( std::size_t i = 0; i < result->length(); i++ ) {
             _console->print( " - " );
             result->at( i )->print_value_on( _console );
             _console->cr();
@@ -477,7 +477,7 @@ GrowableArray<DeferredExpression *> *CompiledVirtualFrame::deferred_expression_s
     GrowableArray<std::int32_t>         *mapping = method()->expression_stack_mapping( byteCodeIndex() );
     GrowableArray<DeferredExpression *> *result  = new GrowableArray<DeferredExpression *>( mapping->length() );
 
-    for ( std::int32_t index = 0; index < mapping->length(); index++ ) {
+    for ( std::size_t index = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = _scopeDescriptor->exprStackElem( mapping->at( index ) );
         result->push( new DeferredExpression( this, nd ) );
     }
@@ -489,7 +489,7 @@ GrowableArray<Oop> *CompiledVirtualFrame::expression_stack() const {
     GrowableArray<std::int32_t> *mapping = method()->expression_stack_mapping( byteCodeIndex() );
     GrowableArray<Oop>          *result  = new GrowableArray<Oop>( mapping->length() );
 
-    for ( std::int32_t i = 0; i < mapping->length(); i++ ) {
+    for ( std::size_t i = 0; i < mapping->length(); i++ ) {
         NameDescriptor *nd   = _scopeDescriptor->exprStackElem( mapping->at( i ) );
         Oop            value = resolve_name( nd, this );
         result->push( value );
@@ -500,7 +500,7 @@ GrowableArray<Oop> *CompiledVirtualFrame::expression_stack() const {
     if ( result->length() not_eq computed_size ) {
         SPDLOG_WARN( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), result->length(), computed_size );
         SPDLOG_INFO( "[expression stack:" );
-        for ( std::int32_t i = 0; i < result->length(); i++ ) {
+        for ( std::size_t i = 0; i < result->length(); i++ ) {
             _console->print( " - " );
             result->at( i )->print_value_on( _console );
             _console->cr();
@@ -786,7 +786,7 @@ ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor *sco
     result = ContextKlass::allocate_context( blk.result->length() );
 
     // fill in the meat
-    for ( std::int32_t i = 0; i < blk.result->length(); i++ ) {
+    for ( std::size_t i = 0; i < blk.result->length(); i++ ) {
         NameDescriptor *nd = blk.result->at( i );
         result->obj_at_put( i, resolve_name( nd, vf, comp_context ) );
     }

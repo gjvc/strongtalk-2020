@@ -308,16 +308,16 @@ MethodOop MethodKlass::constructMethod( Oop selector_or_method, std::int32_t fla
     // merge the bytes and the oops
 
     // first copy the byte array into the method
-    for ( std::int32_t i = 1; i <= bytes->length(); i++ ) {
+    for ( std::size_t i = 1; i <= bytes->length(); i++ ) {
         method->byte_at_put( i, bytes->byte_at( i ) );
     }
 
     // then merge in the oops
-    for ( std::int32_t i = 1; i <= oops->length(); i++ ) {
+    for ( std::size_t i = 1; i <= oops->length(); i++ ) {
         bool         copyOop  = true;
         std::int32_t bc_index = i * OOP_SIZE - ( OOP_SIZE - 1 );
 
-        for ( std::int32_t j = 0; j < OOP_SIZE; j++ ) {
+        for ( std::size_t j = 0; j < OOP_SIZE; j++ ) {
             // copy Oop if bytearray holds 4 consecutive aligned zeroes
             if ( bytes->byte_at( bc_index + j ) not_eq 0 ) {
                 copyOop = false;

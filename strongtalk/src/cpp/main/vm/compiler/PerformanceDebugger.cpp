@@ -32,7 +32,7 @@ void PerformanceDebugger::start_report() {
 void PerformanceDebugger::stop_report() {
     char *report = _stringStream->as_string();
 
-    for ( std::int32_t i = _reports->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _reports->length() - 1; i >= 0; i-- ) {
         if ( strcmp( _reports->at( i ), report ) == 0 ) {
             return;  // already printed identical msg
         }
@@ -115,7 +115,7 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
         SPDLOG_INFO( "  could not eliminate context of scope %s (fixable compiler restriction; should be eliminated)\n", s->key()->toString() );
     } else {
         SPDLOG_INFO( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->toString() );
-        for ( std::int32_t j = 0; j < len; j++ ) {
+        for ( std::size_t j = 0; j < len; j++ ) {
             PseudoRegister *r = temps->at( j )->pseudoRegister();
             if ( r->uplevelR() or r->uplevelW() ) {
                 SPDLOG_INFO( "%d ", j );

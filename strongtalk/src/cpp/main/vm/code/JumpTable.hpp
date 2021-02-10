@@ -95,7 +95,7 @@ protected:
 
 public:
     const char   *_entries;
-    std::int32_t length;        // max. number of IDs
+    std::size_t length;        // max. number of IDs
     std::int32_t usedIDs;        // # of used ID
 
 public:

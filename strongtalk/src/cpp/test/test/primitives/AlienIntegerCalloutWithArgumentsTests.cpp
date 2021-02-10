@@ -193,7 +193,7 @@ protected:
 
         ObjectArrayOop argOops = OopFactory::new_objectArray( 2 );
 
-        for ( std::int32_t index = 0; index < 2; index++ ) {
+        for ( std::size_t index = 0; index < 2; index++ ) {
             argOops->obj_at_put( index + 1, arg[ index ] );
         }
 
@@ -210,7 +210,7 @@ protected:
         setAddress( functionAlien, functionArray[ argIndex ] );
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ ) {
+        for ( std::size_t index = 0; index < argCount; index++ ) {
             arg[ index ] = argIndex == index ? asOop( argValue ) : smi0;
         }
 
@@ -225,7 +225,7 @@ protected:
         setAddress( functionAlien, functionArray[ argIndex ] );
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ ) {
+        for ( std::size_t index = 0; index < argCount; index++ ) {
             arg[ index ] = argIndex == index ? pointer : smi0;
         }
 
@@ -239,7 +239,7 @@ protected:
     void checkIllegalArgnPassed( std::int32_t argIndex, Oop pointer ) {
         std::array<Oop, argCount> arg;
 
-        for ( std::int32_t index = 0; index < argCount; index++ ) {
+        for ( std::size_t index = 0; index < argCount; index++ ) {
             arg[ index ] = argIndex == index ? pointer : smi0;
         }
 

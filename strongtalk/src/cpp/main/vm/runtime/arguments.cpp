@@ -115,7 +115,7 @@ void print_credits() {
 }
 
 
-void parse_arguments( std::int32_t argc, char *argv[] ) {
+void parse_arguments( std::size_t argc, char *argv[] ) {
     bool parse_files = true;
 
     if ( argc > 1 and strcmp( argv[ 1 ], "-t" ) == 0 ) {
@@ -129,7 +129,7 @@ void parse_arguments( std::int32_t argc, char *argv[] ) {
         process_settings_file( rc_basename, true );
     }
 
-    for ( std::int32_t i = parse_files ? 1 : 2; i < argc; i++ ) {
+    for ( std::size_t i = parse_files ? 1 : 2; i < argc; i++ ) {
         if ( strcmp( argv[ i ], "-?" ) == 0 ) {
             debugFlags::printFlags();
             exit( EXIT_SUCCESS );

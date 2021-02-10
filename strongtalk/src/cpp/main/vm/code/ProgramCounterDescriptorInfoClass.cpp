@@ -8,18 +8,18 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 
 
-ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( std::int32_t sz ) :
+ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( std::size_t sz ) :
     _nodes{ new_resource_array<ProgramCounterDescriptorNode>( sz ) },
     _end{ 0 },
     _size{ sz } {
 }
 
 
-void ProgramCounterDescriptorInfoClass::extend( std::int32_t newSize ) {
+void ProgramCounterDescriptorInfoClass::extend( std::size_t newSize ) {
 
     ProgramCounterDescriptorNode *newNodes = new_resource_array<ProgramCounterDescriptorNode>( newSize );
 
-    for ( std::int32_t i = 0; i < _end; i++ ) {
+    for ( std::size_t i = 0; i < _end; i++ ) {
         newNodes[ i ] = _nodes[ i ];
     }
 
@@ -28,7 +28,7 @@ void ProgramCounterDescriptorInfoClass::extend( std::int32_t newSize ) {
 }
 
 
-void ProgramCounterDescriptorInfoClass::add( std::int32_t pcOffset, ScopeInfo scope, std::int32_t byteCodeIndex ) {
+void ProgramCounterDescriptorInfoClass::add( std::int32_t pcOffset, ScopeInfo scope, std::size_t byteCodeIndex ) {
 
     //
     if ( scope->_lite and not GenerateLiteScopeDescs )
@@ -62,7 +62,7 @@ void ProgramCounterDescriptorInfoClass::add( std::int32_t pcOffset, ScopeInfo sc
 
 
 void ProgramCounterDescriptorInfoClass::mark_scopes() {
-    for ( std::int32_t i = 0; i < _end; i++ ) {
+    for ( std::size_t i = 0; i < _end; i++ ) {
         if ( _nodes[ i ]._scopeInfo ) {
             _nodes[ i ]._scopeInfo->_usedInPcs = true;
         }
@@ -70,13 +70,13 @@ void ProgramCounterDescriptorInfoClass::mark_scopes() {
 }
 
 
-void ProgramCounterDescriptorInfoClass::copy_to( std::int32_t *&addr ) {
-    for ( std::int32_t i = 0; i < _end; i++ ) {
+void ProgramCounterDescriptorInfoClass::copy_to( std::size_t *&addr ) {
+    for ( std::size_t i = 0; i < _end; i++ ) {
         ProgramCounterDescriptor *pc = (ProgramCounterDescriptor *) addr;
         pc->_pc            = _nodes[ i ]._pcOffset;
         pc->_scope         = _nodes[ i ]._scopeInfo ? _nodes[ i ]._scopeInfo->_offset : IllegalByteCodeIndex;
         pc->_byteCodeIndex = _nodes[ i ]._byteCodeIndex;
-        addr += sizeof( ProgramCounterDescriptor ) / sizeof( std::int32_t );
+        addr += sizeof( ProgramCounterDescriptor ) / sizeof( std::size_t );
     }
 }
 

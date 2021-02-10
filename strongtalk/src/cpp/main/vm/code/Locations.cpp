@@ -304,7 +304,7 @@ void Locations::print() {
     std::int32_t len = _freeList->length();
 
     // print used locations
-    for ( std::int32_t i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         if ( nofUses( i ) > 0 ) {
             SPDLOG_INFO( "location: {}: {} uses", i, nofUses( i ) );
         }
@@ -316,7 +316,7 @@ void Locations::print() {
     SPDLOG_INFO( "no. of registers    : {}", _nofRegisters );
     SPDLOG_INFO( "first free register : {}", _firstFreeRegister );
     SPDLOG_INFO( "first free stack loc: {}", _firstFreeStackTmp );
-    for ( std::int32_t i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         SPDLOG_INFO( "{}: {}", i, _freeList->at( i ) );
     }
 

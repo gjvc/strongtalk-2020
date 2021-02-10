@@ -307,7 +307,7 @@ static void decode_klass( SymbolOop name, KlassOop klass ) {
 
 void Universe::decode_methods() {
 
-    for ( std::int32_t i = 1; i <= Universe::systemDictionaryObject()->length(); i++ ) {
+    for ( std::size_t i = 1; i <= Universe::systemDictionaryObject()->length(); i++ ) {
         AssociationOop assoc = (AssociationOop) Universe::systemDictionaryObject()->obj_at( i );
         if ( assoc->value()->is_klass() )
             decode_klass( assoc->key(), KlassOop( assoc->value() ) );
@@ -340,7 +340,7 @@ void Universe::print_klass_name( KlassOop k ) {
 
     std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::int32_t i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value() == k ) {
             assoc->key()->print_symbol_on();
@@ -361,7 +361,7 @@ const char *Universe::klass_name( KlassOop k ) {
 
     std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::int32_t i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value() == k ) {
             return assoc->key()->as_string();
@@ -391,7 +391,7 @@ KlassOop Universe::method_holder_of( MethodOop m ) {
     m = m->home();    // so block methods can be found, too
     std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::int32_t i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value()->is_klass() ) {
             KlassOop k = KlassOop( assoc->value() );
@@ -417,7 +417,7 @@ SymbolOop Universe::find_global_key_for( Oop value, bool *meta ) {
     *meta = false;
     std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::int32_t i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = AssociationOop( systemDictionaryObject()->obj_at( i ) );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {
             if ( assoc->value() == value ) {
@@ -450,7 +450,7 @@ Oop Universe::find_global( const char *name, bool must_be_constant ) {
     SymbolOop    sym = OopFactory::new_symbol( name );
     std::int32_t l   = systemDictionaryObject()->length();
 
-    for ( std::int32_t i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = AssociationOop( systemDictionaryObject()->obj_at( i ) );
         if ( assoc->key() == sym ) {
             if ( not must_be_constant or assoc->is_constant() ) {
@@ -467,7 +467,7 @@ AssociationOop Universe::find_global_association( const char *name ) {
 
     std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::int32_t i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->key() == symbolOop )
             return assoc;
@@ -478,9 +478,9 @@ AssociationOop Universe::find_global_association( const char *name ) {
 
 
 void Universe::methods_in_array_do( ObjectArrayOop array, void f( MethodOop method ) ) {
-    std::int32_t length = array->length();
+    std::size_t length = array->length();
 
-    for ( std::int32_t i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         MethodOop method = MethodOop( array->obj_at( i ) );
         st_assert( method->is_method(), "just checking" );
         f( method );
@@ -540,7 +540,7 @@ void Universe::classes_do( klassOopClosure *iterator ) {
     ObjectArrayOop array  = Universe::systemDictionaryObject();
     std::int32_t   length = array->length();
 
-    for ( std::int32_t i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         AssociationOop assoc = AssociationOop( array->obj_at( i ) );
         st_assert( assoc->is_association(), "just checking" );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {

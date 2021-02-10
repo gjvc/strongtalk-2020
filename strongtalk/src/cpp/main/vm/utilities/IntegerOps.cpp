@@ -37,7 +37,7 @@ std::int32_t length_in_bits( Digit x ) {
 }
 
 
-void shift_left( Digit d[], std::int32_t length, std::int32_t shift_count ) {
+void shift_left( Digit d[], std::size_t length, std::int32_t shift_count ) {
 
     // Implements d[length] << shift_count (logical bit-wise left shift).
     if ( shift_count <= 0 )
@@ -76,7 +76,7 @@ void shift_left( Digit d[], std::int32_t length, std::int32_t shift_count ) {
 }
 
 
-void shift_right( Digit d[], std::int32_t length, std::int32_t shift_count ) {
+void shift_right( Digit d[], std::size_t length, std::int32_t shift_count ) {
 
     // Implements d[length] >> shift_count (logical bit-wise right shift).
     if ( shift_count <= 0 )
@@ -298,7 +298,7 @@ void IntegerOps::unsigned_mul( Integer &x, Integer &y, Integer &z ) {
 }
 
 
-Digit IntegerOps::scale( Digit *array, Digit factor, std::int32_t length ) {
+Digit IntegerOps::scale( Digit *array, Digit factor, std::size_t length ) {
 // scale multiplies an integer representation stored
 // in array by factor and returns the last carry.
 
@@ -312,7 +312,7 @@ Digit IntegerOps::scale( Digit *array, Digit factor, std::int32_t length ) {
 }
 
 
-Digit *IntegerOps::copyDigits( Digit *source, std::int32_t length, std::int32_t toCopy ) {
+Digit *IntegerOps::copyDigits( Digit *source, std::size_t length, std::int32_t toCopy ) {
     Digit              *x = new_resource_array<Digit>( length );
     for ( std::int32_t i  = toCopy - 1; i >= 0; i-- )
         x[ i ] = source[ i ];
@@ -320,9 +320,9 @@ Digit *IntegerOps::copyDigits( Digit *source, std::int32_t length, std::int32_t 
 }
 
 
-Digit *IntegerOps::qr_decomposition_single_digit( Digit *x, std::int32_t length, Digit divisor ) {
+Digit *IntegerOps::qr_decomposition_single_digit( Digit *x, std::size_t length, Digit divisor ) {
     Digit              c = 0;
-    for ( std::int32_t i = length - 1; i >= 0; i-- )
+    for ( std::size_t i = length - 1; i >= 0; i-- )
         x[ i + 1 ] = xdy( x[ i ], divisor, c );
     x[ 0 ]         = c;
     return x;
@@ -396,9 +396,9 @@ Digit IntegerOps::qr_scaling_factor( Digit firstDivisorDigit ) {
 }
 
 
-void IntegerOps::qr_unscale_remainder( Digit *qr, Digit scalingFactor, std::int32_t length ) {
+void IntegerOps::qr_unscale_remainder( Digit *qr, Digit scalingFactor, std::size_t length ) {
     Digit              c = 0;
-    for ( std::int32_t i = length - 1; i >= 0; i-- )
+    for ( std::size_t i = length - 1; i >= 0; i-- )
         qr[ i ] = xdy( qr[ i ], scalingFactor, c ); // undo scaling to get remainder
     st_assert( c == 0, "qr scaling broken" );
 }
@@ -492,7 +492,7 @@ void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
 
 
 bool IntegerOps::sd_all_zero( Digit *digits, std::int32_t start, std::int32_t stop ) {
-    for ( std::int32_t i = start; i < stop; i++ )
+    for ( std::size_t i = start; i < stop; i++ )
         if ( digits[ i ] )
             return false;
     return true;
@@ -554,11 +554,11 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
         // unsigned x < unsigned y => z = (y - x)
         Digit carry = 0;
 
-        for ( std::int32_t i = 0; i < xl; i++ ) {
+        for ( std::size_t i = 0; i < xl; i++ ) {
             z[ i ] = xmy( y[ i ], x[ i ], carry );
         }
 
-        for ( std::int32_t i = xl; i < yl; i++ ) {
+        for ( std::size_t i = xl; i < yl; i++ ) {
             z[ i ] = xmy( y[ i ], 0, carry );
         }
 
@@ -574,7 +574,7 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
 
             Digit carry = 0;
 
-            for ( std::int32_t j = 0; j < yl; j++ ) {
+            for ( std::size_t j = 0; j < yl; j++ ) {
                 qr[ j ] = xmy( y[ j ], qr[ j ], carry );
             }
             st_assert( carry == 0, "Remainder too large" );
@@ -1328,7 +1328,7 @@ void IntegerOps::Integer_to_string( const Integer &x, std::int32_t base, char *s
 std::int32_t IntegerOps::hash( Integer &x ) {
     std::int32_t hash = 0;
 
-    for ( std::int32_t i = x.length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = x.length() - 1; i >= 0; i-- ) {
         hash ^= x[ i ];
     }
 

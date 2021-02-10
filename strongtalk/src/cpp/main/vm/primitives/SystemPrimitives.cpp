@@ -770,7 +770,7 @@ PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
 
     ObjectArrayOop result = OopFactory::new_objectArray( SlidingSystemAverage::number_of_cases - 1 );
 
-    for ( std::int32_t i = 1; i < SlidingSystemAverage::number_of_cases; i++ ) {
+    for ( std::size_t i = 1; i < SlidingSystemAverage::number_of_cases; i++ ) {
         result->obj_at_put( i, smiOopFromValue( _array[ i ] ) );
     }
 
@@ -836,7 +836,7 @@ PRIM_DECL_2( SystemPrimitives::instances_of, Oop klass, Oop limit ) {
     std::int32_t   length = blk._result->length();
     ObjectArrayOop result = OopFactory::new_objectArray( length );
 
-    for ( std::int32_t i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         result->obj_at_put( i, blk._result->at( i - 1 ) );
     }
 
@@ -1128,7 +1128,7 @@ PRIM_DECL_0( SystemPrimitives::command_line_args ) {
     ObjectArrayOop result = OopFactory::new_objectArray( argc );
     result->set_length( argc );
 
-    for ( std::int32_t i = 0; i < argc; i++ ) {
+    for ( std::size_t i = 0; i < argc; i++ ) {
         ByteArrayOop arg = OopFactory::new_byteArray( argv[ i ] );
         result->obj_at_put( i + 1, arg );
     }

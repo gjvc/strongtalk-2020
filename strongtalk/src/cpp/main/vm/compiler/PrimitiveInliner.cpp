@@ -105,7 +105,7 @@ Expression *PrimitiveInliner::tryTypeCheck() {
 
     std::int32_t num = number_of_parameters();
 
-    for ( std::int32_t i = 0; i < num; i++ ) {
+    for ( std::size_t i = 0; i < num; i++ ) {
         Expression *a = parameter( i );
         if ( a->hasKlass() ) {
             Expression *primArgType = _primitiveDescriptor->parameter_klass( i, a->pseudoRegister(), nullptr );

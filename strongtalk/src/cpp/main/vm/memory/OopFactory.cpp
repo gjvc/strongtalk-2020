@@ -32,7 +32,7 @@ ByteArrayOop OopFactory::new_byteArray( const char *name ) {
     std::int32_t len    = strlen( name );
     ByteArrayOop result = new_byteArray( len );
 
-    for ( std::int32_t index = 0; index < len; index++ ) {
+    for ( std::size_t index = 0; index < len; index++ ) {
         result->byte_at_put( index + 1, name[ index ] );
     }
     return result;

@@ -246,7 +246,7 @@ void Floats::generate( MacroAssembler *masm, Function f ) {
     masm->ret( 0 );
     _function_table[ static_cast<std::int32_t>(f) ] = entry_point;
 
-    std::int32_t length = masm->pc() - entry_point;
+    std::size_t length = masm->pc() - entry_point;
     const char   *name  = function_name_for( f );
     SPDLOG_INFO( "%float-generate: Float function index [{}]: name[{}], length [{}] bytes, entry point [0x{0:x}]", f, name, length, entry_point );
     if ( PrintInterpreter ) {
@@ -276,7 +276,7 @@ void Floats::init( MacroAssembler *masm ) {
     // pre-initialize whole table
     // (make sure there's an entry for each index so that illegal indices
     // can be caught during execution without additional index range check)
-    for ( std::int32_t i = max_number_of_functions; i-- > 0; ) {
+    for ( std::size_t i = max_number_of_functions; i-- > 0; ) {
         _function_table[ i ] = masm->pc();
         SPDLOG_INFO( "system-init:  Floats::init() _function_table index [%ld] pc [0x{08:x}]", i, masm->pc() );
     }
@@ -330,7 +330,7 @@ void Floats::init( MacroAssembler *masm ) {
 void Floats::print() {
     if ( _is_initialized ) {
         SPDLOG_INFO( "Float functions:" );
-        for ( std::int32_t i = 0; i < static_cast<std::int32_t>( Floats::Function::number_of_functions ); i++ ) {
+        for ( std::size_t i = 0; i < static_cast<std::int32_t>( Floats::Function::number_of_functions ); i++ ) {
             SPDLOG_INFO( "%3d: 0x{0:x} %s", i, _function_table[ i ], function_name_for( Function( i ) ) );
         }
     } else {

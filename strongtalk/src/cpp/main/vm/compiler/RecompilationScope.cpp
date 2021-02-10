@@ -62,7 +62,7 @@ NonDummyRecompilationScope::NonDummyRecompilationScope( NonDummyRecompilationSco
     _ncodes( m == nullptr ? 1 : m->size_of_codes() * OOP_SIZE ),
     _subScopes( new_resource_array<GrowableArray<RecompilationScope *> *>( _ncodes + 1 ) ),
     uncommon( 1 ) {
-    for ( std::int32_t i = 0; i <= _ncodes; i++ )
+    for ( std::size_t i = 0; i <= _ncodes; i++ )
         _subScopes[ i ] = nullptr;
 }
 
@@ -103,7 +103,7 @@ InliningDatabaseRecompilationScope::InliningDatabaseRecompilationScope( NonDummy
     _uncommon       = new GrowableArray<bool>( _ncodes );
 
     //
-    for ( std::int32_t i = 0; i <= _ncodes; i++ ) {
+    for ( std::size_t i = 0; i <= _ncodes; i++ ) {
         _uncommon->append( false );
     }
 
@@ -228,7 +228,7 @@ RecompilationScope *NonDummyRecompilationScope::subScope( std::int32_t byteCodeI
         return new NullRecompilationScope;
     }
 
-    for ( std::int32_t i = 0; i < list->length(); i++ ) {
+    for ( std::size_t i = 0; i < list->length(); i++ ) {
         RecompilationScope *rs = list->at( i );
         if ( rs->equivalent( k ) )
             return rs;
@@ -289,7 +289,7 @@ bool NonDummyRecompilationScope::isNotUncommonAt( std::int32_t byteCodeIndex ) c
     st_assert( byteCodeIndex >= 0 and byteCodeIndex < _ncodes, "byteCodeIndex out of range" );
 
     // check if program got uncommon trap in the past
-    for ( std::int32_t i = 0; i < uncommon.length(); i++ ) {
+    for ( std::size_t i = 0; i < uncommon.length(); i++ ) {
         if ( uncommon.at( i )->byteCodeIndex() == byteCodeIndex )
             return true;
     }
@@ -348,7 +348,7 @@ KlassOop InlinedRecompilationScope::receiverKlass() const {
 
 void NonDummyRecompilationScope::unify( NonDummyRecompilationScope *s ) {
     st_assert( _ncodes == s->_ncodes, "should be the same" );
-    for ( std::int32_t i = 0; i < _ncodes; i++ ) {
+    for ( std::size_t i = 0; i < _ncodes; i++ ) {
         _subScopes[ i ] = s->_subScopes[ i ];
         if ( _subScopes[ i ] ) {
             for ( std::int32_t j = _subScopes[ i ]->length() - 1; j >= 0; j-- ) {
@@ -614,7 +614,7 @@ void NonDummyRecompilationScope::printSubScopes() const {
     for ( ; i < _ncodes and _subScopes[ i ] == nullptr; i++ );
     if ( i < _ncodes ) {
         _console->print( "{ " );
-        for ( std::int32_t i = 0; i < _ncodes; i++ ) {
+        for ( std::size_t i = 0; i < _ncodes; i++ ) {
             _console->print( "0x{0:x} ", PrintHexAddresses ? _subScopes[ i ] : 0 );
         }
         _console->print( "}" );
@@ -709,7 +709,7 @@ void NonDummyRecompilationScope::printTree( std::int32_t senderByteCodeIndex, st
 
     for ( std::int32_t byteCodeIndex = 0; byteCodeIndex < _ncodes; byteCodeIndex++ ) {
         if ( _subScopes[ byteCodeIndex ] ) {
-            for ( std::int32_t j = 0; j < _subScopes[ byteCodeIndex ]->length(); j++ ) {
+            for ( std::size_t j = 0; j < _subScopes[ byteCodeIndex ]->length(); j++ ) {
                 _subScopes[ byteCodeIndex ]->at( j )->printTree( byteCodeIndex, level + 1 );
             }
         }
@@ -760,9 +760,9 @@ bool InliningDatabaseRecompilationScope::isNotUncommonAt( std::int32_t byteCodeI
 std::int32_t InlinedRecompilationScope::inlining_database_size() {
     std::int32_t result = 1; // Count this node
 
-    for ( std::int32_t i = 0; i < _ncodes; i++ ) {
+    for ( std::size_t i = 0; i < _ncodes; i++ ) {
         if ( _subScopes[ i ] ) {
-            for ( std::int32_t j = 0; j < _subScopes[ i ]->length(); j++ ) {
+            for ( std::size_t j = 0; j < _subScopes[ i ]->length(); j++ ) {
                 result += _subScopes[ i ]->at( j )->inlining_database_size();
             }
         }
@@ -811,9 +811,9 @@ void InlinedRecompilationScope::print_inlining_database_on( ConsoleOutputStream 
     ProgramCounterDescriptor *current_uncommon = next_uncommon( scope, u, uncommon );
 
     // File out subscopes
-    for ( std::int32_t i = 0; i < _ncodes; i++ ) {
+    for ( std::size_t i = 0; i < _ncodes; i++ ) {
         if ( _subScopes[ i ] ) {
-            for ( std::int32_t j = 0; j < _subScopes[ i ]->length(); j++ ) {
+            for ( std::size_t j = 0; j < _subScopes[ i ]->length(); j++ ) {
                 _subScopes[ i ]->at( j )->print_inlining_database_on( stream, uncommon, i, level + 1 );
             }
         }

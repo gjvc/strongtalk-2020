@@ -50,20 +50,20 @@ public:
     ssize_t _signed_length;
     Digit   _first_digit;
 
-    std::int32_t length() const;
+    std::size_t length() const;
 
 
     Digit *digits() const;
 
     Digit &operator[]( std::int32_t i ) const;
 
-    static std::int32_t length_to_size_in_bytes( std::int32_t l );
+    static std::size_t length_to_size_in_bytes( std::size_t l );
 
-    std::int32_t length_in_bits() const;
+    std::size_t length_in_bits() const;
 
     std::int32_t signed_length() const; // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
 
-    std::int32_t size_in_bytes() const;
+    std::size_t size_in_bytes() const;
 
     void set_signed_length( std::int32_t l );
 

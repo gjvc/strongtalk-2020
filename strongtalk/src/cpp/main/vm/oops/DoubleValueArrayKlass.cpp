@@ -45,7 +45,7 @@ Oop DoubleValueArrayKlass::allocateObjectSize( std::int32_t size, bool permit_sc
     // indexables
     obj->set_length( size );
 
-    for ( std::int32_t i = 1; i <= size; i++ ) {
+    for ( std::size_t i = 1; i <= size; i++ ) {
         obj->double_at_put( i, 0.0 );
     }
 

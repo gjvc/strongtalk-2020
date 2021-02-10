@@ -52,7 +52,7 @@ private:
     void map_send( bool has_receiver, std::int32_t number_of_arguments ) {
         if ( has_receiver )
             map_pop();
-        for ( std::int32_t i = 0; i < number_of_arguments; i++ )
+        for ( std::size_t i = 0; i < number_of_arguments; i++ )
             map_pop();
         map_push();
     }

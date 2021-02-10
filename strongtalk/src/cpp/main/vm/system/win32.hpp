@@ -100,7 +100,7 @@ private:
 
 
     static Thread *findThread( std::int32_t thread_id ) {
-        for ( std::int32_t i = 0; i < threads->length(); i++ ) {
+        for ( std::size_t i = 0; i < threads->length(); i++ ) {
             Thread *thread = threads->at( i );
             if ( thread == nullptr )
                 continue;

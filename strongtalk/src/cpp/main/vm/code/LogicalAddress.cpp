@@ -35,7 +35,7 @@ NameNode *LogicalAddress::physical_address_at( std::int32_t pc_offset ) {
 }
 
 
-std::int32_t LogicalAddress::length() {
+std::size_t LogicalAddress::length() {
     LogicalAddress *current = this;
     std::int32_t   result   = 1;
     while ( current->next() ) {

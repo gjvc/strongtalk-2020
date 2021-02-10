@@ -10,7 +10,7 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-std::int32_t Integer::length_in_bits() const {
+std::size_t Integer::length_in_bits() const {
 
     if ( is_zero() ) {
         return 0;
@@ -142,7 +142,7 @@ std::int32_t Integer::signed_length() const {
 }
 
 
-std::int32_t Integer::length() const {
+std::size_t Integer::length() const {
     return abs( _signed_length );
 }
 
@@ -157,7 +157,7 @@ Digit *Integer::digits() const {
 }
 
 
-std::int32_t Integer::length_to_size_in_bytes( std::int32_t l ) {
+std::size_t Integer::length_to_size_in_bytes( std::size_t l ) {
     return sizeof( std::int32_t ) + l * sizeof( Digit );
 }
 
@@ -197,6 +197,6 @@ bool Integer::is_valid() const {
 }
 
 
-std::int32_t Integer::size_in_bytes() const {
+std::size_t Integer::size_in_bytes() const {
     return length_to_size_in_bytes( length() );
 }

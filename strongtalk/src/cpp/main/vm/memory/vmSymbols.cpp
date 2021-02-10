@@ -20,7 +20,7 @@ void vmSymbols::initialize() {
 
 
 void vmSymbols::switch_pointers( Oop from, Oop to ) {
-    for ( std::int32_t i = 0; i < terminating_enum; i++ ) {
+    for ( std::size_t i = 0; i < terminating_enum; i++ ) {
         Oop *p = (Oop *) &vm_symbols[ i ];
         SWITCH_POINTERS_TEMPLATE( p )
     }
@@ -28,14 +28,14 @@ void vmSymbols::switch_pointers( Oop from, Oop to ) {
 
 
 void vmSymbols::follow_contents() {
-    for ( std::int32_t i = 0; i < terminating_enum; i++ ) {
+    for ( std::size_t i = 0; i < terminating_enum; i++ ) {
         MarkSweep::follow_root( (Oop *) &vm_symbols[ i ] );
     }
 }
 
 
 void vmSymbols::relocate() {
-    for ( std::int32_t i = 0; i < terminating_enum; i++ ) {
+    for ( std::size_t i = 0; i < terminating_enum; i++ ) {
         Oop *p = (Oop *) &vm_symbols[ i ];
         RELOCATE_TEMPLATE( p );
     }
