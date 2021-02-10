@@ -162,19 +162,19 @@ public:
     }
 
 
-    void at_put( std::int32_t i, const T elem ) {
+    void at_put( std::size_t i, const T elem ) {
         st_assert( 0 <= i and i < _length, "illegal index (at_put)" );
         _data[ i ] = (void *) elem;
     }
 
 
-    T at_grow( std::int32_t i ) {
+    T at_grow( std::size_t i ) {
         st_assert( 0 <= i, "negative index" );
         return reinterpret_cast<T> (raw_at_grow( i, nullptr ));
     }
 
 
-    void at_put_grow( std::int32_t i, const T elem ) {
+    void at_put_grow( std::size_t i, const T elem ) {
         st_assert( 0 <= i, "negative index" );
         raw_at_put_grow( i, (void *) elem, nullptr );
     }
@@ -192,12 +192,12 @@ public:
     }
 
 
-    std::int32_t find( const T elem ) const {
+    std::size_t find( const T elem ) const {
         return raw_find( (const void *) elem );
     }
 
 
-    std::int32_t find( void *token, bool f( void *, T ) ) const {
+    std::size_t find( void *token, bool f( void *, T ) ) const {
         return raw_find( token, (growableArrayFindFn) f );
     }
 

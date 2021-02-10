@@ -21,7 +21,7 @@ bool BitVector::unionWith( BitVector *other ) {
     bool changed = false;
 
     for ( std::size_t i = indexFromNumber( other->length - 1 ); i >= 0; i-- ) {
-        std::int32_t old = _bits[ i ];
+        std::size_t old = _bits[ i ];
         _bits[ i ] |= other->_bits[ i ];
         changed |= ( old not_eq _bits[ i ] );
     }
@@ -34,7 +34,7 @@ bool BitVector::intersectWith( BitVector *other ) {
     bool changed = false;
 
     for ( std::size_t i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
-        std::int32_t old = _bits[ i ];
+        std::size_t old = _bits[ i ];
         _bits[ i ] &= other->_bits[ i ];
         changed |= ( old not_eq _bits[ i ] );
     }
@@ -55,18 +55,18 @@ bool BitVector::isDisjointFrom( BitVector *other ) {
 }
 
 
-void BitVector::addFromTo( std::int32_t first, std::int32_t last ) {
+void BitVector::addFromTo( std::size_t first, std::size_t last ) {
 
     // mark bits [first..last]
     st_assert( first >= 0 and first < length, "wrong index" );
     st_assert( last >= 0 and last < length, "wrong index" );
 
-    std::int32_t startIndex = indexFromNumber( first );
-    std::int32_t endIndex   = indexFromNumber( last );
+    std::size_t startIndex = indexFromNumber( first );
+    std::size_t endIndex   = indexFromNumber( last );
 
     if ( startIndex == endIndex ) {
         st_assert( last - first < BITS_PER_WORD, "oops" );
-        std::int32_t mask = nthMask( last - first + 1 );
+        std::size_t mask = nthMask( last - first + 1 );
         _bits[ startIndex ] |= mask << offsetFromNumber( first );
     } else {
         _bits[ startIndex ] |= AllBitsSet << offsetFromNumber( first );
@@ -84,17 +84,17 @@ void BitVector::addFromTo( std::int32_t first, std::int32_t last ) {
 }
 
 
-void BitVector::removeFromTo( std::int32_t first, std::int32_t last ) {
+void BitVector::removeFromTo( std::size_t first, std::size_t last ) {
 
     st_assert( first >= 0 and first < length, "wrong index" );
     st_assert( last >= 0 and last < length, "wrong index" );
 
-    std::int32_t startIndex = indexFromNumber( first );
-    std::int32_t endIndex   = indexFromNumber( last );
+    std::size_t startIndex = indexFromNumber( first );
+    std::size_t endIndex   = indexFromNumber( last );
 
     if ( startIndex == endIndex ) {
         st_assert( last - first < BITS_PER_WORD, "oops" );
-        std::int32_t mask = ~nthMask( last - first + 1 );
+        std::size_t mask = ~nthMask( last - first + 1 );
         _bits[ startIndex ] &= mask << offsetFromNumber( first );
     } else {
         _bits[ startIndex ] &= ~( AllBitsSet << offsetFromNumber( first ) );
@@ -122,7 +122,7 @@ void BitVector::doForAllOnes( intDoFn f ) {
 
     for ( std::size_t i = indexFromNumber( length - 1 ); i >= 0; i-- ) {
 
-        std::int32_t b = _bits[ i ];
+        std::size_t b = _bits[ i ];
 
         for ( std::size_t j = 0; j < BITS_PER_WORD; j++ ) {
             if ( isBitSet( b, j ) ) {
@@ -142,8 +142,8 @@ void BitVector::print() {
 
     print_short();
     SPDLOG_INFO( ": {" );
-    std::int32_t last = -1;
-    std::int32_t i    = 0;
+    std::size_t last = -1;
+    std::size_t i    = 0;
 
     for ( ; i < length; i++ ) {
         if ( includes( i ) ) {

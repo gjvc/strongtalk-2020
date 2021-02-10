@@ -189,7 +189,7 @@ MemOop MarkSweep::reverse( Oop *p ) {
     // Return nullptr if non MemOop
     if ( not obj->isMemOop() )
         return nullptr;
-    if ( not Oop( p )->isSmallIntegerOop() ) {// ie. not word aligned
+    if ( not Oop( p )->isSmallIntegerOop() ) {// ie. not word-aligned
         p = _oopRelocations->relocate( p );
     }
 

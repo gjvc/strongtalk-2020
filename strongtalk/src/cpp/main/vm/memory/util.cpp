@@ -49,8 +49,8 @@ void printIndent() {
 
 
 void copy_oops_up( Oop *from, Oop *to, std::int32_t count ) {
-    st_assert( maskBits( std::int32_t( from ), TAG_SIZE ) == 0, "not word aligned" );
-    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word aligned" );
+    st_assert( maskBits( std::int32_t( from ), TAG_SIZE ) == 0, "not word-aligned" );
+    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word-aligned" );
     st_assert( count >= 0, "negative count" );
 
     // block_step was determined by profiling the scavenger.
@@ -80,15 +80,15 @@ void copy_oops_up( Oop *from, Oop *to, std::int32_t count ) {
 
 
 void copy_oops_down( Oop *from, Oop *to, std::int32_t count ) {
-    st_assert( maskBits( std::int32_t( from ), TAG_SIZE ) == 0, "not word aligned" );
-    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word aligned" );
+    st_assert( maskBits( std::int32_t( from ), TAG_SIZE ) == 0, "not word-aligned" );
+    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word-aligned" );
     st_assert( count >= 0, "negative count" );
     DO_DOWN( *--from )
 }
 
 
 void set_oops( Oop *to, std::int32_t count, Oop value ) {
-    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word aligned" );
+    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word-aligned" );
     st_assert( count >= 0, "negative count" );
 
     constexpr std::int32_t block_step = 4;

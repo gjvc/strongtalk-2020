@@ -46,7 +46,7 @@ void error_breakpoint();                        // called at every error or fata
 #define st_assert_double( obj, msg )           st_assert_is_type( obj, Double, msg )
 
 
-#define st_assert_oop_aligned( p )             st_assert( reinterpret_cast<std::int32_t>(p) % 4 == 0, "not word aligned" )
+#define st_assert_oop_aligned( p )             st_assert( reinterpret_cast<std::int32_t>(p) % 4 == 0, "not word-aligned" )
 
 
 // -----------------------------------------------------------------------------

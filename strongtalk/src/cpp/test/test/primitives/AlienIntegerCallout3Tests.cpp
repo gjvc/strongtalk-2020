@@ -182,7 +182,7 @@ protected:
         ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( size ) );
         IntegerOps::int_to_Integer( value, valueOop->number() );
         bool ok;
-        Oop  result           = valueOop->number().as_smi( ok );
+        Oop  result           = valueOop->number().as_SmallIntegerOop( ok );
         return ok ? result : valueOop;
     }
 

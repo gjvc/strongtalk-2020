@@ -38,7 +38,7 @@ public:
     }
 
 
-    bool is_within_bounds( std::int32_t index ) const {
+    bool is_within_bounds( std::size_t index ) const {
         return 1 <= index and index <= length();
     }
 

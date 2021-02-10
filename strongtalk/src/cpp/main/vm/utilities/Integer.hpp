@@ -76,7 +76,7 @@ public:
 
     double as_double( bool &ok ) const;
 
-    SmallIntegerOop as_smi( bool &ok ) const;
+    SmallIntegerOop as_SmallIntegerOop( bool &ok ) const;
 
 
     bool is_zero() const;

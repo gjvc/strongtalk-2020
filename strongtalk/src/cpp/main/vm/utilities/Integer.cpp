@@ -102,7 +102,7 @@ double Integer::as_double( bool &ok ) const {
 }
 
 
-SmallIntegerOop Integer::as_smi( bool &ok ) const {
+SmallIntegerOop Integer::as_SmallIntegerOop( bool &ok ) const {
     ok = true;
     switch ( _signed_length ) {
         case -1:

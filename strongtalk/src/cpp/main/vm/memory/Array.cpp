@@ -109,7 +109,7 @@ void ByteArray::appendWord( std::int32_t p ) {
         extend();
     }
 
-    st_assert( size() % sizeof( std::int32_t ) == 0, "Not word aligned" );
+    st_assert( size() % sizeof( std::int32_t ) == 0, "Not word-aligned" );
     std::int32_t *s = (std::int32_t *) &_array[ _top ];
     *s = p;
     _top += sizeof( std::int32_t );
