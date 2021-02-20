@@ -36,7 +36,7 @@ void Assembler::finalize() {
 }
 
 
-void Assembler::emit_byte( std::int32_t x ) {
+void Assembler::emit_byte( std::int32_t x )  {
     st_assert( isByte( x ), "not a byte" );
     *(std::uint8_t *) _code_pos = (std::uint8_t) x;
     _code_pos += sizeof( std::uint8_t );
@@ -51,14 +51,14 @@ void Assembler::emit_long( std::int32_t x ) {
 }
 
 
-void Assembler::emit_data( std::int32_t data, RelocationInformation::RelocationType rtype ) {
+void Assembler::emit_data( std::int32_t data, RelocationInformation::RelocationType rtype ) const {
     if ( rtype not_eq RelocationInformation::RelocationType::none )
         code()->relocate( _code_pos, rtype );
     emit_long( data );
 }
 
 
-void Assembler::emit_arith_b( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm8 ) {
+void Assembler::emit_arith_b( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm8 ) const {
     guarantee( dst.hasByteRegister(), "must have byte register" );
     st_assert( isByte( op1 ) and isByte( op2 ), "wrong opcode" );
     st_assert( isByte( imm8 ), "not a byte" );
@@ -69,7 +69,7 @@ void Assembler::emit_arith_b( std::int32_t op1, std::int32_t op2, const Register
 }
 
 
-void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm32 ) {
+void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm32 ) const {
     st_assert( isByte( op1 ) and isByte( op2 ), "wrong opcode" );
     st_assert( ( op1 & 0x01 ) == 1, "should be 32bit operation" );
     st_assert( ( op1 & 0x02 ) == 0, "sign-extension bit should not be set" );
@@ -85,7 +85,7 @@ void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &
 }
 
 
-void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, Oop obj ) {
+void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, Oop obj ) const {
     st_assert( isByte( op1 ) and isByte( op2 ), "wrong opcode" );
     st_assert( ( op1 & 0x01 ) == 1, "should be 32bit operation" );
     st_assert( ( op1 & 0x02 ) == 0, "sign-extension bit should not be set" );
@@ -95,14 +95,14 @@ void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &
 }
 
 
-void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, const Register &src ) {
+void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, const Register &src ) const {
     st_assert( isByte( op1 ) and isByte( op2 ), "wrong opcode" );
     emit_byte( op1 );
     emit_byte( op2 | dst.number() << 3 | src.number() );
 }
 
 
-void Assembler::emit_operand( const Register &reg, const Register &base, const Register &index, Address::ScaleFactor scale, std::int32_t disp, RelocationInformation::RelocationType rtype ) {
+void Assembler::emit_operand( const Register &reg, const Register &base, const Register &index, Address::ScaleFactor scale, std::int32_t disp, RelocationInformation::RelocationType rtype ) const {
     if ( base.isValid() ) {
         if ( index.isValid() ) {
             st_assert( scale not_eq Address::ScaleFactor::no_scale, "inconsistent address" );
@@ -187,12 +187,12 @@ void Assembler::emit_operand( const Register &reg, const Register &base, const R
 }
 
 
-void Assembler::emit_operand( const Register &r, const Address &a ) {
+void Assembler::emit_operand( const Register &r, const Address &a ) const {
     emit_operand( r, a._base, a._index, a._scale, a._displacement, a._relocationType );
 }
 
 
-void Assembler::emit_farith( std::int32_t b1, std::int32_t b2, std::int32_t i ) {
+void Assembler::emit_farith( std::int32_t b1, std::int32_t b2, std::int32_t i ) const {
     st_assert( isByte( b1 ) and isByte( b2 ), "wrong opcode" );
     st_assert( 0 <= i and i < 8, "illegal stack offset" );
     emit_byte( b1 );
@@ -222,7 +222,7 @@ void Assembler::pushl( Oop obj ) {
 }
 
 
-void Assembler::pushl( const Register &src ) {
+void Assembler::pushl( const Register &src )  {
     emit_byte( 0x50 | src.number() );
 }
 
@@ -705,23 +705,24 @@ void Assembler::xorl( const Register &dst, const Register &src ) {
 }
 
 
-void Assembler::cdq() {
+void Assembler::cdq() const {
     emit_byte( 0x99 );
 }
 
 
-void Assembler::hlt() {
+void Assembler::hlt() const {
     emit_byte( 0xF4 );
 }
 
 
-void Assembler::int3() {
-    if ( EnableInt3 )
+void Assembler::int3() const {
+    if ( EnableInt3 ) {
         emit_byte( 0xCC );
+    }
 }
 
 
-void Assembler::nop() {
+void Assembler::nop() const {
     emit_byte( 0x90 );
 }
 
@@ -737,7 +738,7 @@ void Assembler::ret( std::int32_t imm16 ) {
 }
 
 
-void Assembler::print( const Label &L ) {
+void Assembler::print( const Label &L ) const {
     if ( L.is_unused() ) {
         SPDLOG_INFO( "undefined label" );
     } else if ( L.is_bound() ) {

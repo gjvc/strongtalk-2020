@@ -25,12 +25,12 @@ protected:
     Label        _unbound_label;   // the last label to be bound to _binding_pos, if unbound
     std::int32_t _binding_pos;     // the position to which _unbound_label has to be bound, if there
 
-    const char *addr_at( std::int32_t pos ) {
+    const char *addr_at( std::int32_t pos ) const {
         return _code_begin + pos;
     }
 
 
-    std::int32_t byte_at( std::int32_t pos ) {
+    std::int32_t byte_at( std::int32_t pos ) const {
         return *(std::uint8_t *) addr_at( pos );
     }
 
@@ -40,7 +40,7 @@ protected:
     }
 
 
-    std::int32_t long_at( std::int32_t pos ) {
+    std::int32_t long_at( std::int32_t pos ) const {
         return *(std::int32_t *) addr_at( pos );
     }
 
@@ -50,17 +50,17 @@ protected:
     }
 
 
-    bool is8bit( std::int32_t x ) {
+    bool is8bit( std::int32_t x ) const {
         return -0x80 <= x and x < 0x80;
     }
 
 
-    bool isByte( std::int32_t x ) {
+    bool isByte( std::int32_t x ) const {
         return 0 <= x and x < 0x100;
     }
 
 
-    bool isShiftCount( std::int32_t x ) {
+    bool isShiftCount( std::int32_t x ) const {
         return 0 <= x and x < 32;
     }
 
@@ -69,23 +69,23 @@ protected:
 
     void emit_long( std::int32_t x );
 
-    void emit_data( std::int32_t data, RelocationInformation::RelocationType rtype );
+    void emit_data( std::int32_t data, RelocationInformation::RelocationType rtype ) const;
 
-    void emit_arith_b( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm8 );
+    void emit_arith_b( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm8 ) const;
 
-    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm32 );
+    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm32 ) const;
 
-    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, Oop obj );
+    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, Oop obj ) const;
 
-    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, const Register &src );
+    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, const Register &src ) const;
 
-    void emit_operand( const Register &reg, const Register &base, const Register &index, Address::ScaleFactor scale, std::int32_t disp, RelocationInformation::RelocationType rtype );
+    void emit_operand( const Register &reg, const Register &base, const Register &index, Address::ScaleFactor scale, std::int32_t disp, RelocationInformation::RelocationType rtype ) const;
 
-    void emit_operand( const Register &r, const Address &a );
+    void emit_operand( const Register &r, const Address &a ) const;
 
-    void emit_farith( std::int32_t b1, std::int32_t b2, std::int32_t i );
+    void emit_farith( std::int32_t b1, std::int32_t b2, std::int32_t i ) const;
 
-    void print( const Label &L );
+    void print( const Label &L ) const;
 
     void bind_to( Label &L, std::int32_t pos );
 
@@ -124,7 +124,7 @@ public:
     Assembler &operator=( const Assembler & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)ptr; }
+    void operator delete( void *ptr ) { (void) ptr; }
 
 
     void finalize();        // call this before using/copying the code
@@ -303,13 +303,13 @@ public:
     void xorl( const Register &dst, const Register &src );
 
     // Miscellaneous
-    void cdq();
+    void cdq() const;
 
-    void hlt();
+    void hlt() const;
 
-    void int3();
+    void int3() const;
 
-    void nop();
+    void nop() const;
 
     void ret( std::int32_t imm16 = 0 );
 
