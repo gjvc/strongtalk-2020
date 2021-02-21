@@ -86,8 +86,8 @@ template<typename T>
 class GrowableArray : public GenericGrowableArray {
 
 private:
-    std::vector<T>                    _vector; //
-    std::array<T, INITIAL_ARRAY_SIZE> _array; //
+    std::vector<T>                    _vector;  //
+    std::array<T, INITIAL_ARRAY_SIZE> _array;   //
 
 
 public:
@@ -121,6 +121,7 @@ public:
 
 
     void append( const T elem ) {
+        _vector.push_back( elem );
         if ( _length == _maxLength ) {
             grow( _length );
         }

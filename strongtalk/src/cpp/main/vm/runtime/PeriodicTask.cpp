@@ -10,8 +10,8 @@
 #include "vm/system/os.hpp"
 #include "vm/runtime/PeriodicTask.hpp"
 
-constexpr std::int32_t max_tasks = 10;
 std::int32_t           num_tasks = 0;
+constexpr std::int32_t max_tasks = 10;
 
 std::array<PeriodicTask *, max_tasks> tasks;
 
@@ -29,24 +29,33 @@ bool pending_tasks( std::int32_t delay_time ) {
 void real_time_tick( std::int32_t delay_time ) {
 
     // Do not perform any tasks while bootstrappingInProgress
-    if ( bootstrappingInProgress )
+    if ( bootstrappingInProgress ) {
+        SPDLOG_INFO( "real_time_tick: bootstrappingInProgress is true" );
         return;
-
-    if ( pending_tasks( delay_time ) ) {
-        ThreadCritical tc;
-        if ( not Process::external_suspend_current() )
-            return;
-
-        for ( std::size_t i = 0; i < num_tasks; i++ ) {
-            PeriodicTask *task = tasks[ i ];
-            if ( task->_counter >= task->_interval ) {
-                task->task();
-                task->_counter = 0;
-            }
-        }
-
-        Process::external_resume_current();
     }
+
+    // bail out if nothing to do
+    if ( not pending_tasks( delay_time ) ) {
+        SPDLOG_INFO( "real_time_tick: pending_tasks() returned false" );
+        return;
+    }
+
+    ThreadCritical tc{}; // declare a critical section
+    if ( not Process::external_suspend_current() ) {
+        SPDLOG_INFO( "real_time_tick: external_suspend_current() returned false" );
+        return;
+    }
+
+    for ( std::size_t i = 0; i < num_tasks; i++ ) {
+        PeriodicTask *task = tasks[ i ];
+        if ( task->_counter >= task->_interval ) {
+            task->task();
+            task->_counter = 0;
+        }
+    }
+
+    Process::external_resume_current();
+
 }
 
 
@@ -67,12 +76,15 @@ bool PeriodicTask::is_enrolled() const {
     for ( std::size_t i = 0; i < num_tasks; i++ )
         if ( tasks[ i ] == this )
             return true;
+
     return false;
 }
 
 
 void PeriodicTask::enroll() {
-    if ( num_tasks == max_tasks ) st_fatal( "Overflow in PeriodicTask table" );
+    if ( num_tasks == max_tasks ) {
+        st_fatal( "Overflow in PeriodicTask table: " );
+    }
     tasks[ num_tasks++ ] = this;
 }
 

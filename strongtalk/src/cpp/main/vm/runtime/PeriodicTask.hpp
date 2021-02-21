@@ -19,8 +19,8 @@
 class PeriodicTask : public CHeapAllocatedObject {
 
 private:
-    std::int32_t _counter;
-    std::int32_t _interval;
+    std::int32_t _counter;      // would be better as 'protected'
+    std::int32_t _interval;     // would be better as 'protected'
 
     friend void real_time_tick( std::int32_t delay_time );
 

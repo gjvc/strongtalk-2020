@@ -99,8 +99,8 @@ void DeltaProcess::set_last_delta_sp( Oop *sp ) {
 
 
 const char *DeltaProcess::last_delta_pc() const {
-//    if ( this == nullptr )
-//        return nullptr;
+    if ( this == nullptr )
+        return nullptr;
     return _last_delta_pc;
 }
 

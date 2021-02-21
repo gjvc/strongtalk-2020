@@ -13,7 +13,6 @@
 
 
 extern bool bootstrappingInProgress;
-//static CONTEXT context;
 
 
 std::int32_t WINAPI startThread( void *params ) {
@@ -210,6 +209,9 @@ static void initialize_performance_counter() {
     } else {
         has_performance_count = 0;
     }
+//    SPDLOG_INFO( "has_performance_count set to [{:d}]", has_performance_count );
+//    SPDLOG_INFO( "performance_frequency set to [{:d}]", performance_frequency );
+//    SPDLOG_INFO( "initial_performance_count set to [{:d}]", initial_performance_count );
 }
 
 
@@ -513,6 +515,7 @@ void os::reset_event( Event *event ) {
 
 
 void os::signal_event( Event *event ) {
+    SPDLOG_INFO( "os::signal_event [{}]", static_cast<void *>(event) );
     SetEvent( (HANDLE) event );
 }
 
@@ -553,6 +556,7 @@ void os::find_system_page_size() {
     SYSTEM_INFO systemInfo;
     GetSystemInfo( &systemInfo );
     _vm_page_size = systemInfo.dwPageSize;
+    SPDLOG_INFO( "system page size detected as [{:d}] bytes", _vm_page_size );
 
 }
 
@@ -564,7 +568,6 @@ std::int32_t os::find_current_process_id() {
 
 void os::initialize_system_info() {
     find_system_page_size();
-    SPDLOG_INFO( "system page size detected as [{:d}] bytes", _vm_page_size );
     initialize_performance_counter();
 }
 

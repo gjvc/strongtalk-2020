@@ -136,8 +136,9 @@ bool Mapping::isNormalTemporary( Location loc ) {
 
 bool Mapping::isFloatTemporary( Location loc ) {
     st_assert( not loc.isFloatLocation(), "must have been converted into STACK_LOCATION by register allocation" );
-    if ( not loc.isStackLocation() )
+    if ( not loc.isStackLocation() ) {
         return false;
+    }
     std::int32_t floats = theCompiler->totalNofFloatTemporaries();
     std::int32_t offset = loc.offset();
     return floats > 0 and first_float_offset + 2 >= offset and offset > first_float_offset - floats * ( SIZEOF_FLOAT / OOP_SIZE );

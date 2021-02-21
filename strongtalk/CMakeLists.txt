@@ -8,7 +8,6 @@
 # cmake -----------------------------------------------------------------------
 
 cmake_minimum_required ( VERSION 3.0 )
-project ( st20 )
 
 
 # ccache ----------------------------------------------------------------------
@@ -18,13 +17,10 @@ if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
     set ( CMAKE_C_COMPILER_LAUNCHER CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/.ccache /usr/bin/ccache )
     set ( CMAKE_CXX_COMPILER_LAUNCHER CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/.ccache /usr/bin/ccache )
 
+    execute_process ( COMMAND git branch --show-current WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE GIT_CURRENT_BRANCH ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE )
+    execute_process ( COMMAND git rev-parse ${GIT_CURRENT_BRANCH} WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE GIT_CURRENT_REVISION ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE )
+
 endif ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
-
-
-# git -------------------------------------------------------------------------
-
-execute_process ( COMMAND git branch --show-current WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE GIT_CURRENT_BRANCH ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE )
-execute_process ( COMMAND git rev-parse ${GIT_CURRENT_BRANCH} WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE GIT_CURRENT_REVISION ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE )
 
 
 # toolchain -------------------------------------------------------------------
@@ -34,11 +30,11 @@ set ( platform w64-mingw32 )
 set ( compiler-family gcc )
 set ( compiler-version 10 )
 set ( runtime posix )
-set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime} )
-set ( toolchain-name-debian-style ${compiler-family}/${arch}-${platform}/${compiler-version}-${runtime} ) # following /usr/lib/gcc/i686-w64-mingw32/10-posix/
+set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime} )                # example i686-w64-mingw32-gcc-posix/
+set ( toolchain-name-debian-style ${compiler-family}/${arch}-${platform}/${compiler-version}-${runtime} )   # example gcc/i686-w64-mingw32/10-posix/ following contents of Debian /usr/lib/
 
-set ( cc-compiler /usr/bin/${arch}-${platform}-gcc-${runtime} ) # i686-w64-mingw32-gcc-posix
-set ( cxx-compiler /usr/bin/${arch}-${platform}-g++-${runtime} ) # i686-w64-mingw32-g++-posix
+set ( cc-compiler /usr/bin/${arch}-${platform}-gcc-${runtime} )     # i686-w64-mingw32-gcc-posix
+set ( cxx-compiler /usr/bin/${arch}-${platform}-g++-${runtime} )    # i686-w64-mingw32-g++-posix
 
 set ( build-type debug )
 
@@ -46,13 +42,16 @@ set ( build-type debug )
 # cmake -----------------------------------------------------------------------
 
 set ( object-path ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}-${runtime-variant}/${build-type} )
+set ( CMAKE_BINARY_DIR ${object-path} )
 
-set ( CMAKE_CXX_COMPILER ${cxx-compiler} )
 set ( CMAKE_CXX_COMPILER ${cxx-compiler} )
 set ( CMAKE_CXX_LINKER_PREFERENCE ${cxx-compiler} )
 set ( CMAKE_C_COMPILER ${cc-compiler} )
 set ( CMAKE_C_LINKER_PREFERENCE ${cc-compiler} )
 set ( CMAKE_VERBOSE_MAKEFILE ON )
+set ( CMAKE_SYSTEM_NAME "Windows" )
+
+project ( st20 )
 
 
 # source directories ----------------------------------------------------------
@@ -112,21 +111,21 @@ message ( STATUS "--------------------------------------------------------------
 message ( STATUS ">>> toolchain variables" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS "" )
-message ( STATUS "arch              [${arch}]" )
-message ( STATUS "platform          [${platform}]" )
-message ( STATUS "compiler-family   [${compiler-family}]" )
-message ( STATUS "compiler-version  [${compiler-version}]" )
-message ( STATUS "runtime           [${runtime}]" )
-message ( STATUS "toolchain-name    [${toolchain-name}]" )
+message ( STATUS "arch . . . . . . . . .[${arch}]" )
+message ( STATUS "platform . . . . . . .[${platform}]" )
+message ( STATUS "compiler-family. . . .[${compiler-family}]" )
+message ( STATUS "compiler-version . . .[${compiler-version}]" )
+message ( STATUS "runtime. . . . . . . .[${runtime}]" )
+message ( STATUS "toolchain-name . . . .[${toolchain-name}]" )
+message ( STATUS "" )                   
+message ( STATUS "ext-dir. . . . . . . .[${ext-dir}]" )
+message ( STATUS "cpp-auto-dir . . . . .[${cpp-auto-dir}]" )
+message ( STATUS "cpp-main-dir . . . . .[${cpp-main-dir}]" )
+message ( STATUS "cpp-test-dir . . . . .[${cpp-test-dir}]" )
 message ( STATUS "" )
-message ( STATUS "ext-dir           [${ext-dir}]" )
-message ( STATUS "cpp-auto-dir      [${cpp-auto-dir}]" )
-message ( STATUS "cpp-main-dir      [${cpp-main-dir}]" )
-message ( STATUS "cpp-test-dir      [${cpp-test-dir}]" )
-message ( STATUS "" )
-message ( STATUS "spdlog-object-dir     [${spdlog-object-dir}]" )
-message ( STATUS "nasm-object-dir       [${nasm-object-dir}]" )
-message ( STATUS "fmt-object-dir        [${fmt-object-dir}]" )
+message ( STATUS "spdlog-object-dir. . .[${spdlog-object-dir}]" )
+message ( STATUS "nasm-object-dir. . . .[${nasm-object-dir}]" )
+message ( STATUS "fmt-object-dir . . . .[${fmt-object-dir}]" )
 message ( STATUS "googletest-object-dir [${googletest-object-dir}]" )
 message ( STATUS "" )
 message ( STATUS "GIT_CURRENT_BRANCH    [${GIT_CURRENT_BRANCH}]" )
