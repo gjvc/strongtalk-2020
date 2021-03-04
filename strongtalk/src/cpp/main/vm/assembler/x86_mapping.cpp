@@ -7,8 +7,8 @@
 #include "vm/assembler/x86_mapping.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/oops/BlockClosureOopDescriptor.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/oop/BlockClosureOopDescriptor.hpp"
+#include "vm/oop/ContextOopDescriptor.hpp"
 
 
 

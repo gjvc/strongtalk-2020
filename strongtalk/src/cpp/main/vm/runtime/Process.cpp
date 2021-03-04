@@ -7,9 +7,9 @@
 #include "vm/runtime/Processes.hpp"
 #include "vm/system/os.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/oops/ProcessOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/AssociationOopDescriptor.hpp"
+#include "vm/oop/ProcessOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/AssociationOopDescriptor.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/Sweeper.hpp"
@@ -18,12 +18,12 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/runtime/evaluator.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/oop/ContextOopDescriptor.hpp"
 
 
 std::int32_t CurrentHash = 23;

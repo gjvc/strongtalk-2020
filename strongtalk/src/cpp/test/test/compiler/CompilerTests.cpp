@@ -3,13 +3,13 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/oops/AssociationOopDescriptor.hpp"
+#include "vm/oop/AssociationOopDescriptor.hpp"
 #include "vm/lookup/LookupResult.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/Delta.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 #include "test/compiler/CompilerTests.hpp"
 #include "test/runtime/testProcess.hpp"

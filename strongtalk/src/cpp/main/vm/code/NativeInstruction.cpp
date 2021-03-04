@@ -4,7 +4,7 @@
 //
 
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/code/NativeInstruction.hpp"
 
 

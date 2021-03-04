@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 #include <cstring>
 

@@ -8,8 +8,8 @@
 #include "vm/system/platform.hpp"
 #include "allocation.hpp"
 #include "vm/memory/Closure.hpp"
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 class PrintObjectClosure : public ObjectLayoutClosure {

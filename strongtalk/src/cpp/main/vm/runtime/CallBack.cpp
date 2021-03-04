@@ -4,7 +4,7 @@
 //
 
 #include "vm/runtime/CallBack.hpp"
-#include "vm/oops/ProxyOopDescriptor.hpp"
+#include "vm/oop/ProxyOopDescriptor.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/runtime/ErrorHandler.hpp"

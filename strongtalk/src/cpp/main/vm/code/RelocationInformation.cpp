@@ -6,14 +6,14 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/code/LogicalAddress.hpp"
 #include "vm/code/ScopeDescriptorNode.hpp"
 #include "vm/memory/Array.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/code/PseudoRegisterMapping.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/utilities/disassembler.hpp"
+#include "vm/utility/disassembler.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/code/PolymorphicInlineCache.hpp"
 #include "vm/runtime/Process.hpp"
@@ -23,7 +23,7 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/BasicBlock.hpp"
-#include "vm/primitives/primitives.hpp"
+#include "vm/primitive/primitives.hpp"
 
 
 RelocationInformation::RelocationInformation( RelocationInformation::RelocationType t, std::int32_t offset ) :

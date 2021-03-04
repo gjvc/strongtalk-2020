@@ -6,7 +6,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/interpreter/MethodInterval.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 
 
 IntervalInfo::IntervalInfo( MethodInterval *interval, InlinedScope *scope ) :

@@ -6,9 +6,9 @@
 
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
-#include "vm/primitives/primitives.hpp"
+#include "vm/primitive/primitives.hpp"
 #include "vm/interpreter/MethodClosure.hpp"
-#include "vm/oops/AssociationOopDescriptor.hpp"
+#include "vm/oop/AssociationOopDescriptor.hpp"
 
 
 MethodIntervalFactory         MethodIterator::defaultFactory;

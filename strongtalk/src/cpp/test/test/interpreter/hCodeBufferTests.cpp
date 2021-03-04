@@ -9,9 +9,9 @@
 #include "vm/interpreter/HeapCodeBuffer.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 #include <gtest/gtest.h>
 

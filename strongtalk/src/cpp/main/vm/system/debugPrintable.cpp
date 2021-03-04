@@ -5,17 +5,17 @@
 //
 
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/oops/MemOopDescriptor.hpp"
+#include "vm/oop/MemOopDescriptor.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/oops/Klass.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
+#include "vm/klass/Klass.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
-#include "vm/utilities/ObjectIDTable.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/ObjectIDTable.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/memory/OopFactory.hpp"
 

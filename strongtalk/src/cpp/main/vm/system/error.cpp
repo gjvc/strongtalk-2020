@@ -6,7 +6,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/EventLog.hpp"
 
 #include <cstdarg>
 #include <cstdio>

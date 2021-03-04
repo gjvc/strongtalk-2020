@@ -8,7 +8,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 
 
 //

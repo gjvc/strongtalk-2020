@@ -11,7 +11,7 @@
 #include "vm/compiler/Node.hpp"
 #include "vm/code/PseudoRegisterMapping.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/utilities/disassembler.hpp"
+#include "vm/utility/disassembler.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/code/PolymorphicInlineCache.hpp"
 #include "vm/runtime/Process.hpp"
@@ -21,12 +21,12 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/BasicBlock.hpp"
-#include "vm/primitives/primitives.hpp"
+#include "vm/primitive/primitives.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
 #include "vm/code/NameDescriptor.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/utilities/StringOutputStream.hpp"
+#include "vm/utility/StringOutputStream.hpp"
 
 
 void LocationNameDescriptor::print() {

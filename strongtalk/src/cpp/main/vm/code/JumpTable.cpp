@@ -5,13 +5,13 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/system/os.hpp"
 #include "vm/code/JumpTable.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/utilities/disassembler.hpp"
+#include "vm/utility/disassembler.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
 

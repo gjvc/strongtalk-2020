@@ -4,11 +4,11 @@
 //
 
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/memory/SpaceSizes.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/ByteArrayOopDescriptor.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/ByteArrayOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/assembler/Displacement.hpp"
 #include "vm/assembler/Label.hpp"

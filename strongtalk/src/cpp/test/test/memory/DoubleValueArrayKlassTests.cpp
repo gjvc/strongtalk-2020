@@ -11,7 +11,7 @@
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/interpreter/HeapCodeBuffer.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/oops/DoubleValueArrayKlass.hpp"
+#include "vm/klass/DoubleValueArrayKlass.hpp"
 
 #include <gtest/gtest.h>
 

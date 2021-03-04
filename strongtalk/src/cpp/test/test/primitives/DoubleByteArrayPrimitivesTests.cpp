@@ -12,7 +12,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/primitives/DoubleByteArray_primitives.hpp"
+#include "vm/primitive/DoubleByteArray_primitives.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/OopFactory.hpp"

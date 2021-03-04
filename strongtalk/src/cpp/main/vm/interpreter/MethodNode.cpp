@@ -8,7 +8,7 @@
 #include "vm/interpreter/MethodNode.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
-#include "vm/primitives/primitives.hpp"
+#include "vm/primitive/primitives.hpp"
 #include "vm/system/dll.hpp"
 
 

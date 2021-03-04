@@ -7,7 +7,7 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/oop/OopDescriptor.hpp"
 
 // The JumpTable constitutes the interface between interpreter code and optimized code.
 // This indirection makes it possible to invalidate optimized code without

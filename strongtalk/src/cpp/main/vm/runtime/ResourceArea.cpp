@@ -5,7 +5,7 @@
 //
 
 #include "vm/runtime/ResourceArea.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/system/os.hpp"
 #include "vm/memory/util.hpp"

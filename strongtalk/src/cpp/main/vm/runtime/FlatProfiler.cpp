@@ -4,10 +4,10 @@
 //
 
 #include "vm/runtime/FlatProfiler.hpp"
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/utility/OutputStream.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/runtime/PeriodicTask.hpp"
 #include "vm/runtime/Process.hpp"
@@ -15,7 +15,7 @@
 #include "vm/code/StubRoutines.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 ProfiledNode **FlatProfiler::_table = nullptr;

@@ -8,7 +8,7 @@
 #include "vm/interpreter/MethodClosure.hpp"
 #include "vm/interpreter/MethodNode.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 
 
 MethodClosure::MethodClosure() :

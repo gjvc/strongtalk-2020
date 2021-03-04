@@ -12,7 +12,7 @@
 #include "vm/code/NodeVisitor.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 #include "vm/code/PseudoRegisterMapping.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/assembler/CodeBuffer.hpp"
 #include "vm/assembler/Register.hpp"
 #include "vm/compiler/Node.hpp"

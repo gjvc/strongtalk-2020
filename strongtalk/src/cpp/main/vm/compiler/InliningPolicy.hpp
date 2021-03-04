@@ -7,7 +7,7 @@
 #pragma once
 
 #include "vm/runtime/ResourceObject.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 
 
 class InliningPolicy : public ResourceObject {

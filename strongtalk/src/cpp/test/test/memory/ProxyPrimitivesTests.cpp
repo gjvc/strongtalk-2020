@@ -5,10 +5,10 @@
 
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/oops/ProxyOopDescriptor.hpp"
-#include "vm/oops/DoubleOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/primitives/ProxyOopPrimitives.hpp"
+#include "vm/oop/ProxyOopDescriptor.hpp"
+#include "vm/oop/DoubleOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/primitive/ProxyOopPrimitives.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/memory/vmSymbols.hpp"
 

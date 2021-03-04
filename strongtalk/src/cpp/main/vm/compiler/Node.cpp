@@ -10,16 +10,16 @@
 #include "vm/compiler/Node.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/assembler/x86_mapping.hpp"
-#include "vm/primitives/primitives.hpp"
-#include "vm/primitives/BehaviorPrimitives.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/primitives/PrimitivesGenerator.hpp"
-#include "vm/primitives/SmallIntegerOopPrimitives.hpp"
+#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/BehaviorPrimitives.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/primitive/PrimitivesGenerator.hpp"
+#include "vm/primitive/SmallIntegerOopPrimitives.hpp"
 #include "vm/compiler/CompiledLoop.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/compiler/NodeFactory.hpp"
-#include "vm/utilities/StringOutputStream.hpp"
+#include "vm/utility/StringOutputStream.hpp"
 
 
 std::int32_t        BasicNode::currentID;

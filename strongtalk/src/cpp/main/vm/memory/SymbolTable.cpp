@@ -4,8 +4,8 @@
 //
 
 #include "vm/memory/SymbolTable.hpp"
-#include "vm/oops/SymbolKlass.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/klass/SymbolKlass.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
 
 #define FOR_ALL_ENTRIES( entry ) \

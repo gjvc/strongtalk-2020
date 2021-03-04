@@ -7,9 +7,9 @@
 #include "vm/system/os.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
@@ -17,9 +17,9 @@
 #include "vm/runtime/Timer.hpp"
 #include "vm/code/InliningDatabase.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/utilities/StringOutputStream.hpp"
-#include "vm/utilities/FileOutputStream.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/StringOutputStream.hpp"
+#include "vm/utility/FileOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 const char *InliningDatabase::_directory = nullptr;

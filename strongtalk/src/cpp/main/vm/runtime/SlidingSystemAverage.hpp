@@ -7,7 +7,7 @@
 
 #include <array>
 #include "vm/system/platform.hpp"
-#include "vm/oops/MemOopDescriptor.hpp"
+#include "vm/oop/MemOopDescriptor.hpp"
 
 
 // Keeps the sliding average of where the system spends the time

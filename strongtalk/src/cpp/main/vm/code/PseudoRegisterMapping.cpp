@@ -5,7 +5,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/code/LogicalAddress.hpp"
 #include "vm/code/ScopeDescriptorNode.hpp"
 #include "vm/memory/Array.hpp"
@@ -14,7 +14,7 @@
 #include "vm/code/PseudoRegisterMapping.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/assembler/x86_mapping.hpp"
-#include "vm/utilities/disassembler.hpp"
+#include "vm/utility/disassembler.hpp"
 #include "vm/code/MapConformance.hpp"
 
 extern Compiler *theCompiler;

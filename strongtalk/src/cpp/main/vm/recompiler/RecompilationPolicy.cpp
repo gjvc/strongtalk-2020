@@ -8,7 +8,7 @@
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/recompiler/Recompilee.hpp"
 #include "vm/compiler/InliningPolicy.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/oop/ContextOopDescriptor.hpp"
 #include "vm/interpreter/Interpreter.hpp"
 
 

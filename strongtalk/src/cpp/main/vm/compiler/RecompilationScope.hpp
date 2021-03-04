@@ -10,7 +10,7 @@
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/runtime/ResourceObject.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 // RecompilationScope represent the inlined scopes of a NativeMethod during recompilation.

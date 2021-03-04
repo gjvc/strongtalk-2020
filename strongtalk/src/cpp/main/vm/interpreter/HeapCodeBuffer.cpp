@@ -4,11 +4,11 @@
 //
 
 #include "vm/interpreter/HeapCodeBuffer.hpp"
-#include "vm/oops/SMIOopDescriptor.hpp"
+#include "vm/oop/SMIOopDescriptor.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/ByteArrayOopDescriptor.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/ByteArrayOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
 
 

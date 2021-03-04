@@ -4,7 +4,7 @@
 //
 
 #include "vm/memory/Universe.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
 
 

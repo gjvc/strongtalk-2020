@@ -6,7 +6,7 @@
 #pragma once
 
 #include "vm/memory/allocation.hpp"
-#include "vm/utilities/LongInteger64.hpp"
+#include "vm/utility/LongInteger64.hpp"
 
 
 // Timers for simple measurements

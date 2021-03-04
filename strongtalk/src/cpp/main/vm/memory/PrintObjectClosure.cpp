@@ -5,9 +5,9 @@
 
 #include "vm/memory/PrintObjectClosure.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/oop/MemOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 constexpr std::int32_t indent_col = 3;

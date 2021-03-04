@@ -4,7 +4,7 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/assembler/Displacement.hpp"

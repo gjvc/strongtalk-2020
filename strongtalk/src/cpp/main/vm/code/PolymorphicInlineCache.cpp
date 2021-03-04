@@ -5,11 +5,11 @@
 
 #include "vm/code/PolymorphicInlineCache.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/lookup/LookupKey.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 // A PolymorphicInlineCache implements a Polymorphic Inline Cache for compiled code.

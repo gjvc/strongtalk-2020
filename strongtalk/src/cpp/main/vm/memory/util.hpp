@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/oops/Oop.hpp"
+#include "vm/oop/Oop.hpp"
 
 // conveniences
 

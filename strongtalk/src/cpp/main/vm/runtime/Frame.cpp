@@ -5,19 +5,19 @@
 
 #include "vm/runtime/Frame.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/interpreter/Interpreter.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/interpreter/Floats.hpp"
 #include "vm/code/PolymorphicInlineCache.hpp"
-#include "vm/oops/BlockClosureOopDescriptor.hpp"
+#include "vm/oop/BlockClosureOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/oop/ContextOopDescriptor.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 std::uint8_t *Frame::hp() const {

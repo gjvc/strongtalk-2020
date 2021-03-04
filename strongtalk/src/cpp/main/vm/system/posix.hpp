@@ -14,9 +14,9 @@
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/LongInteger64.hpp"
+#include "vm/utility/LongInteger64.hpp"
 #include "os.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 
 #include <ctime>
 #include <cstdio>

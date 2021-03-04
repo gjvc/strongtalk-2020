@@ -7,7 +7,7 @@
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/Inliner.hpp"
-#include "vm/oops/DoubleOopDescriptor.hpp"
+#include "vm/oop/DoubleOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/compiler/NodeFactory.hpp"
 

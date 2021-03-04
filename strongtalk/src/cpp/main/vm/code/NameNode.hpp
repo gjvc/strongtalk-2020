@@ -8,7 +8,7 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/code/ScopeDescriptorRecorder.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/oop/OopDescriptor.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
 

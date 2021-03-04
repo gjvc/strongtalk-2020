@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/oops/Klass.hpp"
+#include "vm/klass/Klass.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
 

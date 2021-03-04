@@ -5,7 +5,7 @@
 
 #include "vm/system/asserts.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/runtime/ReservedSpace.hpp"
 #include "vm/system/os.hpp"
 

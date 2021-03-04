@@ -9,8 +9,8 @@
 #include "vm/system/asserts.hpp"
 #include "vm/code/ZoneHeap.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/EventLog.hpp"
-#include "vm/oops/Oop.hpp"
+#include "vm/utility/EventLog.hpp"
+#include "vm/oop/Oop.hpp"
 #include "vm/memory/util.hpp"
 
 

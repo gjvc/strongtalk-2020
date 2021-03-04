@@ -9,7 +9,7 @@
 #include "vm/lookup/LookupResult.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/code/CompiledInlineCache.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/code/CompiledInlineCache.hpp"
 

@@ -8,9 +8,9 @@
 
 
 #include "vm/memory/allocation.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/recompiler/RecompilerFrame.hpp"
-#include "vm/oops/BlockClosureOopDescriptor.hpp"
+#include "vm/oop/BlockClosureOopDescriptor.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/runtime/ResourceObject.hpp"

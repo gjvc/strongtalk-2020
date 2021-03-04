@@ -5,10 +5,10 @@
 //
 
 #include "vm/memory/Universe.hpp"
-#include "vm/primitives/SystemPrimitives.hpp"
+#include "vm/primitive/SystemPrimitives.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 #include "test/utilities/testUtils.hpp"
 

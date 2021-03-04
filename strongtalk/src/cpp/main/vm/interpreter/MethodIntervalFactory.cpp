@@ -6,7 +6,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 #include "vm/interpreter/MethodIntervalFactory.hpp"
 
 

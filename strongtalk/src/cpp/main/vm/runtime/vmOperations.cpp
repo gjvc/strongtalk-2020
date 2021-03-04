@@ -4,7 +4,7 @@
 //
 
 #include "vm/runtime/vmOperations.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/runtime/ErrorHandler.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/compiler/Compiler.hpp"

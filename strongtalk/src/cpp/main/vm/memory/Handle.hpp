@@ -6,7 +6,7 @@
 #pragma once
 
 #include "vm/memory/allocation.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/oop/OopDescriptor.hpp"
 
 // Interface for preserving memOops across scavenge/gc in primitives.
 // ex.

@@ -8,7 +8,7 @@
 
 #include "vm/system/platform.hpp"
 #include "allocation.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 
 
 #define VMSYMBOLS( s ) \

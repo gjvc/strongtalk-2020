@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/utilities/LongInteger64.hpp"
+#include "vm/utility/LongInteger64.hpp"
 #include "vm/system/ThreadCritical.hpp"
 
 

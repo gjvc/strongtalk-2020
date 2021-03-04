@@ -9,7 +9,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/os.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/interpreter/Floats.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 

@@ -6,9 +6,9 @@
 #pragma once
 
 #include "vm/memory/allocation.hpp"
-#include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/oops/SMIOopDescriptor.hpp"
-#include "vm/oops/BlockClosureOopDescriptor.hpp"
+#include "vm/oop/MemOopDescriptor.hpp"
+#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/BlockClosureOopDescriptor.hpp"
 
 // TempDecoder decodes the method annotation describing the names of parameters and temporaries.
 

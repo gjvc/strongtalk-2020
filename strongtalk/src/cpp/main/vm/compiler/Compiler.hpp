@@ -6,13 +6,13 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/compiler/PerformanceDebugger.hpp"
 #include "vm/code/JumpTable.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/compiler/CodeGenerator.hpp"
 #include "vm/runtime/ResourceObject.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 extern std::int32_t compilationCount;

@@ -7,7 +7,7 @@
 
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/runtime/Frame.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/oop/ContextOopDescriptor.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
 
 

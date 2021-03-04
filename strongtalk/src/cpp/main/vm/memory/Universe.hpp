@@ -7,7 +7,7 @@
 #pragma once
 
 #include "vm/memory/allocation.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/oop/OopDescriptor.hpp"
 #include "vm/memory/Generation.hpp"
 #include "vm/memory/NewGeneration.hpp"
 #include "vm/memory/OldGeneration.hpp"

@@ -7,7 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "allocation.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 
 
 // MarkSweep takes care of garbage collection

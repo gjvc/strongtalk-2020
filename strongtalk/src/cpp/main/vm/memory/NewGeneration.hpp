@@ -8,7 +8,7 @@
 
 #include "vm/memory/Generation.hpp"
 #include "vm/memory/Space.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/oop/OopDescriptor.hpp"
 #include "vm/memory/WaterMark.hpp"
 
 class NewGeneration : public Generation {

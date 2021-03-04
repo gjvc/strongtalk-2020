@@ -7,7 +7,7 @@
 
 #include "vm/interpreter/Floats.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/runtime/flags.hpp"
 

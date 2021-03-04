@@ -9,7 +9,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/system/platform.hpp"
 #include "vm/code/Locations.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 #include "vm/assembler/Location.hpp"
 #include "vm/runtime/ResourceObject.hpp"

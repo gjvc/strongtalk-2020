@@ -5,11 +5,11 @@
 
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/oops/MixinOopDescriptor.hpp"
+#include "vm/oop/MixinOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 #include <gtest/gtest.h>
 

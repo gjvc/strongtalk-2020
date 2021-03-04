@@ -8,8 +8,8 @@
 #include "vm/system/dll.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
 #include "vm/interpreter/Interpreter.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/AssociationOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/AssociationOopDescriptor.hpp"
 
 
 bool Interpreted_DLLCache::async() const {

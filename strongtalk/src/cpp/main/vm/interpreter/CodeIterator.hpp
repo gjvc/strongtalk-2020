@@ -9,7 +9,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/system/platform.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 
 
 class InterpretedPrimitiveCache;

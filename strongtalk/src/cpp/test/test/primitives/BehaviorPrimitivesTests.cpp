@@ -5,8 +5,8 @@
 //
 
 #include "vm/memory/Universe.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/primitives/BehaviorPrimitives.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/primitive/BehaviorPrimitives.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "test/memory/EdenMark.hpp"

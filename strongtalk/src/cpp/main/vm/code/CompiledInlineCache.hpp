@@ -7,7 +7,7 @@
 
 #include "vm/code/NativeInstruction.hpp"
 #include "vm/runtime/Frame.hpp"
-#include "vm/primitives/PrimitiveDescriptor.hpp"
+#include "vm/primitive/PrimitiveDescriptor.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
 #include "vm/runtime/VMProcess.hpp"
 

@@ -7,7 +7,7 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/oops/SMIOopDescriptor.hpp"
+#include "vm/oop/SMIOopDescriptor.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/platform.hpp"
 #include "vm/assembler/MacroAssembler.hpp"

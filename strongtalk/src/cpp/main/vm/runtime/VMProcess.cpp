@@ -6,9 +6,9 @@
 
 #include "vm/runtime/VMProcess.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
-#include "vm/oops/ProcessOopDescriptor.hpp"
-#include "vm/oops/AssociationOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/ProcessOopDescriptor.hpp"
+#include "vm/oop/AssociationOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/Sweeper.hpp"
 #include "vm/memory/OopFactory.hpp"

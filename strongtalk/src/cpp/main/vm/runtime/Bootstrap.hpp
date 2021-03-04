@@ -7,7 +7,7 @@
 #pragma once
 
 #include "vm/memory/allocation.hpp"
-#include "vm/oops/MarkOopDescriptor.hpp"
+#include "vm/oop/MarkOopDescriptor.hpp"
 
 #include <array>
 #include <fstream>

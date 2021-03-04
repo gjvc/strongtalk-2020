@@ -8,7 +8,7 @@
 
 #include "vm/assembler/Location.hpp"
 #include "vm/assembler/x86_mapping.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 
 
 // special locations

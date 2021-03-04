@@ -5,7 +5,7 @@
 //
 
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/code/LogicalAddress.hpp"
 #include "vm/code/ScopeDescriptorNode.hpp"
 #include "vm/memory/Array.hpp"

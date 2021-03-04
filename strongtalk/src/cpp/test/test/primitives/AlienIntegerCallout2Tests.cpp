@@ -9,9 +9,9 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/utilities/Integer.hpp"
-#include "vm/utilities/IntegerOps.hpp"
-#include "vm/primitives/ByteArrayPrimitives.hpp"
+#include "vm/utility/Integer.hpp"
+#include "vm/utility/IntegerOps.hpp"
+#include "vm/primitive/ByteArrayPrimitives.hpp"
 #include "vm/compiler/Node.hpp"
 
 #include <gtest/gtest.h>

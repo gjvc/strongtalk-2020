@@ -6,11 +6,11 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/system/dll.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/runtime/Delta.hpp"
-#include "vm/oops/ProxyOopDescriptor.hpp"
+#include "vm/oop/ProxyOopDescriptor.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
 
 

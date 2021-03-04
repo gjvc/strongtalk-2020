@@ -6,12 +6,12 @@
 
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/oops/DoubleOopDescriptor.hpp"
-#include "vm/utilities/IntegerOps.hpp"
-#include "vm/primitives/ByteArrayPrimitives.hpp"
+#include "vm/oop/DoubleOopDescriptor.hpp"
+#include "vm/utility/IntegerOps.hpp"
+#include "vm/primitive/ByteArrayPrimitives.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 #include <gtest/gtest.h>
 

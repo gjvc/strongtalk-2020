@@ -5,9 +5,9 @@
 //
 
 #include "vm/lookup/LookupKey.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/utilities/StringOutputStream.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/utility/StringOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 std::int32_t LookupKey::hash() const {

@@ -7,8 +7,8 @@
 #include "vm/memory/ClassChange.hpp"
 #include "vm/memory/Converter.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/oops/MixinOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/MixinOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 
 void ClassChange::recustomize_methods() {

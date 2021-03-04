@@ -9,7 +9,7 @@
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/lookup/LookupResult.hpp"
 #include "vm/lookup/LookupCache.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/runtime/DeltaCallCache.hpp"
 
 

@@ -13,7 +13,7 @@
 #include "vm/code/Zone.hpp"
 #include "vm/runtime/Timer.hpp"
 #include "vm/lookup/LookupCache.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/Processes.hpp"
 

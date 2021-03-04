@@ -5,7 +5,7 @@
 
 #include "vm/system/asserts.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/utilities/DebugNotifier.hpp"
+#include "vm/utility/DebugNotifier.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 

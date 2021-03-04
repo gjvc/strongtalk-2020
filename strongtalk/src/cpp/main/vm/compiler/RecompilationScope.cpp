@@ -9,7 +9,7 @@
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/interpreter/Floats.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
@@ -20,7 +20,7 @@
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 RecompilationScope::RecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex ) :

@@ -8,10 +8,10 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/code/NameDescriptor.hpp"
-#include "vm/oops/SMIOopDescriptor.hpp"
+#include "vm/oop/SMIOopDescriptor.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/runtime/ResourceObject.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 constexpr std::int16_t IllegalByteCodeIndex  = -1;       //

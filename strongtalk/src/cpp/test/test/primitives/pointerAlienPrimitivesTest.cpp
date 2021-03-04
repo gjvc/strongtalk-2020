@@ -4,13 +4,13 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/oops/DoubleOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/DoubleOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/primitives/ByteArrayPrimitives.hpp"
-#include "vm/utilities/Integer.hpp"
-#include "vm/utilities/IntegerOps.hpp"
+#include "vm/primitive/ByteArrayPrimitives.hpp"
+#include "vm/utility/Integer.hpp"
+#include "vm/utility/IntegerOps.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 #include <gtest/gtest.h>

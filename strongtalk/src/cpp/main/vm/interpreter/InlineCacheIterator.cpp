@@ -5,11 +5,11 @@
 
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/code/PolymorphicInlineCache.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/oops/Klass.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/utility/OutputStream.hpp"
+#include "vm/klass/Klass.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 
 InlineCache::InlineCache( CompiledInlineCache *ic ) :

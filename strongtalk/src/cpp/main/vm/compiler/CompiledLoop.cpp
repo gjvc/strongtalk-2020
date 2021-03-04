@@ -9,8 +9,8 @@
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 GrowableArray<BasicBlock *> *CompiledLoop::_bbs;

@@ -4,7 +4,7 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/utilities/LongInteger64.hpp"
+#include "vm/utility/LongInteger64.hpp"
 
 #include <gtest/gtest.h>
 

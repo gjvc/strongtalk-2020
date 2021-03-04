@@ -5,13 +5,13 @@
 
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/utility/OutputStream.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/code/RelocationInformation.hpp"
 #include "vm/assembler/CodeBuffer.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 #include "vm/code/NativeMethod.hpp"
-#include "vm/utilities/disassembler.hpp"
+#include "vm/utility/disassembler.hpp"
 
 
 MacroAssembler *theMacroAssembler = nullptr;

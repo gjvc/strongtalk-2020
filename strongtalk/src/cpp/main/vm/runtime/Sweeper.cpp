@@ -7,10 +7,10 @@
 #include "vm/runtime/Timer.hpp"
 #include "vm/runtime/PeriodicTask.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/MixinOopDescriptor.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/MixinOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 

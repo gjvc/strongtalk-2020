@@ -8,8 +8,8 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/Timer.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 #include "vm/code/NativeMethod.hpp"
 
 

@@ -5,7 +5,7 @@
 
 #include "vm/runtime/SavedRegisters.hpp"
 #include "vm/runtime/Process.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 
 
 // Need to be static so they can be accessed in assembly code

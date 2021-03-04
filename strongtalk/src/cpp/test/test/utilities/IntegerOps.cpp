@@ -5,9 +5,9 @@
 //
 
 #include "vm/system/macros.hpp"
-#include "vm/utilities/Integer.hpp"
-#include "vm/utilities/IntegerOps.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/Integer.hpp"
+#include "vm/utility/IntegerOps.hpp"
+#include "vm/utility/OutputStream.hpp"
 
 #include <gtest/gtest.h>
 

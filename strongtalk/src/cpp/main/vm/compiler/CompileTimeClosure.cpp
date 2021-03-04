@@ -4,7 +4,7 @@
 //
 
 #include "vm/compiler/CompileTimeClosure.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 #include "vm/compiler/Compiler.hpp"
 
 

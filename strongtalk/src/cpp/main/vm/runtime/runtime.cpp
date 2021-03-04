@@ -4,7 +4,7 @@
 //
 
 #include "vm/system/asserts.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/oop/OopDescriptor.hpp"
 
 
 char *byte_map_base;

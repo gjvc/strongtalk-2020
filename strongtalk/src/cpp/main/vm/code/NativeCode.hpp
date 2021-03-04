@@ -6,7 +6,7 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/memory/Universe.hpp"
 
 

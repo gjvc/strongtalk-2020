@@ -5,8 +5,8 @@
 
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/oops/DoubleKlass.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/klass/DoubleKlass.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 
 #include <gtest/gtest.h>

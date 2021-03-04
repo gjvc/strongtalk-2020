@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/compiler/InliningPolicy.hpp"
 #include "vm/compiler/Compiler.hpp"

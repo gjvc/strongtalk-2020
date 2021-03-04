@@ -10,7 +10,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/MethodClosure.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 
 
 class Node;

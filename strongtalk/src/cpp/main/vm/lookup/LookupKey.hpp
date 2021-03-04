@@ -6,8 +6,8 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 // LookupKeys are the keys into the code table.

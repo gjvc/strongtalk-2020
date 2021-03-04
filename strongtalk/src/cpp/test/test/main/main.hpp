@@ -6,7 +6,7 @@
 #pragma once
 
 #include "vm/runtime/Delta.hpp"
-#include "vm/oops/ProcessOopDescriptor.hpp"
+#include "vm/oop/ProcessOopDescriptor.hpp"
 #include "test/main/TestDeltaProcess.hpp"
 #include "vm/memory/OopFactory.hpp"
 

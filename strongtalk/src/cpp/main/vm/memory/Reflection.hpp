@@ -7,9 +7,9 @@
 
 #include "vm/system/platform.hpp"
 #include "allocation.hpp"
-#include "vm/oops/MixinOopDescriptor.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/oop/MixinOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/memory/ClassChange.hpp"
 
 class memConverter;

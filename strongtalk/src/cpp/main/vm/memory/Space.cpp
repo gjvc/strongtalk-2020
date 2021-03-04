@@ -6,7 +6,7 @@
 
 #include "vm/memory/Space.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/oops/MemOopDescriptor.hpp"
+#include "vm/oop/MemOopDescriptor.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/runtime/flags.hpp"

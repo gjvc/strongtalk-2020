@@ -6,9 +6,9 @@
 #include "vm/memory/OopFactory.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/primitives/primitives.hpp"
-#include "vm/utilities/Integer.hpp"
-#include "vm/utilities/IntegerOps.hpp"
+#include "vm/primitive/primitives.hpp"
+#include "vm/utility/Integer.hpp"
+#include "vm/utility/IntegerOps.hpp"
 
 #include <gtest/gtest.h>
 

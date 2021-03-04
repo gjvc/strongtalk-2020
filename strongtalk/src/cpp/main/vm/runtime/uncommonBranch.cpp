@@ -12,7 +12,7 @@
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/code/NativeMethod.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/recompiler/RecompilationPolicy.hpp"
 #include "vm/runtime/uncommonBranch.hpp"

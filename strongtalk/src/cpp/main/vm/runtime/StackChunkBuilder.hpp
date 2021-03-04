@@ -7,8 +7,8 @@
 
 
 #include "vm/memory/allocation.hpp"
-#include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/oop/MemOopDescriptor.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
 

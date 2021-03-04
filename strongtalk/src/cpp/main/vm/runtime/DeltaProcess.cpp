@@ -9,8 +9,8 @@
 #include "vm/system/os.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/ContextOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
@@ -22,9 +22,9 @@
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/Delta.hpp"
-#include "vm/oops/ProcessOopDescriptor.hpp"
+#include "vm/oop/ProcessOopDescriptor.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/primitives/primitives.hpp"
+#include "vm/primitive/primitives.hpp"
 
 
 // The tricky part is to restore the original return address of the primitive before the delta call.

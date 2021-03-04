@@ -5,8 +5,8 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/utilities/Integer.hpp"
-#include "vm/utilities/IntegerOps.hpp"
+#include "vm/utility/Integer.hpp"
+#include "vm/utility/IntegerOps.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 

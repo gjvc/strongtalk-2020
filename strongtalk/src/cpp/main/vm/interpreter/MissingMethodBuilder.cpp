@@ -8,13 +8,13 @@
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/oops/AssociationOopDescriptor.hpp"
+#include "vm/oop/AssociationOopDescriptor.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/MissingMethodBuilder.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/oops/MethodKlass.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
+#include "vm/klass/MethodKlass.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
 
 

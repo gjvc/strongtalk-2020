@@ -8,7 +8,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 
 
 

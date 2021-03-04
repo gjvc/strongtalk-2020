@@ -8,7 +8,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
 #include "vm/interpreter/MethodNode.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 

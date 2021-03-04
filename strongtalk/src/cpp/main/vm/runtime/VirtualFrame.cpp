@@ -5,19 +5,19 @@
 
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
-#include "vm/oops/BlockClosureOopDescriptor.hpp"
+#include "vm/oop/BlockClosureOopDescriptor.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/SavedRegisters.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
-#include "vm/oops/BlockClosureKlass.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/klass/BlockClosureKlass.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/oops/ContextKlass.hpp"
-#include "vm/utilities/StringOutputStream.hpp"
+#include "vm/klass/ContextKlass.hpp"
+#include "vm/utility/StringOutputStream.hpp"
 
 // Ideas:
 //   Maybe cache methodOop in DeltaVirtualFrame for faster argument access. (Lars 8/10/95)

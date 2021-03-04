@@ -8,7 +8,7 @@
 #include "vm/lookup/CacheElement.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/lookup/LookupKey.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
 #include "vm/code/InliningDatabase.hpp"

@@ -9,7 +9,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/VirtualSpace.hpp"
 #include "vm/runtime/ReservedSpace.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/oop/OopDescriptor.hpp"
 
 
 // A generation is a bunch of spaces of similarly-aged objects

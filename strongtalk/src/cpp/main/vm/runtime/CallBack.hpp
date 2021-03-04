@@ -6,7 +6,7 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 
 
 class CallBack : AllStatic {

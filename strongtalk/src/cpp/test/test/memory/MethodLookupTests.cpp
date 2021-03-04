@@ -5,8 +5,8 @@
 
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/memory/Scavenge.hpp"
 

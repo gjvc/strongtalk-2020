@@ -5,8 +5,8 @@
 
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/MixinOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/MixinOopDescriptor.hpp"
 
 
 #include <gtest/gtest.h>

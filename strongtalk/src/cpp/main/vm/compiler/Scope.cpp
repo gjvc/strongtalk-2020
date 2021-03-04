@@ -9,7 +9,7 @@
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/compiler/CompiledLoop.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/assembler/x86_mapping.hpp"
 #include "vm/compiler/NodeFactory.hpp"
 

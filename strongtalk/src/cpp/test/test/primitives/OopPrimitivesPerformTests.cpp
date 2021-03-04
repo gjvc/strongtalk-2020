@@ -7,10 +7,10 @@
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/primitives/OopPrimitives.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/primitive/OopPrimitives.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/OopDescriptor.hpp"
 
 #include <gtest/gtest.h>
 

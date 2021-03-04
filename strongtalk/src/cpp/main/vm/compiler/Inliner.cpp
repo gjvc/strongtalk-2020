@@ -9,9 +9,9 @@
 #include "vm/compiler/Inliner.hpp"
 #include "vm/compiler/Scope.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/compiler/NodeFactory.hpp"
 

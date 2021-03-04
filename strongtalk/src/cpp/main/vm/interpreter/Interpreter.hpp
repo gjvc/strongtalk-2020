@@ -9,7 +9,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/system/platform.hpp"
 #include "vm/assembler/Label.hpp"
-#include "vm/oops/DoubleOopDescriptor.hpp"
+#include "vm/oop/DoubleOopDescriptor.hpp"
 
 
 class Interpreter : AllStatic {

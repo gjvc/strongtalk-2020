@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/assembler/Location.hpp"
 #include "vm/code/NameNode.hpp"
 #include "vm/code/ScopeDescriptor.hpp"

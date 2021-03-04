@@ -8,7 +8,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/code/CompiledInlineCache.hpp"
@@ -19,7 +19,7 @@
 #include "vm/code/ScopeDescriptor.hpp"
 #include "vm/code/ScopeDescriptorRecorder.hpp"
 #include "vm/code/NativeMethodScopes.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 char *ScopeDescriptor::invalid_pc = (char *) -1;

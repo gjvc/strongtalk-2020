@@ -8,7 +8,7 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/ResourceArea.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 

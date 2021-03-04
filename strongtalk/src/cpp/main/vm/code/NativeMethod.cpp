@@ -11,16 +11,16 @@
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/utilities/disassembler.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/primitives/primitives.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/utility/disassembler.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/primitive/primitives.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 void NativeMethodFlags::clear() {

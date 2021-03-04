@@ -11,8 +11,8 @@
 #include "vm/interpreter/Interpreter.hpp"
 #include "vm/recompiler/RecompilationPolicy.hpp"
 #include "vm/code/InliningDatabase.hpp"
-#include "vm/utilities/disassembler.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/disassembler.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/compiler/oldCodeGenerator.hpp"
 #include "vm/assembler/x86_mapping.hpp"
 #include "vm/runtime/Timer.hpp"
@@ -20,8 +20,8 @@
 #include "vm/compiler/RegisterAllocator.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/compiler/NodeFactory.hpp"
-#include "vm/utilities/StringOutputStream.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/StringOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
 
 

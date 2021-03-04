@@ -5,7 +5,7 @@
 
 #include "vm/runtime/Timer.hpp"
 #include "vm/system/os.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 
 
 void Timer::start() {

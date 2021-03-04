@@ -9,8 +9,8 @@
 #include "vm/code/StubRoutines.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
 

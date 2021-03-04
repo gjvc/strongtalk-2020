@@ -7,7 +7,7 @@
 
 #include "vm/system/os.hpp"
 #include "vm/code/NativeInstruction.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 
 // Support routines for Dynamic Link Libraries (DLLs)
 

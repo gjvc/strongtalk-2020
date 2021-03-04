@@ -8,11 +8,11 @@
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/utilities/IntegerOps.hpp"
-#include "vm/primitives/ByteArrayPrimitives.hpp"
+#include "vm/utility/IntegerOps.hpp"
+#include "vm/primitive/ByteArrayPrimitives.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 #include <gtest/gtest.h>

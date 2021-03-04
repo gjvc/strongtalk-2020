@@ -26,8 +26,8 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/platform.hpp"
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/OutputStream.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/code/MapConformance.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 

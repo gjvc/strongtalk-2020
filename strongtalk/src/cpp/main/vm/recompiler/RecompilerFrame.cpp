@@ -8,7 +8,7 @@
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/interpreter/MethodIterator.hpp"

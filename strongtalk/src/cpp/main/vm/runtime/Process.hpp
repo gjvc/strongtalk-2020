@@ -9,7 +9,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/DebugInfo.hpp"
 #include "vm/runtime/UnwindInfo.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 

@@ -10,9 +10,9 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/os.hpp"
-#include "vm/utilities/EventLog.hpp"
+#include "vm/utility/EventLog.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 
 #include <vector>
 #include <windows.h>

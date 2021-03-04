@@ -9,7 +9,7 @@
 #include "vm/memory/util.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/NodeFactory.hpp"
-#include "vm/primitives/PrimitiveDescriptor.hpp"
+#include "vm/primitive/PrimitiveDescriptor.hpp"
 #include "vm/assembler/x86_mapping.hpp"
 
 

@@ -4,14 +4,14 @@
 //
 
 #include "vm/runtime/StackChunkBuilder.hpp"
-#include "vm/utilities/GrowableArray.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/oops/SMIOopDescriptor.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/utility/GrowableArray.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
+#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/oop/ContextOopDescriptor.hpp"
 
 
 GrowableArray<const CompiledVirtualFrame *> *frames;

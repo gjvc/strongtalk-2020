@@ -8,7 +8,7 @@
 #include "vm/runtime/DeltaProcess.hpp"
 #include "vm/runtime/VMProcess.hpp"
 #include "vm/runtime/Processes.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 
 
 PersistentHandle *PersistentHandle::_first{ nullptr };

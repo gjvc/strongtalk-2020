@@ -4,10 +4,10 @@
 //
 
 #include "vm/memory/Universe.hpp"
-#include "vm/oops/AssociationKlass.hpp"
+#include "vm/klass/AssociationKlass.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 
 #include <gtest/gtest.h>

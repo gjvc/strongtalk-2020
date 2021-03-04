@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "vm/utilities/GrowableArray.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/utility/GrowableArray.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/code/LogicalAddress.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/code/ScopeDescriptorRecorder.hpp"

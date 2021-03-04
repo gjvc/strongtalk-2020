@@ -7,9 +7,9 @@
 #pragma once
 
 #include "vm/memory/allocation.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utility/OutputStream.hpp"
 #include "vm/memory/Closure.hpp"
-#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/utility/ConsoleOutputStream.hpp"
 
 
 // A Frame represents a physical stack frame (an activation).  Frames can be

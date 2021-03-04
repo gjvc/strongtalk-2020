@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/assembler/Displacement.hpp"
 #include "vm/memory/Array.hpp"
@@ -11,7 +11,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/primitives/ObjectArrayPrimitives.hpp"
+#include "vm/primitive/ObjectArrayPrimitives.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/OopFactory.hpp"

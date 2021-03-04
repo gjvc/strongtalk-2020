@@ -5,12 +5,12 @@
 
 #include "vm/compiler/PerformanceDebugger.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/utilities/GrowableArray.hpp"
+#include "vm/utility/GrowableArray.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/primitives/primitives.hpp"
+#include "vm/utility/OutputStream.hpp"
+#include "vm/primitive/primitives.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/utilities/StringOutputStream.hpp"
+#include "vm/utility/StringOutputStream.hpp"
 
 
 PerformanceDebugger::PerformanceDebugger( Compiler *c ) :

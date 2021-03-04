@@ -6,10 +6,10 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
-#include "vm/oops/Klass.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/oops/ByteArrayOopDescriptor.hpp"
+#include "vm/klass/Klass.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
+#include "vm/oop/MethodOopDescriptor.hpp"
+#include "vm/oop/ByteArrayOopDescriptor.hpp"
 #include "vm/runtime/TempDecoder.hpp"
 
 

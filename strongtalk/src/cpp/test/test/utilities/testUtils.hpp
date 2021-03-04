@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/primitives/ByteArrayPrimitives.hpp"
+#include "vm/primitive/ByteArrayPrimitives.hpp"
 
 
 #define as_large_integer( value ) \

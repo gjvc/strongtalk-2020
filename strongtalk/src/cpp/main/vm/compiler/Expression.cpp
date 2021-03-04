@@ -9,8 +9,8 @@
 #include "vm/compiler/Scope.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/oops/BlockClosureKlass.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/klass/BlockClosureKlass.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 
 
 const std::int32_t UnknownExpression::UnlikelyBit        = 1;
