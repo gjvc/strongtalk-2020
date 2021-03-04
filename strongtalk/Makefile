@@ -70,7 +70,7 @@ runtime             := posix
 toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
 toolchain-name-deb  := $(compiler-family)/$(machine)-$(platform)/$(compiler-version)-$(runtime) # following /usr/lib/gcc/i686-w64-mingw32/10-posix/
 
-cc-compiler         := /usr/bin/$(machine)-$(platform)-gcc-$(runtime)
+c-compiler          := /usr/bin/$(machine)-$(platform)-gcc-$(runtime)
 cxx-compiler        := /usr/bin/$(machine)-$(platform)-g++-$(runtime)
 
 ar   		        := /usr/bin/$(machine)-$(platform)-gcc-ar-$(runtime)
@@ -88,7 +88,7 @@ compiler-version    := 11
 runtime             := posix
 toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
 
-cc-compiler         := /usr/bin/clang-$(compiler-version)
+c-compiler          := /usr/bin/clang-$(compiler-version)
 cxx-compiler        := /usr/bin/clang++-$(compiler-version)
 
 ar                  := /usr/bin/$(compiler-family)-ar-$(compiler-version)
@@ -101,7 +101,7 @@ run-clang-tidy-py   := /usr/lib/llvm-11/share/clang/run-clang-tidy.py
 
 # common ----------------------------------------------------------------------
 
-export CC=$(ccache) $(cc-compiler)
+export CC=$(ccache) $(c-compiler)
 export CXX=$(ccache) $(cxx-compiler)
 
 
@@ -139,6 +139,16 @@ external-package-path               := ext
 external-package-root               := $(ROOT)/ext
 external-package-object-root        := $(ROOT)/obj/$(toolchain-name)/gnu-make/$(build-type)/ext
 external-package-object-root-cmake  := $(ROOT)/obj/$(toolchain-name)/cmake/$(build-type)/ext
+
+
+# absl -------------------------------------------------------------------------
+
+absl-git-url        := https://github.com/abseil/abseil-cpp
+absl-root-dir       := $(external-package-root)/absl
+absl-include-paths  := $(absl-root-dir)/include
+absl-object-dir     := $(external-package-object-root-cmake)/absl
+libabsl-a           := $(absl-object-dir)/lib/libabsl.a
+libabsl-a-flags     := -L $(absl-object-dir)/lib -l absl
 
 
 # fmt -------------------------------------------------------------------------
@@ -248,11 +258,11 @@ libgcc-link-flags := \
 
 # st20-main-lib -----------------------------------------------------------------
 
-st20-main-lib               := $(object-root)/st20-main-lib.a
-st20-main-lib-sources       := $(wildcard src/cpp/auto/vm/*/*.cpp src/cpp/main/vm/*/*.cpp src/cpp/main/vm/*/*/*.cpp)
-st20-main-lib-sources       := $(filter-out src/cpp/main/vm/main/%.cpp,$(st20-main-lib-sources))
-st20-main-lib-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-lib-sources))
-st20-main-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-main-lib-sources))
+st20-main-lib      		:= $(object-root)/st20-main-lib.a
+st20-main-lib-sources   := $(wildcard src/cpp/auto/vm/*/*.cpp src/cpp/main/vm/*/*.cpp src/cpp/main/vm/*/*/*.cpp)
+st20-main-lib-sources   := $(filter-out src/cpp/main/vm/main/%.cpp,$(st20-main-lib-sources))
+st20-main-lib-objects   := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-lib-sources))
+st20-main-lib-depends   := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-main-lib-sources))
 
 st20-main-lib-cxx-include-paths-external := $(nasm-include-paths) $(fmt-include-paths) $(spdlog-include-paths)
 st20-main-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-main-lib-cxx-include-paths-external))
@@ -266,10 +276,10 @@ st20-main-lib-define-flags  := $(addprefix -D ,$(st20-main-lib-define-values))
 
 # st20-main-exe -----------------------------------------------------------------
 
-st20-main-exe               := $(object-root)/st20-main.exe
-st20-main-exe-sources       := $(wildcard src/cpp/main/vm/main/*.cpp)
-st20-main-exe-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-exe-sources))
-st20-main-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-main-exe-sources))
+st20-main-exe       	:= $(object-root)/st20-main.exe
+st20-main-exe-sources   := $(wildcard src/cpp/main/vm/main/*.cpp)
+st20-main-exe-objects   := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-exe-sources))
+st20-main-exe-depends   := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-main-exe-sources))
 
 st20-main-lib-define-values := GIT_CURRENT_REVISION=$(GIT_CURRENT_REVISION) GIT_CURRENT_BRANCH=$(GIT_CURRENT_BRANCH)
 st20-main-lib-define-flags  := $(addprefix -D ,$(st20-main-lib-define-values))
@@ -277,16 +287,16 @@ st20-main-lib-define-flags  := $(addprefix -D ,$(st20-main-lib-define-values))
 
 # st20-test-exe -----------------------------------------------------------------
 
-st20-test-lib               := $(object-root)/st20-test-lib.a
-st20-test-lib-sources       := $(wildcard src/cpp/test/test/*/*.cpp)
-st20-test-lib-sources       := $(filter-out src/cpp/test/test/main/%.cpp,$(st20-test-lib-sources))
-st20-test-lib-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-lib-sources))
-st20-test-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-test-lib-sources))
+st20-test-lib           := $(object-root)/st20-test-lib.a
+st20-test-lib-sources   := $(wildcard src/cpp/test/test/*/*.cpp)
+st20-test-lib-sources   := $(filter-out src/cpp/test/test/main/%.cpp,$(st20-test-lib-sources))
+st20-test-lib-objects   := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-lib-sources))
+st20-test-lib-depends   := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-test-lib-sources))
 
-st20-test-exe               := $(object-root)/st20-test.exe
-st20-test-exe-sources       := $(wildcard src/cpp/test/test/main/*.cpp)
-st20-test-exe-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-exe-sources))
-st20-test-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-test-exe-sources))
+st20-test-exe           := $(object-root)/st20-test.exe
+st20-test-exe-sources   := $(wildcard src/cpp/test/test/main/*.cpp)
+st20-test-exe-objects   := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-exe-sources))
+st20-test-exe-depends   := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-test-exe-sources))
 
 st20-test-lib-cxx-include-paths-external := $(googletest-include-paths) $(fmt-include-paths) $(spdlog-include-paths)
 st20-test-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-test-lib-cxx-include-paths-external))
@@ -294,8 +304,8 @@ st20-test-lib-cxx-include-paths-internal := src/cpp/auto src/cpp/main src/cpp/te
 st20-test-lib-cxx-include-flags-internal := $(addprefix -I ,$(st20-test-lib-cxx-include-paths-internal))
 st20-test-lib-cxx-include-flags          := $(st20-test-lib-cxx-include-flags-external) $(st20-test-lib-cxx-include-flags-internal)
 
-st20-test-define-values     := 
-st20-test-define-flags      := $(addprefix -D ,$(st20-test-define-values))
+st20-test-define-values :=
+st20-test-define-flags  := $(addprefix -D ,$(st20-test-define-values))
 
 
 
@@ -312,7 +322,7 @@ default : st20-main-exe st20-test-exe
 cmake-build : 
 	$(cmake) \
         -G $(cmake-generator-name) \
-        -D CMAKE_C_COMPILER=$(cc-compiler) \
+        -D CMAKE_C_COMPILER=$(c-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
         -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
         -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
@@ -385,7 +395,7 @@ help :
 settings :
 	@echo ""
 	@echo "ar                      $(ar)"
-	@echo "cc-compiler             $(cc-compiler)"
+	@echo "c-compiler              $(c-compiler)"
 	@echo "cmake                   $(cmake)"
 	@echo "cmake-generator-name    $(cmake-generator-name)"
 	@echo "cmake-system-name       $(cmake-system-name)"
@@ -403,8 +413,8 @@ settings :
 # environment -----------------------------------------------------------------
 
 wine-init :
-	-$(wine-wineserver) --kill=9
-	-rm -rf ~/.wine/
+	-@$(wine-wineserver) --kill=9 || true
+	-@rm -rf ~/.wine/ &>/dev/null || true
 	$(wine-winetricks) $(wine-windows-version)
 
 
@@ -443,15 +453,15 @@ GPATH GRTAGS GTAGS : $(st20-main-lib-sources) $(st20-test-lib-sources)
 # clean -----------------------------------------------------------------------
 
 clean :
-	-@rm $(st20-main-lib-objects)
-	-@rm $(st20-main-lib-depends)
-	-@rm $(st20-main-exe-objects)
-	-@rm $(st20-main-exe-depends)
-	-@rm $(st20-main-exe)
-	-@rm $(st20-test-lib-depends)
-	-@rm $(st20-test-exe-objects)
-	-@rm $(st20-test-exe-depends)
-	-@rm $(st20-test-exe)
+	-@rm $(st20-main-lib-objects) &>/dev/null || true
+	-@rm $(st20-main-lib-depends) &>/dev/null || true
+	-@rm $(st20-main-exe-objects) &>/dev/null || true
+	-@rm $(st20-main-exe-depends) &>/dev/null || true
+	-@rm $(st20-main-exe)         &>/dev/null || true
+	-@rm $(st20-test-lib-depends) &>/dev/null || true
+	-@rm $(st20-test-exe-objects) &>/dev/null || true
+	-@rm $(st20-test-exe-depends) &>/dev/null || true
+	-@rm $(st20-test-exe)         &>/dev/null || true
 
 .PHONY : clean
 
@@ -543,7 +553,25 @@ $(CCACHE_DIR) :
 	-@mkdir -p $(CCACHE_DIR)
 
 
-ext : fmt googletest spdlog nasm
+ext : absl fmt googletest spdlog nasm
+
+
+# absl -------------------------------------------------------------------------
+
+$(absl-root-dir) :
+	git clone $(absl-git-url) $(absl-root-dir)
+
+absl : $(absl-root-dir)
+	$(cmake) \
+        -G $(cmake-generator-name) \
+        -D CMAKE_C_COMPILER=$(c-compiler) \
+        -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
+        -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+        -S $(absl-root-dir) \
+        -B $(absl-object-dir)
+	$(ninja) -C $(absl-object-dir)
 
 
 # fmt -------------------------------------------------------------------------
@@ -554,7 +582,7 @@ $(fmt-root-dir) :
 fmt : $(fmt-root-dir)
 	$(cmake) \
         -G $(cmake-generator-name) \
-        -D CMAKE_C_COMPILER=$(cc-compiler) \
+        -D CMAKE_C_COMPILER=$(c-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
         -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
         -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
@@ -572,7 +600,7 @@ $(spdlog-root-dir) :
 spdlog : $(spdlog-root-dir)
 	$(cmake) \
         -G $(cmake-generator-name) \
-        -D CMAKE_C_COMPILER=$(cc-compiler) \
+        -D CMAKE_C_COMPILER=$(c-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
         -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
         -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
@@ -590,7 +618,7 @@ $(googletest-root-dir) :
 googletest : $(googletest-root-dir)
 	$(cmake) \
         -G $(cmake-generator-name) \
-        -D CMAKE_C_COMPILER=$(cc-compiler) \
+        -D CMAKE_C_COMPILER=$(c-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
         -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
         -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \

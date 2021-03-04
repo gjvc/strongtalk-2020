@@ -4,10 +4,39 @@
 ####  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 ####
 
+# announce  -------------------------------------------------------------------
+
+message ( STATUS "" )
+message ( STATUS "-----------------------------------------------------------------------------" )
+message ( STATUS ">>> strongtalk-2020" )
+message ( STATUS ">>> [${CMAKE_CURRENT_LIST_FILE}]" )
+message ( STATUS "-----------------------------------------------------------------------------" )
+message ( STATUS "" )
+
 
 # cmake -----------------------------------------------------------------------
 
 cmake_minimum_required ( VERSION 3.0 )
+
+
+# toolchain -------------------------------------------------------------------
+
+set ( build-type debug )
+
+
+# toolchain -------------------------------------------------------------------
+
+set ( arch i686 )
+set ( compiler-family gcc )
+set ( compiler-version 10 )
+set ( platform w64-mingw32 )
+set ( runtime posix )
+
+
+# toolchain -------------------------------------------------------------------
+
+set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime} )
+set ( object-path ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type} )
 
 
 # ccache ----------------------------------------------------------------------
@@ -17,40 +46,42 @@ if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
     set ( CMAKE_C_COMPILER_LAUNCHER CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/.ccache /usr/bin/ccache )
     set ( CMAKE_CXX_COMPILER_LAUNCHER CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/.ccache /usr/bin/ccache )
 
+endif ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
+
+
+# git -------------------------------------------------------------------------
+
+if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
+
     execute_process ( COMMAND git branch --show-current WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE GIT_CURRENT_BRANCH ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE )
     execute_process ( COMMAND git rev-parse ${GIT_CURRENT_BRANCH} WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE GIT_CURRENT_REVISION ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE )
 
 endif ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
 
-# toolchain -------------------------------------------------------------------
+# compiler --------------------------------------------------------------------
 
-set ( arch i686 )
-set ( platform w64-mingw32 )
-set ( compiler-family gcc )
-set ( compiler-version 10 )
-set ( runtime posix )
-set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime} )                # example i686-w64-mingw32-gcc-posix/
-set ( toolchain-name-debian-style ${compiler-family}/${arch}-${platform}/${compiler-version}-${runtime} )   # example gcc/i686-w64-mingw32/10-posix/ following contents of Debian /usr/lib/
+if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
-set ( cc-compiler /usr/bin/${arch}-${platform}-gcc-${runtime} )     # i686-w64-mingw32-gcc-posix
-set ( cxx-compiler /usr/bin/${arch}-${platform}-g++-${runtime} )    # i686-w64-mingw32-g++-posix
+    execute_process ( COMMAND /usr/bin/lsb_release --short --id OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT OUTPUT_STRIP_TRAILING_WHITESPACE )
+    if ( "${LSB_RELEASE_ID_SHORT}" STREQUAL "Debian" )
+        set ( c-compiler /usr/bin/${arch}-${platform}-gcc-${runtime} )
+        set ( cxx-compiler /usr/bin/${arch}-${platform}-g++-${runtime} )
+    endif ( "${LSB_RELEASE_ID_SHORT}" STREQUAL "Debian" )
 
-set ( build-type debug )
+endif ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
 
 # cmake -----------------------------------------------------------------------
 
-set ( object-path ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}-${runtime-variant}/${build-type} )
 set ( CMAKE_BINARY_DIR ${object-path} )
 
 set ( CMAKE_CXX_COMPILER ${cxx-compiler} )
 set ( CMAKE_CXX_LINKER_PREFERENCE ${cxx-compiler} )
-set ( CMAKE_C_COMPILER ${cc-compiler} )
-set ( CMAKE_C_LINKER_PREFERENCE ${cc-compiler} )
+set ( CMAKE_C_COMPILER ${c-compiler} )
+set ( CMAKE_C_LINKER_PREFERENCE ${c-compiler} )
 set ( CMAKE_VERBOSE_MAKEFILE ON )
 set ( CMAKE_SYSTEM_NAME "Windows" )
-
 project ( st20 )
 
 
@@ -90,46 +121,46 @@ message ( STATUS "--------------------------------------------------------------
 message ( STATUS ">>> CMAKE_ variables" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS "" )
-message ( STATUS "CMAKE_BUILD_TYPE             [${CMAKE_BUILD_TYPE}]" )
-message ( STATUS "CMAKE_CURRENT_BINARY_DIR     [${CMAKE_CURRENT_BINARY_DIR}]" )
-message ( STATUS "CMAKE_CURRENT_SOURCE_DIR     [${CMAKE_CURRENT_SOURCE_DIR}]" )
-message ( STATUS "CMAKE_CXX_COMPILER           [${CMAKE_CXX_COMPILER}]" )
-message ( STATUS "CMAKE_CXX_COMPILER_ID        [${CMAKE_CXX_COMPILER_ID}]" )
-message ( STATUS "CMAKE_CXX_COMPILER_LAUNCHER  [${CMAKE_CXX_COMPILER_LAUNCHER}]" )
-message ( STATUS "CMAKE_CXX_STANDARD_REQUIRED  [${CMAKE_CXX_STANDARD_REQUIRED}]" )
-message ( STATUS "CMAKE_C_COMPILER             [${CMAKE_C_COMPILER}]" )
+message ( STATUS "CMAKE_BUILD_TYPE . . . . . . [${CMAKE_BUILD_TYPE}]" )
+message ( STATUS "CMAKE_CURRENT_BINARY_DIR . . [${CMAKE_CURRENT_BINARY_DIR}]" )
+message ( STATUS "CMAKE_CURRENT_SOURCE_DIR . . [${CMAKE_CURRENT_SOURCE_DIR}]" )
+message ( STATUS "CMAKE_CXX_COMPILER . . . . . [${CMAKE_CXX_COMPILER}]" )
+message ( STATUS "CMAKE_CXX_COMPILER_ID. . . . [${CMAKE_CXX_COMPILER_ID}]" )
+message ( STATUS "CMAKE_CXX_COMPILER_LAUNCHER. [${CMAKE_CXX_COMPILER_LAUNCHER}]" )
+message ( STATUS "CMAKE_CXX_STANDARD_REQUIRED. [${CMAKE_CXX_STANDARD_REQUIRED}]" )
+message ( STATUS "CMAKE_C_COMPILER. . . . . . .[${CMAKE_C_COMPILER}]" )
 message ( STATUS "CMAKE_C_COMPILER_LAUNCHER    [${CMAKE_C_COMPILER_LAUNCHER}]" )
 message ( STATUS "CMAKE_HOST_SYSTEM_NAME       [${CMAKE_HOST_SYSTEM_NAME}]" )
 message ( STATUS "CMAKE_HOST_SYSTEM_VERSION    [${CMAKE_HOST_SYSTEM_VERSION}]" )
-message ( STATUS "CMAKE_SYSTEM                 [${CMAKE_SYSTEM}]" )
+message ( STATUS "CMAKE_SYSTEM . . . . . .     [${CMAKE_SYSTEM}]" )
 message ( STATUS "CMAKE_SYSTEM_NAME            [${CMAKE_SYSTEM_NAME}]" )
 message ( STATUS "CMAKE_VERBOSE_MAKEFILE       [${CMAKE_VERBOSE_MAKEFILE}]" )
-message ( STATUS "CMAKE_VERSION                [${CMAKE_VERSION}]" )
+message ( STATUS "CMAKE_VERSION . . . . . .    [${CMAKE_VERSION}]" )
 message ( STATUS "" )
 message ( STATUS "" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS ">>> toolchain variables" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS "" )
-message ( STATUS "arch . . . . . . . . .[${arch}]" )
-message ( STATUS "platform . . . . . . .[${platform}]" )
-message ( STATUS "compiler-family. . . .[${compiler-family}]" )
-message ( STATUS "compiler-version . . .[${compiler-version}]" )
-message ( STATUS "runtime. . . . . . . .[${runtime}]" )
-message ( STATUS "toolchain-name . . . .[${toolchain-name}]" )
-message ( STATUS "" )                   
-message ( STATUS "ext-dir. . . . . . . .[${ext-dir}]" )
-message ( STATUS "cpp-auto-dir . . . . .[${cpp-auto-dir}]" )
-message ( STATUS "cpp-main-dir . . . . .[${cpp-main-dir}]" )
-message ( STATUS "cpp-test-dir . . . . .[${cpp-test-dir}]" )
+message ( STATUS "arch . . . . . . . . . [${arch}]" )
+message ( STATUS "platform . . . . . . . [${platform}]" )
+message ( STATUS "compiler-family. . . . [${compiler-family}]" )
+message ( STATUS "compiler-version . . . [${compiler-version}]" )
+message ( STATUS "runtime. . . . . . . . [${runtime}]" )
+message ( STATUS "toolchain-name . . . . [${toolchain-name}]" )
+message ( STATUS "" )                    
+message ( STATUS "ext-dir. . . . . . . . [${ext-dir}]" )
+message ( STATUS "cpp-auto-dir . . . . . [${cpp-auto-dir}]" )
+message ( STATUS "cpp-main-dir . . . . . [${cpp-main-dir}]" )
+message ( STATUS "cpp-test-dir . . . . . [${cpp-test-dir}]" )
+message ( STATUS "" )                    
+message ( STATUS "spdlog-object-dir. . . [${spdlog-object-dir}]" )
+message ( STATUS "nasm-object-dir. . . . [${nasm-object-dir}]" )
+message ( STATUS "fmt-object-dir . . . . [${fmt-object-dir}]" )
+message ( STATUS "googletest-object-dir. [${googletest-object-dir}]" )
 message ( STATUS "" )
-message ( STATUS "spdlog-object-dir. . .[${spdlog-object-dir}]" )
-message ( STATUS "nasm-object-dir. . . .[${nasm-object-dir}]" )
-message ( STATUS "fmt-object-dir . . . .[${fmt-object-dir}]" )
-message ( STATUS "googletest-object-dir [${googletest-object-dir}]" )
-message ( STATUS "" )
-message ( STATUS "GIT_CURRENT_BRANCH    [${GIT_CURRENT_BRANCH}]" )
-message ( STATUS "GIT_CURRENT_REVISION  [${GIT_CURRENT_REVISION}]" )
+message ( STATUS "GIT_CURRENT_BRANCH . . [${GIT_CURRENT_BRANCH}]" )
+message ( STATUS "GIT_CURRENT_REVISION . [${GIT_CURRENT_REVISION}]" )
 message ( STATUS "" )
 message ( STATUS "" )
 
@@ -192,3 +223,7 @@ add_executable ( st20-test-binary ${st20-test-binary-sources} )
 target_link_directories ( st20-test-binary PUBLIC ${spdlog-object-dir} )
 target_link_directories ( st20-test-binary PUBLIC ${googletest-object-dir}/lib )
 target_link_libraries ( st20-test-binary PUBLIC st20-test-library-static st20-main-library-static spdlog gtest )
+
+message ( STATUS "-----------------------------------------------------------------------------" )
+message ( STATUS ">>> complete" )
+message ( STATUS "-----------------------------------------------------------------------------" )
