@@ -22,23 +22,52 @@ readonly _PREFIX=$(dirname "${_ROOT}")
 arch="i686"
 platform="w64-mingw32"
 compiler_family="gcc"
-compiler_version="gcc"
+compiler_version="10"
 runtime="posix"
-toolchain_name="${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime}"
+toolchain_name="${arch}-${platform}-${compiler_family}-${compiler_version}-${runtime}"
 object_root=${_DIRNAME}/obj/${toolchain_name}/cmake/debug/
 
 
 # generate and build ----------------------------------------------------------
 
-rm -rf "${object_root}"
+rm -rf "${object_root}/src"
+echo
+echo
+echo "-----------------------------------------------------------------------------"
+echo ">>> ccache summary"
+echo "-----------------------------------------------------------------------------"
+CCACHE_DIR=.ccache ccache --show-stats | grep cache | sort
 
+echo
+echo
+echo "-----------------------------------------------------------------------------"
+echo ">>> cmake"
+echo "-----------------------------------------------------------------------------"
+echo
 cmake \
     -G Ninja \
     -B "${object_root}" \
     -S .
 
+
+echo
+echo
+echo "-----------------------------------------------------------------------------"
+echo ">>> ninja"
+echo "-----------------------------------------------------------------------------"
+echo
 ninja \
     -C ${object_root} \
     -k 0
 
+ls -al ${object_root}/*.{a,exe} | column -t
+
+echo
+echo
+echo "-----------------------------------------------------------------------------"
+echo ">>> ccache summary"
+echo "-----------------------------------------------------------------------------"
 CCACHE_DIR=.ccache ccache --show-stats | grep cache | sort
+
+echo
+echo
