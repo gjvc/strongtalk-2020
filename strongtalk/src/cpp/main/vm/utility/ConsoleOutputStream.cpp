@@ -12,12 +12,7 @@ ConsoleOutputStream *_console;
 
 
 void ConsoleOutputStream::basic_print( const char *str ) {
-
     SPDLOG_INFO( "{}", str );
-//    for ( std::size_t i = 0; i < strlen( str ); i++ ) {
-//        put( str[ i ] );
-//    }
-
 }
 
 

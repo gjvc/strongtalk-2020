@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
-#include "vm/klass/SMIKlass.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/klass/SmallIntegerKlass.hpp"
 
 
 // -----------------------------------------------------------------------------

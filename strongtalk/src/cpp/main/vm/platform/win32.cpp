@@ -6,10 +6,10 @@
 
 #if ( defined( __GNUC__ ) && defined( __MINGW32__ ) ) || defined( _MSC_VER )
 
-#include "vm/system/win32.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/platform/win32.hpp"
+#include "vm/platform/os.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/runtime/Process.hpp"
-#include "os.hpp"
 
 
 extern bool bootstrappingInProgress;
@@ -17,7 +17,7 @@ extern bool bootstrappingInProgress;
 
 std::int32_t WINAPI startThread( void *params ) {
 
-    SPDLOG_INFO( "Win32: startThread" );
+    SPDLOG_INFO( "win32: startThread" );
 
     char *spptr;
     asm( "mov %%esp, %0;" :"=r"(spptr) );
@@ -154,7 +154,7 @@ double os::systemTime() {
 
 
 double os::user_time_for( Thread *thread ) {
-    static_cast<void>(thread); // unused
+    st_unused( thread ); // unused
 
     FILETIME creation_time;
     FILETIME exit_time;
@@ -168,7 +168,7 @@ double os::user_time_for( Thread *thread ) {
 
 
 double os::system_time_for( Thread *thread ) {
-    static_cast<void>(thread); // unused
+    st_unused( thread ); // unused
 
     FILETIME creation_time;
     FILETIME exit_time;
@@ -209,9 +209,9 @@ static void initialize_performance_counter() {
     } else {
         has_performance_count = 0;
     }
-//    SPDLOG_INFO( "has_performance_count set to [{:d}]", has_performance_count );
-//    SPDLOG_INFO( "performance_frequency set to [{:d}]", performance_frequency );
-//    SPDLOG_INFO( "initial_performance_count set to [{:d}]", initial_performance_count );
+//    SPDLOG_INFO( "has_performance_count set to [{}]", has_performance_count );
+//    SPDLOG_INFO( "performance_frequency set to [{}]", performance_frequency );
+//    SPDLOG_INFO( "initial_performance_count set to [{}]", initial_performance_count );
 }
 
 
@@ -391,7 +391,7 @@ bool os::commit_memory( const char *addr, std::int32_t size ) {
     bool result = VirtualAlloc( const_cast<char *>( addr ), size, MEM_COMMIT, PAGE_READWRITE ) not_eq nullptr;
     if ( not result ) {
         std::int32_t error = GetLastError();
-        SPDLOG_INFO( "commit_memory error {:d} 0x{:0x}", error, error );
+        SPDLOG_INFO( "win32: commit_memory error {} 0x{:0x}", error, error );
     }
 
     return result;
@@ -404,7 +404,7 @@ bool os::uncommit_memory( const char *addr, std::int32_t size ) {
 
 
 bool os::release_memory( const char *addr, std::int32_t size ) {
-    static_cast<void>(size); // unused
+    st_unused( size ); // unused
     return VirtualFree( const_cast<char *>( addr ), 0, MEM_RELEASE ) ? true : false;
 }
 
@@ -451,8 +451,8 @@ void os::free( void *p ) {
 
 
 void os::transfer( Thread *from_thread, Event *from_event, Thread *to_thread, Event *to_event ) {
-    static_cast<void>(from_thread); // unused
-    static_cast<void>(to_thread); // unused
+    st_unused( from_thread ); // unused
+    st_unused( to_thread ); // unused
 
     ResetEvent( (HANDLE) from_event );
     SetEvent( (HANDLE) to_event );
@@ -461,8 +461,8 @@ void os::transfer( Thread *from_thread, Event *from_event, Thread *to_thread, Ev
 
 
 void os::transfer_and_continue( Thread *from_thread, Event *from_event, Thread *to_thread, Event *to_event ) {
-    static_cast<void>(from_thread); // unused
-    static_cast<void>(to_thread); // unused
+    st_unused( from_thread ); // unused
+    st_unused( to_thread ); // unused
 
     ResetEvent( (HANDLE) from_event );
     SetEvent( (HANDLE) to_event );
@@ -515,7 +515,7 @@ void os::reset_event( Event *event ) {
 
 
 void os::signal_event( Event *event ) {
-    SPDLOG_INFO( "os::signal_event [{}]", static_cast<void *>(event) );
+//    SPDLOG_INFO( "win32: os::signal_event [{}]", static_cast<void *>(event) );
     SetEvent( (HANDLE) event );
 }
 
@@ -535,7 +535,7 @@ void real_time_tick( std::int32_t delay_time );
 // The sole purpose of the watcher thread is simulating timer interrupts.
 
 DWORD WINAPI WatcherMain( LPVOID lpvParam ) {
-    static_cast<void>(lpvParam); // unused
+    st_unused( lpvParam ); // unused
 
     const std::int32_t delay_interval = 10; // Delay 1 ms
     while ( true ) {
@@ -556,7 +556,7 @@ void os::find_system_page_size() {
     SYSTEM_INFO systemInfo;
     GetSystemInfo( &systemInfo );
     _vm_page_size = systemInfo.dwPageSize;
-    SPDLOG_INFO( "system page size detected as [{:d}] bytes", _vm_page_size );
+    SPDLOG_INFO( "win32: system page size detected as [{}] bytes", _vm_page_size );
 
 }
 
@@ -615,9 +615,9 @@ void (*handler)( void *fp, void *sp, void *pc ) = nullptr;
 bool handling_exception;
 
 
-LONG WINAPI testVectoredHandler( struct _EXCEPTION_POINTERS *exceptionInfo ) {
+LONG WINAPI simpleVectoredExceptionHandler( struct _EXCEPTION_POINTERS *exceptionInfo ) {
 
-    SPDLOG_INFO( "Caught exception." );
+    SPDLOG_INFO( "Caught exception" );
     if ( true and handler and not handling_exception ) {
         handling_exception = true;
         handler( (void *) exceptionInfo->ContextRecord->Ebp, (void *) exceptionInfo->ContextRecord->Esp, (void *) exceptionInfo->ContextRecord->Eip );
@@ -629,7 +629,7 @@ LONG WINAPI testVectoredHandler( struct _EXCEPTION_POINTERS *exceptionInfo ) {
 
 void os::add_exception_handler( void new_handler( void *fp, void *sp, void *pc ) ) {
     handler = new_handler;
-    AddVectoredExceptionHandler( 0, testVectoredHandler );
+    AddVectoredExceptionHandler( 0, simpleVectoredExceptionHandler );
 }
 
 
@@ -649,7 +649,7 @@ void os_init_processor_affinity() {
     while ( not( processMask & processorId ) and processorId < processMask )
         processorId >>= 1;
 
-    SPDLOG_INFO( "system-init:  os-init:  set-processor-affinity: processorId: [{:d}]", processorId );
+    SPDLOG_INFO( "system-init:  os-init:  set-processor-affinity: processorId: [{}]", processorId );
     if ( not SetProcessAffinityMask( GetCurrentProcess(), processorId ) ) {
         SPDLOG_INFO( "error code: {}", GetLastError() );
     }
@@ -733,9 +733,9 @@ void os_exit() {
 
 
 extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR cmdLine, int cmdShow ) {
-    static_cast<void>(hPrevInst); // unused
-    static_cast<void>(cmdLine); // unused
-    static_cast<void>(cmdShow); // unused
+    st_unused( hPrevInst ); // unused
+    st_unused( cmdLine ); // unused
+    st_unused( cmdShow ); // unused
 
     WNDCLASSW wc;
     wc.style         = CS_HREDRAW | CS_VREDRAW;
@@ -757,8 +757,8 @@ extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR
 
 
 void os::set_args( std::int32_t argc, char *argv[] ) {
-    static_cast<void>(argc); // unused
-    static_cast<void>(argv); // unused
+    st_unused( argc ); // unused
+    st_unused( argv ); // unused
 }
 
 

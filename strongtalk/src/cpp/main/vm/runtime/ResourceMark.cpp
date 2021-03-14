@@ -5,7 +5,7 @@
 //
 
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/runtime/flags.hpp"
@@ -60,6 +60,11 @@ ResourceMark::~ResourceMark() {
         _resourceArea->_resourceAreaChunk = c->_prev;
         resources.addToFreeList( c );
     }
+}
+
+
+void ResourceMark::operator delete( void *ptr ) {
+    st_unused( ptr );
 }
 
 

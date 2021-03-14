@@ -106,12 +106,12 @@ Oop CopyPropagationInfo::constant() const {
 
 
 void CopyPropagationInfo::print() {
-    SPDLOG_INFO( "*(CopyPropagationInfo*)0x{0:x} : def 0x{0:x}, %s", static_cast<void *>( this ), static_cast<void *>( _definition ), _register->name() );
+    SPDLOG_INFO( "*(CopyPropagationInfo*) 0x{0:x} : def 0x{0:x}, {}", static_cast<void *>( this ), static_cast<void *>( _definition ), _register->name() );
 }
 
 
 static void printNodeFn( DefinitionUsage *du ) {
-    SPDLOG_INFO( "N%d ", du->_node->id() );
+    SPDLOG_INFO( "N{:d} ", du->_node->id() );
 }
 
 

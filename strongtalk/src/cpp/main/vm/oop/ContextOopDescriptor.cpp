@@ -17,7 +17,7 @@
 
 
 // Computes the byte offset from the beginning of an Oop
-static inline std::int32_t byteOffset( std::int32_t offset ) {
+static constexpr std::int32_t byteOffset( std::int32_t offset ) {
     st_assert( offset >= 0, "bad offset" );
     return offset * sizeof( Oop ) - MEMOOP_TAG;
 }

@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/assembler/Displacement.hpp"
 #include "vm/memory/Array.hpp"
@@ -14,7 +14,7 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/primitive/DoubleByteArray_primitives.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 
 #include <gtest/gtest.h>
@@ -26,9 +26,9 @@ class DoubleByteArrayPrimitivesTests : public ::testing::Test {
 
 public:
     DoubleByteArrayPrimitivesTests() :
-    ::testing::Test(),
-    dByteArrayClass{}
-    {}
+        ::testing::Test(),
+        dByteArrayClass{} {}
+
 
 protected:
     void SetUp() override {
@@ -45,6 +45,7 @@ protected:
 
 
 };
+
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldAllocateDByteArrayOfCorrectSize ) {
 

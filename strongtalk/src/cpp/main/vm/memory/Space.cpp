@@ -27,8 +27,8 @@ void Space::clear() {
 
 
 void Space::switch_pointers( Oop from, Oop to ) {
-    static_cast<void>(from); // unused
-    static_cast<void>(to); // unused
+    st_unused( from ); // unused
+    st_unused( to ); // unused
     // FIX LATER
     st_fatal( "not implemented yet" );
 }
@@ -116,7 +116,7 @@ void Space::compact( OldWaterMark *mark ) {
 
             if ( q not_eq new_top ) {
                 copy_oops( q, new_top, size );
-//                SPDLOG_INFO( "Space::compact()  copy [0x{0:x}] -> [0x{0:x}] (%d)", q, new_top, size );
+//                SPDLOG_INFO( "Space::compact()  copy [0x{0:x}] -> [0x{0:x}] ({:d})", q, new_top, size );
                 st_assert( ( *new_top )->isMarkOop(), "should be header" );
             }
             mark->_space->update_offsets( new_top, new_top + size );
@@ -224,7 +224,7 @@ OldSpace::OldSpace( const char *name, std::int32_t &size ) :
     _nextOffsetIndex{ 0 } {
 
     //
-    static_cast<void>(size); // unused
+    st_unused( size ); // unused
 
     _offsetArray = new_c_heap_array<std::uint8_t>( Universe::old_gen._virtualSpace.reserved_size() / card_size );
     set_name( name );

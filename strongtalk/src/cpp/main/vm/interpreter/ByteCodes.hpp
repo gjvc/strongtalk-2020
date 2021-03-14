@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/system/asserts.hpp"
 
@@ -401,22 +401,22 @@ public:
         unimplemented_df              = 0xdf, //
 
         // row 0x0e
-        smi_add           = 0xe0, //
-        smi_sub           = 0xe1, //
-        smi_mult          = 0xe2, //
-        smi_div           = 0xe3, //
-        smi_mod           = 0xe4, //
-        smi_create_point  = 0xe5, //
-        smi_equal         = 0xe6, //
-        smi_not_equal     = 0xe7, //
-        smi_less          = 0xe8, //
-        smi_less_equal    = 0xe9, //
-        smi_greater       = 0xea, //
-        smi_greater_equal = 0xeb, //
-        objectArray_at       = 0xec, //
-        objectArray_at_put   = 0xed, //
-        double_equal      = 0xee, //
-        double_tilde      = 0xef, //
+        smi_add             = 0xe0, //
+        smi_sub             = 0xe1, //
+        smi_mult            = 0xe2, //
+        smi_div             = 0xe3, //
+        smi_mod             = 0xe4, //
+        smi_create_point    = 0xe5, //
+        smi_equal           = 0xe6, //
+        smi_not_equal       = 0xe7, //
+        smi_less            = 0xe8, //
+        smi_less_equal      = 0xe9, //
+        smi_greater         = 0xea, //
+        smi_greater_equal   = 0xeb, //
+        objectArray_at      = 0xec, //
+        objectArray_at_put  = 0xed, //
+        double_equal        = 0xee, //
+        double_tilde        = 0xef, //
 
         // row 0x0f
         push_global             = 0xf0, //

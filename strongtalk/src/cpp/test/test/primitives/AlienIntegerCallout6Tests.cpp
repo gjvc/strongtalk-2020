@@ -4,9 +4,9 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/utility/Integer.hpp"
@@ -19,128 +19,128 @@
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirst6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t f ) {
     // a
-    static_cast<void>(b); // unused
-    static_cast<void>(c); // unused
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
-    static_cast<void>(f); // unused
+    st_unused( b );
+    st_unused( c );
+    st_unused( d );
+    st_unused( e );
+    st_unused( f );
     return a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirstPointer6( std::int32_t *a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t f ) {
     // a
-    static_cast<void>(b); // unused
-    static_cast<void>(c); // unused
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
-    static_cast<void>(f); // unused
+    st_unused( b );
+    st_unused( c );
+    st_unused( d );
+    st_unused( e );
+    st_unused( f );
     return *a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecond6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t f ) {
-    static_cast<void>(a); // unused
+    st_unused( a );
     // b
-    static_cast<void>(c); // unused
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
-    static_cast<void>(f); // unused
+    st_unused( c );
+    st_unused( d );
+    st_unused( e );
+    st_unused( f );
     return b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecondPointer6( std::int32_t a, std::int32_t *b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t f ) {
-    static_cast<void>(a); // unused
+    st_unused( a );
     // b
-    static_cast<void>(c); // unused
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
-    static_cast<void>(f); // unused
+    st_unused( c );
+    st_unused( d );
+    st_unused( e );
+    st_unused( f );
     return *b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnThird6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t f ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
+    st_unused( a );
+    st_unused( b );
     // c
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
-    static_cast<void>(f); // unused
+    st_unused( d );
+    st_unused( e );
+    st_unused( f );
     return c;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnThirdPointer6( std::int32_t a, std::int32_t b, std::int32_t *c, std::int32_t d, std::int32_t e, std::int32_t f ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
+    st_unused( a );
+    st_unused( b );
     // c
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
-    static_cast<void>(f); // unused
+    st_unused( d );
+    st_unused( e );
+    st_unused( f );
     return *c;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFourth6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t f ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
-    static_cast<void>(c); // unused
+    st_unused( a );
+    st_unused( b );
+    st_unused( c );
     // d
-    static_cast<void>(e); // unused
-    static_cast<void>(f); // unused
+    st_unused( e );
+    st_unused( f );
     return d;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFourthPointer6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t *d, std::int32_t e, std::int32_t f ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
-    static_cast<void>(c); // unused
+    st_unused( a );
+    st_unused( b );
+    st_unused( c );
     // d
-    static_cast<void>(e); // unused
-    static_cast<void>(f); // unused
+    st_unused( e );
+    st_unused( f );
     return *d;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFifth6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t f ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
-    static_cast<void>(c); // unused
-    static_cast<void>(d); // unused
+    st_unused( a );
+    st_unused( b );
+    st_unused( c );
+    st_unused( d );
     // e
-    static_cast<void>(f); // unused
+    st_unused( f );
     return e;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFifthPointer6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t *e, std::int32_t f ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
-    static_cast<void>(c); // unused
-    static_cast<void>(d); // unused
+    st_unused( a );
+    st_unused( b );
+    st_unused( c );
+    st_unused( d );
     // e
-    static_cast<void>(f); // unused
+    st_unused( f );
     return *e;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSixth6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t f ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
-    static_cast<void>(c); // unused
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
+    st_unused( a );
+    st_unused( b );
+    st_unused( c );
+    st_unused( d );
+    st_unused( e );
     return f;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSixthPointer6( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e, std::int32_t *f ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
-    static_cast<void>(c); // unused
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
+    st_unused( a );
+    st_unused( b );
+    st_unused( c );
+    st_unused( d );
+    st_unused( e );
     return *f;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION forceScavenge6( std::int32_t ignore1, std::int32_t ignore2, std::int32_t ignore3, std::int32_t d, std::int32_t e ) {
-    static_cast<void>(ignore1); // unused
-    static_cast<void>(ignore2); // unused
-    static_cast<void>(ignore3); // unused
-    static_cast<void>(d); // unused
-    static_cast<void>(e); // unused
+    st_unused( ignore1 );
+    st_unused( ignore2 );
+    st_unused( ignore3 );
+    st_unused( d );
+    st_unused( e );
     Universe::scavenge();
     return -1;
 }
@@ -239,7 +239,7 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
-        static_cast<void>(message); // unused
+        st_unused( message );
 
         char         text[200];
         bool         ok;
@@ -293,8 +293,8 @@ protected:
         std::array<Oop, argCount> arg;
 
         for ( std::size_t index = 0; index < argCount; index++ )
-            arg[ index ]          = argIndex == index ? asOop( argValue ) : smi0;
-        Oop                result = callout( arg );
+            arg[ index ]         = argIndex == index ? asOop( argValue ) : smi0;
+        Oop               result = callout( arg );
 
         EXPECT_TRUE( result == resultAlien->as_oop() ) << "Should return result alien";
         checkIntResult( "wrong result", argValue, resultAlien );
@@ -306,8 +306,8 @@ protected:
         std::array<Oop, argCount> arg;
 
         for ( std::size_t index = 0; index < argCount; index++ )
-            arg[ index ]          = argIndex == index ? pointer : smi0;
-        Oop                result = callout( arg );
+            arg[ index ]         = argIndex == index ? pointer : smi0;
+        Oop               result = callout( arg );
 
         EXPECT_TRUE( result == resultAlien->as_oop() ) << "Should return result alien";
         checkIntResult( "wrong result", -1, resultAlien );

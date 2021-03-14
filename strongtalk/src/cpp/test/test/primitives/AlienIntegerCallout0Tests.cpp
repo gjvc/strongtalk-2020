@@ -3,9 +3,9 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/utility/Integer.hpp"
@@ -91,7 +91,7 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, std::int32_t actual ) {
-        static_cast<void>(message); // unused
+        st_unused( message );
         char text[200];
         sprintf( text, "Should be: %d, was: %d", expected, actual );
         EXPECT_TRUE( actual == expected ) << text;

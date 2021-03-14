@@ -30,7 +30,7 @@ bool VirtualFrame::equal( const VirtualFrame *virtualFrame ) const {
 
 
 Oop VirtualFrame::callee_argument_at( std::int32_t index ) const {
-    static_cast<void>(index); // unused
+    st_unused( index ); // unused
     SPDLOG_INFO( "VirtualFrame::callee_argument_at should be specialized for all vframes calling deltaVFrames" );
     st_fatal( "aborting" );
     return nullptr;
@@ -266,8 +266,8 @@ void InterpretedVirtualFrame::temp_at_put( std::int32_t offset, Oop obj ) {
 
 
 void InterpretedVirtualFrame::expression_at_put( std::int32_t offset, Oop obj ) {
-    static_cast<void>(offset); // unused
-    static_cast<void>(obj); // unused
+    st_unused( offset ); // unused
+    st_unused( obj ); // unused
     // FIX LATER p.set_expr(offset) = obj;
     Unimplemented();
 }
@@ -403,7 +403,7 @@ public:
 
 
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
-        static_cast<void>(pc); // unused
+        st_unused( pc ); // unused
         if ( no == i ) {
             result = a;
         }
@@ -447,8 +447,8 @@ public:
 
 
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(pc); // unused
+        st_unused( no ); // unused
+        st_unused( pc ); // unused
         result->append( a );
     }
 };
@@ -607,7 +607,7 @@ Oop CompiledVirtualFrame::resolve_name( NameDescriptor *nd, const CompiledVirtua
             // nameDesc instead - gri 8-5-96
             return nilObject;
         }
-        SPDLOG_WARN( "Compiler Bug: Illegal name desc found in NativeMethod 0x{0:x} @ {:d}", static_cast<const void *>(vf->fr().code()), vf->scope()->offset() );
+        SPDLOG_WARN( "Compiler Bug: Illegal name desc found in NativeMethod 0x{0:x} @ {}", static_cast<const void *>(vf->fr().code()), vf->scope()->offset() );
         return OopFactory::new_symbol( "illegal nameDesc" );
     }
 
@@ -648,25 +648,25 @@ public:
 
 
     void arg( std::int32_t no, NameDescriptor *a, char *pc ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(a); // unused
-        static_cast<void>(pc); // unused
+        st_unused( no ); // unused
+        st_unused( a ); // unused
+        st_unused( pc ); // unused
         CHECK( a );
     }
 
 
     void temp( std::int32_t no, NameDescriptor *a, char *pc ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(a); // unused
-        static_cast<void>(pc); // unused
+        st_unused( no ); // unused
+        st_unused( a ); // unused
+        st_unused( pc ); // unused
         CHECK( a );
     }
 
 
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(a); // unused
-        static_cast<void>(pc); // unused
+        st_unused( no ); // unused
+        st_unused( a ); // unused
+        st_unused( pc ); // unused
         CHECK( a );
     }
 };
@@ -1121,7 +1121,7 @@ void cChunk::print_value() const {
 void cChunk::print() {
     VirtualFrame::print();
     SPDLOG_INFO( "C Chunk inbetween Delta" );
-    SPDLOG_INFO( "C     link 0x%lx", static_cast<const void *>(_frame.link()) );
+    SPDLOG_INFO( "C     link 0x{0:x}", static_cast<const void *>(_frame.link()) );
 }
 
 

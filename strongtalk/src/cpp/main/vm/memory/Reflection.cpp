@@ -6,7 +6,7 @@
 
 #include "vm/memory/Reflection.hpp"
 #include "vm/memory/Converter.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/code/Zone.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/runtime/Delta.hpp"
@@ -28,7 +28,7 @@ bool Reflection::needs_schema_change() {
         if ( TraceApplyChange and sub_result ) {
             _classChanges->at( i )->old_klass()->print_value();
             _console->cr();
-            SPDLOG_INFO( "  needs schema change because: %s.", _classChanges->at( i )->reason_for_schema_change() );
+            SPDLOG_INFO( "  needs schema change because: {}.", _classChanges->at( i )->reason_for_schema_change() );
         }
         result = result or sub_result;
     }
@@ -212,8 +212,8 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
         for ( std::size_t j = 0; j < _converted->length(); j++ ) {
             MemOop obj = _converted->at( j );
             if ( TraceApplyChange ) {
-                SPDLOG_INFO( "Old: 0x%lx, 0x%lx", static_cast<const void *>(obj), static_cast<const void *>(obj->mark()) );
-                SPDLOG_INFO( "New: 0x%lx, 0x%lx", static_cast<const void *>(obj->forwardee()), static_cast<const void *>(obj->forwardee()->mark()) );
+                SPDLOG_INFO( "Old: 0x{0:x}, 0x{0:x}", static_cast<const void *>(obj), static_cast<const void *>(obj->mark()) );
+                SPDLOG_INFO( "New: 0x{0:x}, 0x{0:x}", static_cast<const void *>(obj->forwardee()), static_cast<const void *>(obj->forwardee()->mark()) );
             }
             obj->set_mark( obj->forwardee()->mark() );
         }
@@ -223,7 +223,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
 
     } else {
         if ( TraceApplyChange ) {
-            SPDLOG_INFO( " - no schema change (%s%s%s)", class_vars_changed ? "class variables " : "", instance_methods_changed ? "instance methods " : "", class_methods_changed ? "class methods " : "" );
+            SPDLOG_INFO( " - no schema change ({}{}{})", class_vars_changed ? "class variables " : "", instance_methods_changed ? "instance methods " : "", class_methods_changed ? "class methods " : "" );
         }
         update_classes( class_vars_changed, instance_methods_changed, class_methods_changed );
     }

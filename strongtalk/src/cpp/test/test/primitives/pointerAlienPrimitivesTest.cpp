@@ -7,7 +7,7 @@
 #include "vm/oop/DoubleOopDescriptor.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/primitive/ByteArrayPrimitives.hpp"
 #include "vm/utility/Integer.hpp"
 #include "vm/utility/IntegerOps.hpp"
@@ -19,10 +19,12 @@
 class PointerAlienPrimsTests : public ::testing::Test {
 
 public:
-    PointerAlienPrimsTests() : ::testing::Test(), rm{ nullptr}, alien{},invalidAlien{},largeUnsignedInteger{}, largeSignedInteger{},alien_byte_region{},doubleValue{} {}
+    PointerAlienPrimsTests() : ::testing::Test(), rm{ nullptr }, alien{}, invalidAlien{}, largeUnsignedInteger{}, largeSignedInteger{}, alien_byte_region{}, doubleValue{} {}
+
 
 protected:
     void SetUp() override {
+
         rm = new HeapResourceMark();
         PersistentHandle ah( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( 8 ) );
         PersistentHandle iah( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( 8 ) );

@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/runtime/evaluator.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/oop/MethodOopDescriptor.hpp"
@@ -17,7 +17,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/interpreter/DispatchTable.hpp"
 #include "vm/utility/EventLog.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/interpreter/MethodClosure.hpp"
 
@@ -463,7 +463,7 @@ void evaluator::change_debug_flag( TokenStream *stream, bool value ) {
         stream->current();
         bool r = value;
         if ( not debugFlags::boolAtPut( stream->current(), &r ) ) {
-            SPDLOG_INFO( "boolean flag %s not found", stream->current() );
+            SPDLOG_INFO( "boolean flag {} not found", stream->current() );
         }
         stream->advance();
         if ( not stream->eos() ) {
@@ -653,7 +653,7 @@ public:
 
 
     void do_process( DeltaProcess *p ) {
-        SPDLOG_INFO( "{:d}:{}", index++, DeltaProcess::active() == p ? "*" : " " );
+        SPDLOG_INFO( "{}:{}", index++, DeltaProcess::active() == p ? "*" : " " );
         p->print();
     }
 };

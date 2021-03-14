@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 
 // Floats describes the floating point operations of the interpreter and implements stub routines used to execute this operations.

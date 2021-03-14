@@ -9,7 +9,7 @@
 #include "vm/oop/DoubleOopDescriptor.hpp"
 #include "vm/utility/IntegerOps.hpp"
 #include "vm/primitive/ByteArrayPrimitives.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 
@@ -22,15 +22,15 @@ class DirectAlienPrimitivesTests : public ::testing::Test {
 
 public:
     DirectAlienPrimitivesTests() :
-    ::testing::Test(),
-    _heapResourceMark{},
-    _alien{},
-    _largeUnsignedInteger{},
-    _largeUnsignedInteger2{},
-    _veryLargeUnsignedInteger{},
-    _largeSignedInteger{},
-    _doubleValue{}
-    {}
+        ::testing::Test(),
+        _heapResourceMark{},
+        _alien{},
+        _largeUnsignedInteger{},
+        _largeUnsignedInteger2{},
+        _veryLargeUnsignedInteger{},
+        _largeSignedInteger{},
+        _doubleValue{} {}
+
 
 protected:
 

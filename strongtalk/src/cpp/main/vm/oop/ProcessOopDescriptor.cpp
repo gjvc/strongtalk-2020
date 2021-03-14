@@ -4,7 +4,7 @@
 //
 
 #include "vm/oop/ProcessOopDescriptor.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
 
 

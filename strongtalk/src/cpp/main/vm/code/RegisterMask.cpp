@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
 #include "vm/memory/util.hpp"
@@ -32,14 +32,14 @@ void printAllocated( RegisterMask rs ) {
             } else {
                 SPDLOG_INFO( "," );
             }
-            SPDLOG_INFO( "%s", RegisterNames[ d ] );
+            SPDLOG_INFO( "{}", RegisterNames[ d ] );
             Unimplemented();
             // Location d1 = Location(d); <<< fix this
             Location   d1;
             for ( char c = RegisterNames[ d ][ 0 ];
                   isBitSet( r, 1 ) and c == RegisterNames[ d + 1 ][ 0 ];
                   d++, r >>= 1 );
-            if ( d > d1.no() ) SPDLOG_INFO( "-%s", RegisterNames[ d ] );
+            if ( d > d1.no() ) SPDLOG_INFO( "-{}", RegisterNames[ d ] );
         }
     }
     SPDLOG_INFO( "}" );

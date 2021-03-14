@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/code/NativeInstruction.hpp"
 #include "vm/oop/SymbolOopDescriptor.hpp"
 

@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/compiler/NodeBuilder.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
@@ -807,7 +807,7 @@ void NodeBuilder::double_not_equal() {
 
 
 void NodeBuilder::method_return( std::int32_t nofArgs ) {
-    static_cast<void>(nofArgs); // unused
+    st_unused( nofArgs ); // unused
 
     // assign result & return
     Expression *result = exprStack()->pop();
@@ -863,7 +863,7 @@ void NodeBuilder::method_return( std::int32_t nofArgs ) {
 
 
 void NodeBuilder::nonlocal_return( std::int32_t nofArgs ) {
-    static_cast<void>(nofArgs); // unused
+    st_unused( nofArgs ); // unused
 
     // assign result & return
     Expression     *resultExpression = exprStack()->pop();
@@ -1222,8 +1222,8 @@ void NodeBuilder::zap_scope() {
 
 
 void NodeBuilder::predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
-    static_cast<void>(pdesc); // unused
-    static_cast<void>(failure_start); // unused
+    st_unused( pdesc ); // unused
+    st_unused( failure_start ); // unused
     // ignored
 }
 
@@ -1283,7 +1283,7 @@ void NodeBuilder::float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFl
 
 
 void NodeBuilder::float_floatify( Floats::Function f, std::int32_t fno ) {
-    static_cast<void>(f); // unused
+    st_unused( f ); // unused
 
     // top of stack must be a boxed float, it is unboxed and stored at float(fno).
     Expression *t = _expressionStack->pop();

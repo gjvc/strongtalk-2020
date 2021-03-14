@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/assembler/IntegerFreeList.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/assembler/Location.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/utility/GrowableArray.hpp"
@@ -42,7 +43,7 @@ public:
 };
 
 
-extern RegisterAllocator *theAllocator;
+extern RegisterAllocator *theRegisterAllocator;
 
 
 // helper structure for local register allocation

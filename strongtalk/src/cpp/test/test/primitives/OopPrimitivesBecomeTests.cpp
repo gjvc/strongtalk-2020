@@ -17,7 +17,7 @@
 #include "vm/oop/AssociationOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 
 #include <gtest/gtest.h>
@@ -26,7 +26,8 @@
 class OopPrimitivesBecomeTest : public ::testing::Test {
 
 public:
-    OopPrimitivesBecomeTest() : ::testing::Test(), targetContainer{},replacementContainer{},tenuredTargetContainer{}, tenuredReplacementContainer{},target{},replacement{} {}
+    OopPrimitivesBecomeTest() : ::testing::Test(), targetContainer{}, replacementContainer{}, tenuredTargetContainer{}, tenuredReplacementContainer{}, target{}, replacement{} {}
+
 
 protected:
     void SetUp() override {
@@ -70,6 +71,7 @@ protected:
 
 };
 
+
 TEST_F( OopPrimitivesBecomeTest, becomeShouldSwapTargetAndReplacement ) {
     OopPrimitives::become( replacement, target );
     EXPECT_EQ( replacement, targetContainer->obj_at( 1 ) ) << "target of become: has not been replaced by replacement";
@@ -77,7 +79,9 @@ TEST_F( OopPrimitivesBecomeTest, becomeShouldSwapTargetAndReplacement ) {
 }
 
 
-TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnTarget ) { EXPECT_EQ( target, OopPrimitives::become( replacement, target ) ) << "should return target"; }
+TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnTarget ) {
+    EXPECT_EQ( target, OopPrimitives::become( replacement, target ) ) << "should return target";
+}
 
 
 TEST_F( OopPrimitivesBecomeTest, becomeShouldMarkStoredCards ) {

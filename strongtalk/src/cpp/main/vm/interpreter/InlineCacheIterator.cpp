@@ -37,7 +37,7 @@ GrowableArray<KlassOop> *InlineCache::receiver_klasses() const {
 
 
 void InlineCache::replace( NativeMethod *nm ) {
-    static_cast<void>(nm); // unused
+    st_unused( nm ); // unused
     Unimplemented();
     InlineCacheIterator *it = iterator();
     it->init_iteration();
@@ -65,7 +65,7 @@ void InlineCache::print() {
             break;
         default         : ShouldNotReachHere();
     }
-    SPDLOG_INFO( "%s InlineCache: {} entries", s, number_of_targets() );
+    SPDLOG_INFO( "{} InlineCache: {} entries", s, number_of_targets() );
 
     InlineCacheIterator *it = iterator();
     it->init_iteration();
@@ -211,5 +211,5 @@ NativeMethod *CompiledInlineCacheIterator::compiled_method() const {
 
 
 void CompiledInlineCacheIterator::print() {
-    SPDLOG_INFO( "CompiledInlineCacheIterator for ((CompiledInlineCache*)0x{0:x}) (%s)", static_cast<void *>( _ic ), selector()->as_string() );
+    SPDLOG_INFO( "CompiledInlineCacheIterator for ((CompiledInlineCache*)0x{0:x}) ({})", static_cast<void *>( _ic ), selector()->as_string() );
 }

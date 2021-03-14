@@ -693,9 +693,9 @@ std::int32_t PolymorphicInlineCache::code_for_megamorphic_case( char *entry ) {
 
 
 void PolymorphicInlineCache::shrink_and_generate( PolymorphicInlineCache *pic, KlassOop klass, void *method ) {
-    static_cast<void>(pic); // unused
-    static_cast<void>(klass); // unused
-    static_cast<void>(method); // unused
+    st_unused( pic ); // unused
+    st_unused( klass ); // unused
+    st_unused( method ); // unused
     Unimplemented();
 }
 
@@ -837,21 +837,18 @@ void PolymorphicInlineCache::oops_do( void f( Oop * ) ) {
 
 
 void PolymorphicInlineCache::print() {
-    SPDLOG_INFO( "\tPolymorphicInlineCache with %d entr%s", number_of_targets(), number_of_targets() == 1 ? "y" : "ies" );
-    SPDLOG_INFO( "\t- selector    : {}", selector()->print_value_string() );
+    SPDLOG_INFO( "\tPolymorphicInlineCache with {} entr{}", number_of_targets(), number_of_targets() == 1 ? "y" : "ies" );
+    SPDLOG_INFO( "\t- selector [{}]", selector()->print_value_string() );
     selector()->print_symbol_on();
-//    SPDLOG_INFO( "" );
 
     // Disassembler::decode(entry(), entry() + code_size());
-
 
     PolymorphicInlineCacheIterator it( this );
 
     std::int32_t i = 1;
     while ( not it.at_end() ) {
-        SPDLOG_INFO( "\t- %d. klass    : ", i );
+        SPDLOG_INFO( "\t- {}. klass ", i );
         it.get_klass()->print_value();
-        SPDLOG_INFO( "" );
         switch ( it.state() ) {
             case InlineState::AT_SMI_NATIVE_METHOD:
                 [[fallthrough]];
@@ -859,7 +856,7 @@ void PolymorphicInlineCache::print() {
                 SPDLOG_INFO( "\t-    NativeMethod  : 0x{0:x} (entry 0x{0:x})\n", (std::int32_t) it.compiled_method(), (std::int32_t) it.get_call_addr() );
                 break;
             case InlineState::AT_METHOD_OOP:
-                SPDLOG_INFO( "\t-    methodOop: %s\n", it.interpreted_method()->print_value_string() );
+                SPDLOG_INFO( "\t-    methodOop: {}\n", it.interpreted_method()->print_value_string() );
                 break;
             default: ShouldNotReachHere();
         }
@@ -879,7 +876,7 @@ void PolymorphicInlineCache::verify() {
             if ( k->at( i ) == k->at( j ) ) {
                 _console->print( "The class " );
                 k->at( i )->klass_part()->print_name_on( _console );
-                SPDLOG_INFO( "is twice in PolymorphicInlineCache 0x%lx", static_cast<const void *>(this) );
+                SPDLOG_INFO( "is present twice in PolymorphicInlineCache 0x{0:x}", static_cast<const void *>(this) );
                 SPDLOG_WARN( "PolymorphicInlineCache verify error" );
             }
         }

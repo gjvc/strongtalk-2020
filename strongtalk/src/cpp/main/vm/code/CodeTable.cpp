@@ -154,9 +154,13 @@ void CodeTable::print_stats() {
       total += len;
       histo[min(len, N-1)]++;
     }
-    SPDLOG_INFO("\ncodeTable statistics: 0x%08x nativeMethods; min chain = 0x%08x, max = 0x%08x, avg = %4.1f", total, nmin, nmax, (float)total / nonzero);
+
+    SPDLOG_INFO("codeTable statistics: 0x{0:x} nativeMethods; min chain = 0x{0:x}, max = 0x{0:x}, avg = {:04.1f}", total, nmin, nmax, (float)total / nonzero);
     SPDLOG_INFO("histogram:");
-    for (std::int32_t i = 0; i < N - 1; i++) SPDLOG_INFO("%4d:\t%d", i, histo[i]);
-    SPDLOG_INFO(">=0x%08x:\t0x%08x", N-1, histo[N-1]);
+
+    for (std::int32_t i = 0; i < N - 1; i++)
+        SPDLOG_INFO("%4d:\t{:d}", i, histo[i]);
+
+    SPDLOG_INFO(">=0x{0:x}:\t0x{0:x}", N-1, histo[N-1]);
 #endif
 }

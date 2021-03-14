@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/compiler/PerformanceDebugger.hpp"
 #include "vm/code/JumpTable.hpp"

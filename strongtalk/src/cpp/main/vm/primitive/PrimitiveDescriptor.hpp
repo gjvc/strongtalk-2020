@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/primitive/primitive_declarations.hpp"
 #include "vm/primitive/primitive_tracing.hpp"
 #include "vm/oop/SymbolOopDescriptor.hpp"

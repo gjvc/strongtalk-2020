@@ -4,7 +4,7 @@
 //
 
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/lookup/LookupType.hpp"
 #include "vm/runtime/ResourceArea.hpp"

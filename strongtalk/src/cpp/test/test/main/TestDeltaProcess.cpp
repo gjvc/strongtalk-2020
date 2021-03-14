@@ -5,7 +5,7 @@
 //
 
 #include "vm/runtime/Delta.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 
 #include "vm/runtime/Processes.hpp"
 #include "test/main/TestDeltaProcess.hpp"

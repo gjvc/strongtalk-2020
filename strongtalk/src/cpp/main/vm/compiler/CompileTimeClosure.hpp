@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/code/JumpTable.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 

@@ -4,11 +4,11 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/runtime/Delta.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/oop/MixinOopDescriptor.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/oop/ProxyOopDescriptor.hpp"
@@ -92,10 +92,13 @@ extern "C" ContextOop allocateContext( SmallIntegerOop nofVars ) {
 
 extern "C" ContextOop allocateContext0() {
     PROLOGUE_0( "allocateContext0" );
+
     // allocate
     ContextOop obj = as_contextOop( Universe::allocate( ContextOopDescriptor::header_size() ) );
+
     // header
     obj->set_klass_field( contextKlassObject );
+
     //%clean this up later
     //  hash value must by convention be different from 0 (check markOop.hpp)
     obj->set_mark( MarkOopDescriptor::tagged_prototype()->set_hash( 0 + 1 ) );
@@ -111,6 +114,7 @@ extern "C" ContextOop allocateContext1() {
     inc_context_counter();
     return static_cast<ContextOop>(ok->allocateObjectSize( 1 ));
 }
+
 extern "C" ContextOop allocateContext2() {
     PROLOGUE_0( "allocateContext2" );
     ContextKlass *ok = (ContextKlass *) contextKlassObject->klass_part();
@@ -174,141 +178,158 @@ static void trap() {
 
 
 extern "C" Oop primitiveValue0( Oop blk ) {
-    static_cast<void>(blk); // unused
+    st_unused( blk ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue1( Oop blk, Oop arg1 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue2( Oop blk, Oop arg1, Oop arg2 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
-    static_cast<void>(arg2); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
+    st_unused( arg2 ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue3( Oop blk, Oop arg1, Oop arg2, Oop arg3 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
-    static_cast<void>(arg2); // unused
-    static_cast<void>(arg3); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
+    st_unused( arg2 ); // unused
+    st_unused( arg3 ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue4( Oop blk, Oop arg1, Oop arg2, Oop arg3, Oop arg4 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
-    static_cast<void>(arg2); // unused
-    static_cast<void>(arg3); // unused
-    static_cast<void>(arg4); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
+    st_unused( arg2 ); // unused
+    st_unused( arg3 ); // unused
+    st_unused( arg4 ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue5( Oop blk, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
-    static_cast<void>(arg2); // unused
-    static_cast<void>(arg3); // unused
-    static_cast<void>(arg4); // unused
-    static_cast<void>(arg5); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
+    st_unused( arg2 ); // unused
+    st_unused( arg3 ); // unused
+    st_unused( arg4 ); // unused
+    st_unused( arg5 ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue6( Oop blk, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5, Oop arg6 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
-    static_cast<void>(arg2); // unused
-    static_cast<void>(arg3); // unused
-    static_cast<void>(arg4); // unused
-    static_cast<void>(arg5); // unused
-    static_cast<void>(arg6); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
+    st_unused( arg2 ); // unused
+    st_unused( arg3 ); // unused
+    st_unused( arg4 ); // unused
+    st_unused( arg5 ); // unused
+    st_unused( arg6 ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue7( Oop blk, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5, Oop arg6, Oop arg7 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
-    static_cast<void>(arg2); // unused
-    static_cast<void>(arg3); // unused
-    static_cast<void>(arg4); // unused
-    static_cast<void>(arg5); // unused
-    static_cast<void>(arg6); // unused
-    static_cast<void>(arg7); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
+    st_unused( arg2 ); // unused
+    st_unused( arg3 ); // unused
+    st_unused( arg4 ); // unused
+    st_unused( arg5 ); // unused
+    st_unused( arg6 ); // unused
+    st_unused( arg7 ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue8( Oop blk, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5, Oop arg6, Oop arg7, Oop arg8 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
-    static_cast<void>(arg2); // unused
-    static_cast<void>(arg3); // unused
-    static_cast<void>(arg4); // unused
-    static_cast<void>(arg5); // unused
-    static_cast<void>(arg6); // unused
-    static_cast<void>(arg7); // unused
-    static_cast<void>(arg8); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
+    st_unused( arg2 ); // unused
+    st_unused( arg3 ); // unused
+    st_unused( arg4 ); // unused
+    st_unused( arg5 ); // unused
+    st_unused( arg6 ); // unused
+    st_unused( arg7 ); // unused
+    st_unused( arg8 ); // unused
 
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveValue9( Oop blk, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5, Oop arg6, Oop arg7, Oop arg8, Oop arg9 ) {
-    static_cast<void>(blk); // unused
-    static_cast<void>(arg1); // unused
-    static_cast<void>(arg2); // unused
-    static_cast<void>(arg3); // unused
-    static_cast<void>(arg4); // unused
-    static_cast<void>(arg5); // unused
-    static_cast<void>(arg6); // unused
-    static_cast<void>(arg7); // unused
-    static_cast<void>(arg8); // unused
-    static_cast<void>(arg9); // unused
+    st_unused( blk ); // unused
+    st_unused( arg1 ); // unused
+    st_unused( arg2 ); // unused
+    st_unused( arg3 ); // unused
+    st_unused( arg4 ); // unused
+    st_unused( arg5 ); // unused
+    st_unused( arg6 ); // unused
+    st_unused( arg7 ); // unused
+    st_unused( arg8 ); // unused
+    st_unused( arg9 ); // unused
 
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
-/*
-extern "C" blockClosureOop allocateBlock0() { trap(); return blockClosureOop(markSymbol(vmSymbols::primitive_trap())); };
-extern "C" blockClosureOop allocateBlock1() { trap(); return blockClosureOop(markSymbol(vmSymbols::primitive_trap())); };
-extern "C" blockClosureOop allocateBlock2() { trap(); return blockClosureOop(markSymbol(vmSymbols::primitive_trap())); };
-*/
+
+//extern "C" BlockClosureOop allocateBlock0() {
+//    trap();
+//    return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
+//};
+//
+//extern "C" BlockClosureOop allocateBlock1() {
+//    trap();
+//    return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
+//};
+//
+//extern "C" BlockClosureOop allocateBlock2() {
+//    trap();
+//    return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
+//};
+
 extern "C" BlockClosureOop allocateBlock3() {
     trap();
     return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
 }
+
 extern "C" BlockClosureOop allocateBlock4() {
     trap();
     return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
 }
+
 extern "C" BlockClosureOop allocateBlock5() {
     trap();
     return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
 }
+
 extern "C" BlockClosureOop allocateBlock6() {
     trap();
     return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
 }
+
 extern "C" BlockClosureOop allocateBlock7() {
     trap();
     return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
 }
+
 extern "C" BlockClosureOop allocateBlock8() {
     trap();
     return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );
 }
+
 extern "C" BlockClosureOop allocateBlock9() {
     trap();
     return BlockClosureOop( markSymbol( vmSymbols::primitive_trap() ) );

@@ -68,18 +68,22 @@ BlockClosureOop BlockClosureOopDescriptor::create_clean_block( std::int32_t nofA
 
 
 void BlockClosureOopDescriptor::deoptimize() {
+
     if ( not isCompiledBlock() )
         return; // do nothing if unoptimized
 
-    ContextOop con                        = lexical_scope();
+    ContextOop con = lexical_scope();
     if ( con == nilObject )
-        return;     // do nothing if lexical scope is nil
+        return; // do nothing if lexical scope is nil
 
-    std::int32_t                   index;
+    //
+    std::int32_t index;
+
+    //
     NativeMethod                   *nm    = jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor *scope = nm->noninlined_block_scope_at( index );
 
-    SPDLOG_INFO( "Deoptimized context in blockClosure -> switch to methodOop [0x%lx]", static_cast<const void *>( nm ) );
+    SPDLOG_INFO( "Deoptimized context in blockClosure -> switch to methodOop [0x{0:x}]", static_cast<const void *>( nm ) );
     st_assert( nm, "NativeMethod must be present" );
 
     st_assert( not StackChunkBuilder::is_deoptimizing(), "you cannot be in deoptimization mode" );

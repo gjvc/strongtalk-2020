@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
-#include "vm/system/posix.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/platform/posix.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
 #include "vm/runtime/VMProcess.hpp"
 

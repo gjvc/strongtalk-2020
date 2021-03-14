@@ -6,7 +6,7 @@
 
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/interpreter/MethodClosure.hpp"
 #include "vm/oop/AssociationOopDescriptor.hpp"
 

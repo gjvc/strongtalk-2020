@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/utility/GrowableArray.hpp"
@@ -26,9 +26,9 @@ void OopNativeCode::relocate() {
 
 
 bool OopNativeCode::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
-    static_cast<void>(from); // unused
-    static_cast<void>(to); // unused
-    static_cast<void>(nativeMethods_to_invalidate); // unused
+    st_unused( from ); // unused
+    st_unused( to ); // unused
+    st_unused( nativeMethods_to_invalidate ); // unused
     bool needToInvalICache = false;
     Unimplemented();
     return needToInvalICache;

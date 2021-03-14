@@ -10,7 +10,7 @@
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/primitive/ProxyOopPrimitives.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 
 #include <gtest/gtest.h>
 

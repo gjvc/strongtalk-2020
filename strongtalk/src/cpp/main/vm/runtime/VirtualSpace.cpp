@@ -4,11 +4,11 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/runtime/VirtualSpace.hpp"
 #include "vm/runtime/ReservedSpace.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 
 
 // -----------------------------------------------------------------------------

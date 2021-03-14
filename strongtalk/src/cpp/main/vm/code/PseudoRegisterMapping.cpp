@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/code/LogicalAddress.hpp"
@@ -1018,7 +1018,7 @@ void PseudoRegisterMapping::print() {
         for ( std::size_t i = 0; i < _temporaryLocations->length(); i++ ) {
             std::int32_t loc = _temporaryLocations->at( i );
             st_assert( _locations->isRegister( loc ), "temporaries must be in registers" );
-            SPDLOG_INFO( "temp 0x%08x -> 0x%08x %s", i, loc, _locations->locationAsRegister( loc ).name() );
+            SPDLOG_INFO( "temp 0x{0:x} -> 0x{0:x} {}", i, loc, _locations->locationAsRegister( loc ).name() );
         }
         _console->cr();
     }

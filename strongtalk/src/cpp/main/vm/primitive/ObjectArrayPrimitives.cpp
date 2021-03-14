@@ -4,14 +4,14 @@
 //
 
 #include "vm/primitive/ObjectArrayPrimitives.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/oop/MixinOopDescriptor.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/code/NativeMethod.hpp"
 
 

@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/runtime/Process.hpp"
@@ -18,7 +18,7 @@
 #include "vm/compiler/Scope.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
@@ -39,7 +39,7 @@ RecompilationScope::RecompilationScope( NonDummyRecompilationScope *s, std::int3
 
 
 GrowableArray<RecompilationScope *> *NullRecompilationScope::subScopes( std::int32_t byteCodeIndex ) const {
-    static_cast<void>(byteCodeIndex); // unused
+    st_unused( byteCodeIndex ); // unused
     return new GrowableArray<RecompilationScope *>( 1 );
 }
 
@@ -205,7 +205,7 @@ bool InlinedRecompilationScope::equivalent( InlinedScope *s ) const {
 
 
 bool PICRecompilationScope::equivalent( InlinedScope *s ) const {
-    static_cast<void>(s); // unused
+    st_unused( s ); // unused
     // an PICRecompilationScope represents a non-inlined scope, so it can't be equivalent to any InlinedScope
     return false;
 }
@@ -268,7 +268,7 @@ void NonDummyRecompilationScope::addScope( std::int32_t byteCodeIndex, Recompila
 
 
 bool InterpretedRecompilationScope::isUncommonAt( std::int32_t byteCodeIndex ) const {
-    static_cast<void>(byteCodeIndex); // unused
+    st_unused( byteCodeIndex ); // unused
     return DeferUncommonBranches;
 }
 
@@ -690,8 +690,8 @@ void NullRecompilationScope::print_short() {
 
 
 void NullRecompilationScope::printTree( std::int32_t byteCodeIndex, std::int32_t level ) const {
-    static_cast<void>(byteCodeIndex); // unused
-    static_cast<void>(level); // unused
+    st_unused( byteCodeIndex ); // unused
+    st_unused( level ); // unused
 }
 
 
@@ -734,7 +734,7 @@ void InliningDatabaseRecompilationScope::print_short() {
 
 
 bool InliningDatabaseRecompilationScope::equivalent( InlinedScope *s ) const {
-    static_cast<void>(s); // unused
+    st_unused( s ); // unused
     Unimplemented();
     return false;
 }
@@ -784,10 +784,10 @@ ProgramCounterDescriptor *next_uncommon( std::int32_t scope, std::int32_t u, Gro
 
 
 void UninlinableRecompilationScope::print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, std::int32_t byteCodeIndex, std::int32_t level ) {
-    static_cast<void>(stream); // unused
-    static_cast<void>(uncommon); // unused
-    static_cast<void>(byteCodeIndex); // unused
-    static_cast<void>(level); // unused
+    st_unused( stream ); // unused
+    st_unused( uncommon ); // unused
+    st_unused( byteCodeIndex ); // unused
+    st_unused( level ); // unused
 
     // not necessary to actually write out this info since DB-driven compilation won't inline anything not inlined in DB
     // stream->print_cr("%*s%d uninlinable", level * 2, "", byteCodeIndex);

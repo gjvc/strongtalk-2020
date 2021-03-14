@@ -4,10 +4,10 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/primitive/ByteArrayPrimitives.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/Scavenge.hpp"
 #include "vm/oop/ProxyOopDescriptor.hpp"
 #include "vm/klass/MemOopKlass.hpp"
@@ -17,7 +17,7 @@
 #include "vm/utility/IntegerOps.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/code/StubRoutines.hpp"
 
 
@@ -363,33 +363,33 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerMultiply, Oop
 }
 
 
-#define BIT_OP( receiver, argument, sizeFn, opFn, label )\
-  ARG_CHECK(receiver, argument, label);\
-  BlockScavenge bs;\
-  ByteArrayOop z = ByteArrayOop(x->klass()->klass_part()->allocateObjectSize(IntegerOps::sizeFn(x->number(), y->number())));\
-\
-  IntegerOps::opFn(x->number(), y->number(), z->number());\
+#define BIT_OP( receiver, argument, sizeFn, opFn, label ) \
+  ARG_CHECK(receiver, argument, label); \
+  BlockScavenge bs; \
+  ByteArrayOop z = ByteArrayOop(x->klass()->klass_part()->allocateObjectSize(IntegerOps::sizeFn(x->number(), y->number()))); \
+ \
+  IntegerOps::opFn(x->number(), y->number(), z->number()); \
   return simplified(z)
 
-#define DIVISION( receiver, argument, sizeFn, divFn, label )\
-  ARG_CHECK(receiver, argument, label);\
-  if (y->number().is_zero()) return markSymbol(vmSymbols::division_by_zero   ());\
-\
-  BlockScavenge bs;\
-  ByteArrayOop z = ByteArrayOop(x->klass()->klass_part()->allocateObjectSize(IntegerOps::sizeFn(x->number(), y->number())));\
-\
-  IntegerOps::divFn(x->number(), y->number(), z->number());\
+#define DIVISION( receiver, argument, sizeFn, divFn, label ) \
+  ARG_CHECK(receiver, argument, label); \
+  if (y->number().is_zero()) return markSymbol(vmSymbols::division_by_zero   ()); \
+ \
+  BlockScavenge bs; \
+  ByteArrayOop z = ByteArrayOop(x->klass()->klass_part()->allocateObjectSize(IntegerOps::sizeFn(x->number(), y->number()))); \
+ \
+  IntegerOps::divFn(x->number(), y->number(), z->number()); \
   return simplified(z)
-#define ARG_CHECK( receiver, argument, label )\
-  PROLOGUE_2(label, receiver, argument);\
-  ASSERT_RECEIVER;\
-\
-  if (not argument->isByteArray())\
-    return markSymbol(vmSymbols::first_argument_has_wrong_type());\
-\
-  ByteArrayOop x = ByteArrayOop(receiver);\
-  ByteArrayOop y = ByteArrayOop(argument);\
-\
+#define ARG_CHECK( receiver, argument, label ) \
+  PROLOGUE_2(label, receiver, argument); \
+  ASSERT_RECEIVER; \
+ \
+  if (not argument->isByteArray()) \
+    return markSymbol(vmSymbols::first_argument_has_wrong_type()); \
+ \
+  ByteArrayOop x = ByteArrayOop(receiver); \
+  ByteArrayOop y = ByteArrayOop(argument); \
+ \
   if (not x->number().is_valid() or not y->number().is_valid()) return markSymbol(vmSymbols::argument_is_invalid())
 
 

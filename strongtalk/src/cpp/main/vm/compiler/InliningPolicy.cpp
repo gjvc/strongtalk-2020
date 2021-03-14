@@ -4,7 +4,7 @@
 //
 
 #include "vm/oop/MethodOopDescriptor.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/compiler/InliningPolicy.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
@@ -50,7 +50,7 @@ const char *InliningPolicy::basic_shouldInline( MethodOop method ) {
     std::int32_t       cost_limit = method->is_blockMethod() ? MaxBlockInlineCost : MaxFnInlineCost;
     for ( std::int32_t i          = method->number_of_arguments() - 1; i >= 0; i-- ) {
         KlassOop k = nthArgKlass( i );
-        if ( k and k->klass_part()->oop_is_block() ) {
+        if ( k and k->klass_part()->oopIsBlock() ) {
             cost_limit += BlockArgAdditionalAllowedInlineCost;
         }
     }
@@ -97,13 +97,13 @@ bool InliningPolicy::isInterpreterPredictedSmiSelector( const SymbolOop sel ) {
 
 
 bool InliningPolicy::isInterpreterPredictedArraySelector( const SymbolOop sel ) {
-    static_cast<void>(sel); // unused
+    st_unused( sel ); // unused
     return false;
 }
 
 
 bool InliningPolicy::isInterpreterPredictedBoolSelector( const SymbolOop sel ) {
-    static_cast<void>(sel); // unused
+    st_unused( sel ); // unused
     return false;
 }
 
@@ -244,7 +244,7 @@ const char *RecompilerInliningPolicy::shouldInline( const NativeMethod *nm ) {
     std::int32_t i          = _methodOop->number_of_arguments();
     while ( i-- > 0 ) {
         KlassOop k = nthArgKlass( i );
-        if ( k and k->klass_part()->oop_is_block() )
+        if ( k and k->klass_part()->oopIsBlock() )
             cost_limit += BlockArgAdditionalInstrSize;
     }
 

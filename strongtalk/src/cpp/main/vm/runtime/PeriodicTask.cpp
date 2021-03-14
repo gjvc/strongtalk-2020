@@ -3,11 +3,11 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/runtime/PeriodicTask.hpp"
 
 std::int32_t           num_tasks = 0;
@@ -30,19 +30,19 @@ void real_time_tick( std::int32_t delay_time ) {
 
     // Do not perform any tasks while bootstrappingInProgress
     if ( bootstrappingInProgress ) {
-        SPDLOG_INFO( "real_time_tick: bootstrappingInProgress is true" );
+        SPDLOG_INFO( "bootstrappingInProgress is true" );
         return;
     }
 
     // bail out if nothing to do
     if ( not pending_tasks( delay_time ) ) {
-        SPDLOG_INFO( "real_time_tick: pending_tasks() returned false" );
+        SPDLOG_INFO( "pending_tasks() returned false" );
         return;
     }
 
     ThreadCritical tc{}; // declare a critical section
     if ( not Process::external_suspend_current() ) {
-        SPDLOG_INFO( "real_time_tick: external_suspend_current() returned false" );
+        SPDLOG_INFO( "external_suspend_current() returned false" );
         return;
     }
 

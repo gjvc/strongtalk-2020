@@ -24,8 +24,8 @@ Oop DoubleKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 KlassOop DoubleKlass::create_subclass( MixinOop mixin, Format format ) {
-    static_cast<void>(mixin); // unused
-    static_cast<void>(format); // unused
+    st_unused( mixin ); // unused
+    st_unused( format ); // unused
 
     return nullptr;
 }
@@ -52,13 +52,13 @@ void DoubleKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
 
 // since klass is tenured scavenge operations are empty.
 std::int32_t DoubleKlass::oop_scavenge_contents( Oop obj ) {
-    static_cast<void>(obj); // unused
+    st_unused( obj ); // unused
     return DoubleOopDescriptor::object_size();
 }
 
 
 std::int32_t DoubleKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    static_cast<void>(obj); // unused
+    st_unused( obj ); // unused
     return DoubleOopDescriptor::object_size();
 }
 

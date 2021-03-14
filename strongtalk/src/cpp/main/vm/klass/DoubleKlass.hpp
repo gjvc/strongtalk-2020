@@ -13,7 +13,7 @@
 class DoubleKlass : public MemOopKlass {
 public:
     // testers
-    bool oop_is_double() const {
+    bool oopIsDouble() const {
         return true;
     }
 

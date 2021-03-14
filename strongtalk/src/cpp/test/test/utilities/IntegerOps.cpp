@@ -12,22 +12,23 @@
 #include <gtest/gtest.h>
 
 
-class IntegerOpsTests :
-    public testing::Test {
+class IntegerOpsTests : public testing::Test {
 };
 
 
 // -----------------------------------------------------------------------------
 
 TEST( IntegerOpsTest, test_axpy ) {
-    Digit a, x, y, carry;
-    for ( a = 12345; a <= 112345; a += 1234 ) {
-        for ( x = 10; x <= 20000; x += 1234 ) {
-            y             = 10;
-            carry         = 500;
+
+    for ( Digit a = 12345; a <= 112345; a += 1234 ) {
+        for ( Digit x = 10; x <= 20000; x += 1234 ) {
+
+            Digit y       = 10;
+            Digit carry   = 500;
             Digit answer0 = ( ( a * x ) + y + carry ) % oneB;
             Digit answer1 = ( ( a * x ) + y + carry ) / oneB;
             Digit result  = IntegerOps::axpy( a, x, y, carry );
+
             EXPECT_EQ( result, answer0 );
             EXPECT_EQ( carry, answer1 );
         }
@@ -37,7 +38,7 @@ TEST( IntegerOpsTest, test_axpy ) {
 
 TEST( IntegerOpsTest, string_to_Integer ) {
 
-    bool    ok = true;
+    bool    ok{ true };
     Integer z6;
     IntegerOps::string_to_Integer( "0", 10, z6 );
     EXPECT_TRUE( 0 == z6.as_int32_t( ok ) ) << "failed to convert std::int32_t 0 to Integer ";
@@ -70,10 +71,11 @@ TEST( IntegerOpsTest, string_to_Integer ) {
 
 TEST( IntegerOpsTest, test_integer_conversion ) {
 
-    bool               ok = true;
-    const std::int32_t n  = 10000;
-    const std::int32_t l  = n * sizeof( std::int32_t );
-    Integer            x, y, z;
+    bool               ok{ true };
+    const std::int32_t n{ 10000 };
+    const std::int32_t l{ n * sizeof( std::int32_t ) };
+
+    Integer x, y, z;
 
     for ( std::size_t i = -10; i <= 10; i++ ) {
         EXPECT_EQ( std::int32_t( ( i == 0 ? 1 : 2 ) * sizeof( std::int32_t ) ), IntegerOps::int_to_Integer_result_size_in_bytes( i ) ) << "int_to_Integer_result_size failed";
@@ -86,27 +88,27 @@ TEST( IntegerOpsTest, test_integer_conversion ) {
 
 TEST( IntegerOpsTest, test_string_conversion ) {
 
-    bool    ok = true;
+    bool    ok     = true;
     Integer z1;
-    char *s1_in = "123456";
+    char    *s1_in = "123456";
     IntegerOps::string_to_Integer( s1_in, 10, z1 );
     std::int32_t s1_out = z1.as_int32_t( ok );
     EXPECT_EQ( z1.as_int32_t( ok ), 123456 );
 
-    lprintf( "ok: [%s] converted to [%d]", s1_in, s1_out );
-    lprintf( "ok: z1._first_digit [%d], z._signed_length [%d]", z1._first_digit, z1._signed_length );
+    SPDLOG_INFO( "ok: [{}] converted to [{}]", s1_in, s1_out );
+    SPDLOG_INFO( "ok: z1._first_digit [{}], z._signed_length [{}]", z1._first_digit, z1._signed_length );
 
-//    lprintf( "mul: x._first_digit [%d], x._signed_length [%d]", x._first_digit, x._signed_length );
-//    lprintf( "mul: y._first_digit [%d], y._signed_length [%d]", y._first_digit, y._signed_length );
+//    SPDLOG_INFO( "mul: x._first_digit [{}], x._signed_length [{}]", x._first_digit, x._signed_length );
+//    SPDLOG_INFO( "mul: y._first_digit [{}], y._signed_length [{}]", y._first_digit, y._signed_length );
 
 }
 
 
 TEST( IntegerOpsTest, test_string_conversion_negative_input ) {
 
-    bool    ok = true;
+    bool    ok     = true;
     Integer z2;
-    char *s2_in = "-123456";
+    char    *s2_in = "-123456";
     IntegerOps::string_to_Integer( s2_in, 10, z2 );
     std::int32_t s2_out = z2.as_int32_t( ok );
     EXPECT_EQ( z2.as_int32_t( ok ), -123456 );
@@ -210,6 +212,7 @@ TEST( IntegerOpsTest, test_factorial ) {
 
 
 static void unfactorial( std::int32_t n ) {
+
     Integer x, y, z;
     IntegerOps::int_to_Integer( 1, z );
     for ( std::size_t i = 2; i <= n; i++ ) {

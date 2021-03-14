@@ -4,9 +4,9 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/utility/IntegerOps.hpp"
 #include "vm/primitive/ByteArrayPrimitives.hpp"
@@ -19,34 +19,34 @@
 
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirst2( std::int32_t a, std::int32_t b ) {
-    static_cast<void>(b); // unused
+    st_unused( b );
     return a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirstPointer2( std::int32_t *a, std::int32_t b ) {
-    static_cast<void>(b); // unused
+    st_unused( b );
     return *a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecond2( std::int32_t a, std::int32_t b ) {
-    static_cast<void>(a); // unused
+    st_unused( a );
     return b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecondPointer2( std::int32_t a, std::int32_t *b ) {
-    static_cast<void>(a); // unused
+    st_unused( a );
     return *b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION forceScavengeWA( std::int32_t a, std::int32_t b ) {
-    static_cast<void>(a); // unused
-    static_cast<void>(b); // unused
+    st_unused( a );
+    st_unused( b );
     Universe::scavenge();
     return -1;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION argAlignment2( std::int32_t a, std::int32_t b ) {
-    static_cast<void>(b); // unused
+    st_unused( b );
     return ( (std::int32_t) &a ) & 0xF;
 }
 
@@ -140,7 +140,7 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
-        static_cast<void>(message); // unused
+        st_unused( message );
 
         char         text[200];
         bool         ok;

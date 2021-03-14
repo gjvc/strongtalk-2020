@@ -3,9 +3,9 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/utility/Integer.hpp"
@@ -31,7 +31,7 @@ extern "C" std::int32_t __CALLING_CONVENTION size5( size5_t arg ) {
 }
 
 extern "C" Oop __CALLING_CONVENTION forceScavenge1( std::int32_t ignore ) {
-    static_cast<void>(ignore); // unused
+    st_unused( ignore );
     Universe::scavenge();
     return vmSymbols::completed();
 }
@@ -47,21 +47,21 @@ extern "C" const char *__CALLING_CONVENTION argUnsafe1( const char *a ) {
 
 class AlienIntegerCallout1Tests : public ::testing::Test {
 public:
-    AlienIntegerCallout1Tests()
-        : ::testing::Test(),
-          rm{ nullptr },
-          handles{nullptr},
-          resultAlien{nullptr},
-          addressAlien{nullptr},
-          pointerAlien{nullptr},
-          functionAlien{nullptr},
-          directAlien{nullptr},
-          invalidFunctionAlien{nullptr},
-          unsafeAlien{nullptr},
-          unsafeContents{nullptr},
-          smi0{},
-          smi1{},
-          address{} {}
+    AlienIntegerCallout1Tests() :
+        ::testing::Test(),
+        rm{ nullptr },
+        handles{ nullptr },
+        resultAlien{ nullptr },
+        addressAlien{ nullptr },
+        pointerAlien{ nullptr },
+        functionAlien{ nullptr },
+        directAlien{ nullptr },
+        invalidFunctionAlien{ nullptr },
+        unsafeAlien{ nullptr },
+        unsafeContents{ nullptr },
+        smi0{},
+        smi1{},
+        address{} {}
 
 
 protected:
@@ -120,7 +120,7 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
-        static_cast<void>(message); // unused
+        st_unused( message );
         char         text[200];
         bool         ok;
         std::int32_t actual = asInt( ok, ByteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
@@ -159,7 +159,7 @@ protected:
 
 
     void allocateUnsafe( PersistentHandle *&handle, PersistentHandle *&contents ) {
-        static_cast<void>(handle); // unused
+        st_unused( handle );
         KlassOop unsafeKlass = KlassOop( Universe::find_global( "UnsafeAlien" ) );
         unsafeAlien = new PersistentHandle( unsafeKlass->primitive_allocate() );
         std::int32_t offset = unsafeKlass->klass_part()->lookup_inst_var( OopFactory::new_symbol( "nonPointerObject" ) );

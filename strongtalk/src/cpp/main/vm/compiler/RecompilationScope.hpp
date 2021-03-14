@@ -99,29 +99,29 @@ public:
 
 
     virtual RecompilationScope *subScope( std::int32_t byteCodeIndex, LookupKey *l ) const {
-        static_cast<void>(byteCodeIndex); // unused
-        static_cast<void>(l); // unused
+        st_unused( byteCodeIndex ); // unused
+        st_unused( l ); // unused
         ShouldNotCallThis();
         return nullptr;
     }
 
 
     virtual GrowableArray<RecompilationScope *> *subScopes( std::int32_t byteCodeIndex ) const {
-        static_cast<void>(byteCodeIndex); // unused
+        st_unused( byteCodeIndex ); // unused
         ShouldNotCallThis();
         return nullptr;
     }
 
 
     virtual bool hasSubScopes( std::int32_t byteCodeIndex ) const {
-        static_cast<void>(byteCodeIndex); // unused
+        st_unused( byteCodeIndex ); // unused
         ShouldNotCallThis();
         return false;
     }
 
 
     virtual bool isUncommonAt( std::int32_t byteCodeIndex ) const {
-        static_cast<void>(byteCodeIndex); // unused
+        st_unused( byteCodeIndex ); // unused
         ShouldNotCallThis();
         return false;
     }
@@ -129,7 +129,7 @@ public:
 
     // was send at this byteCodeIndex uncommon (never taken) in recompilee?  (false means "don't know")
     virtual bool isNotUncommonAt( std::int32_t byteCodeIndex ) const {
-        static_cast<void>(byteCodeIndex); // unused
+        st_unused( byteCodeIndex ); // unused
         ShouldNotCallThis();
         return false;
     }
@@ -171,10 +171,10 @@ public:
 
     // - prints the inlining database tree on a stream.
     virtual void print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, std::int32_t byteCodeIndex = -1, std::int32_t level = 0 ) {
-        static_cast<void>(stream); // unused
-        static_cast<void>(uncommon); // unused
-        static_cast<void>(byteCodeIndex); // unused
-        static_cast<void>(level); // unused
+        st_unused( stream ); // unused
+        st_unused( uncommon ); // unused
+        st_unused( byteCodeIndex ); // unused
+        st_unused( level ); // unused
     }
 
 
@@ -206,20 +206,20 @@ public:
 
 
     bool equivalent( InlinedScope *s ) const {
-        static_cast<void>(s); // unused
+        st_unused( s ); // unused
         return false;
     }
 
 
     bool equivalent( LookupKey *l ) const {
-        static_cast<void>(l); // unused
+        st_unused( l ); // unused
         return false;
     }
 
 
     RecompilationScope *subScope( std::int32_t byteCodeIndex, LookupKey *l ) const {
-        static_cast<void>(byteCodeIndex); // unused
-        static_cast<void>(l); // unused
+        st_unused( byteCodeIndex ); // unused
+        st_unused( l ); // unused
 
         return (RecompilationScope *) this;
     }
@@ -229,19 +229,19 @@ public:
 
 
     bool hasSubScopes( std::int32_t byteCodeIndex ) const {
-        static_cast<void>(byteCodeIndex); // unused
+        st_unused( byteCodeIndex ); // unused
         return false;
     }
 
 
     bool isUncommonAt( std::int32_t byteCodeIndex ) const {
-        static_cast<void>(byteCodeIndex); // unused
+        st_unused( byteCodeIndex ); // unused
         return false;
     }
 
 
     bool isNotUncommonAt( std::int32_t byteCodeIndex ) const {
-        static_cast<void>(byteCodeIndex); // unused
+        st_unused( byteCodeIndex ); // unused
         return false;
     }
 
@@ -410,7 +410,7 @@ public:
 
 
     bool isNotUncommonAt( std::int32_t byteCodeIndex ) const {
-        static_cast<void>(byteCodeIndex); // unused
+        st_unused( byteCodeIndex ); // unused
         return false;
     }
 
@@ -668,13 +668,13 @@ public:
 
 
     bool equivalent( InlinedScope *s ) const {
-        static_cast<void>(s); // unused
+        st_unused( s ); // unused
         return false;
     }
 
 
     bool equivalent( LookupKey *l ) const {
-        static_cast<void>(l); // unused
+        st_unused( l ); // unused
         return false;
     }
 

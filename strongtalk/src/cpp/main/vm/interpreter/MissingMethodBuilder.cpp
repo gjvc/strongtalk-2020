@@ -5,7 +5,7 @@
 
 #include "vm/code/NativeMethod.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/oop/AssociationOopDescriptor.hpp"

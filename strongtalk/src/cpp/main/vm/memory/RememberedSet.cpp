@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/utility/OutputStream.hpp"
@@ -70,9 +70,9 @@ RememberedSet::RememberedSet( RememberedSet *old, const char *start, const char 
     _lowBoundary{},
     _highBoundary{},
     _byteMap{} {
-    static_cast<void>(old); // unused
-    static_cast<void>(start); // unused
-    static_cast<void>(end); // unused
+    st_unused( old ); // unused
+    st_unused( start ); // unused
+    st_unused( end ); // unused
 
     ShouldNotReachHere();
 
@@ -171,7 +171,7 @@ void RememberedSet::scavenge_contents( OldSpace *sp ) {
 void RememberedSet::print_set_for_space( OldSpace *sp ) {
     char *current_byte = byte_for( sp->bottom() );
     char *end_byte     = byte_for( sp->top() );
-    SPDLOG_INFO( "%s: [0x{0:x}, 0x{0:x}]", sp->name(), current_byte, end_byte );
+    SPDLOG_INFO( "{}: [0x{0:x}, 0x{0:x}]", sp->name(), current_byte, end_byte );
     while ( current_byte <= end_byte ) {
         if ( *current_byte ) {
             SPDLOG_INFO( "_" );
@@ -309,7 +309,7 @@ void RememberedSet::clear( const char *start, const char *end ) {
 
 
 bool RememberedSet::verify( bool postScavenge ) {
-    static_cast<void>(postScavenge); // unused
+    st_unused( postScavenge ); // unused
     return true;
 }
 

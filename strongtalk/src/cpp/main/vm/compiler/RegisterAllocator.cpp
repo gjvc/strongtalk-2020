@@ -10,7 +10,7 @@
 #include "vm/compiler/Compiler.hpp"
 
 
-RegisterAllocator *theAllocator;
+RegisterAllocator *theRegisterAllocator;
 
 
 static std::int32_t compare_pseudoRegisterBegs( PseudoRegister **a, PseudoRegister **b ) {
@@ -24,8 +24,8 @@ static std::int32_t compare_pseudoRegisterEnds( PseudoRegister **a, PseudoRegist
 
 
 RegisterAllocator::RegisterAllocator() : _stackLocs{} {
-    theAllocator = this;
-    _stackLocs   = new IntegerFreeList( 2 );
+    theRegisterAllocator = this;
+    _stackLocs           = new IntegerFreeList( 2 );
 }
 
 
@@ -78,8 +78,8 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
         theCompiler->topScope->allocatePseudoRegisters( _stackLocs );
 
         // result
-        if ( CompilerDebug ) {
-            cout( PrintRegAlloc )->print_cr( "%d (-2) stack locations allocated for %d PseudoRegisters", _stackLocs->length(), regs->length() );
+        if ( CompilerDebug && PrintRegAlloc ) {
+            SPDLOG_INFO( "{} (-2) stack locations allocated for {} PseudoRegisters", _stackLocs->length(), regs->length() );
         }
 
     }

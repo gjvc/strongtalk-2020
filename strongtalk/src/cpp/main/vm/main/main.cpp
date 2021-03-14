@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 
 #include <iostream>
 #include <cstdlib>

@@ -3,12 +3,12 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/primitive/primitive_declarations.hpp"
 #include "vm/primitive/primitive_tracing.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/SymbolTable.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/lookup/LookupKey.hpp"
@@ -275,7 +275,7 @@ public:
 
 
     void end_process( Process *process ) {
-        static_cast<void>(process); // unused
+        st_unused( process ); // unused
         theProcess = nullptr;
     }
 

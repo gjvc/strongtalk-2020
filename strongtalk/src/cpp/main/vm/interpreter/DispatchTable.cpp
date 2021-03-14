@@ -5,7 +5,7 @@
 
 
 #include "vm/interpreter/DispatchTable.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/utility/OutputStream.hpp"
@@ -139,7 +139,7 @@ void DispatchTable::patch_with_sst_stub() {
 
 
 void DispatchTable::intercept_for_step( std::int32_t *fr ) {
-    static_cast<void>(fr); // unused
+    st_unused( fr ); // unused
 
     if ( not in_step_mode() ) {
         patch_with_sst_stub();

@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/compiler/InliningPolicy.hpp"
 #include "vm/compiler/Inliner.hpp"
@@ -79,8 +79,8 @@ Expression *Inliner::inlineSend() {
         // don't waste time inlining dead code
         _result = new NoResultExpression;
         _generator->abort();   // the rest of this method is dead code, too
-        if ( CompilerDebug )
-            cout( PrintInlining )->print( "%*s*skipping %s (dead code)\n", depth, "", _info->_selector->as_string() );
+        if ( CompilerDebug and PrintInlining )
+            SPDLOG_INFO( "{} {} skipping {} (dead code)", depth, "", _info->_selector->as_string() );
     } else {
         tryInlineSend();
     }
@@ -109,8 +109,8 @@ Expression *Inliner::inlineSend() {
 Expression *Inliner::genRealSend() {
     const std::int32_t nofArgs     = _info->_selector->number_of_arguments();
     bool               uninlinable = theCompiler->registerUninlinable( this );
-    if ( CompilerDebug ) {
-        cout( PrintInlining )->print( "%*s*sending %s %s%s\n", depth, "", _info->_selector->as_string(), uninlinable ? "(unlinlinable) " : "", _info->_counting ? "(counting) " : "" );
+    if ( CompilerDebug and PrintInlining ) {
+        SPDLOG_INFO( "{} sending {} {} {}", depth, "", _info->_selector->as_string(), uninlinable ? "(uninlinable) " : "", _info->_counting ? "(counting) " : "" );
     }
     switch ( _sendKind ) {
         case SendKind::NormalSend:
@@ -174,14 +174,14 @@ void Inliner::tryInlineSend() {
     } else {
         // unknown receiver
         // NB: *must* use uncommon branch if marked unlikely because future type tests won't test for unknown
-        if ( CompilerDebug )
-            cout( PrintInlining )->print( "%*s*cannot inline %s (unknown receiver)\n", depth, "", sel->as_string() );
+        if ( CompilerDebug and PrintInlining )
+            SPDLOG_INFO( "{} {} cannot inline {} (unknown receiver)", depth, "", sel->as_string() );
         if ( _info->_receiver->findUnknown()->isUnlikely() ) {
             // generate an uncommon branch for the unknown case, not a send
             _generator->append_exit( NodeFactory::UncommonNode( _sender->gen()->copyCurrentExprStack(), _sender->byteCodeIndex() ) );
             _info->_needRealSend = false;
-            if ( CompilerDebug )
-                cout( PrintInlining )->print( "%*s*making %s uncommon\n", depth, "", sel->as_string() );
+            if ( CompilerDebug and PrintInlining )
+                SPDLOG_INFO( "{} {} making {} uncommon", depth, "", sel->as_string() );
             _result = new NoResultExpression();
             // rest of method's code is unreachable
             st_assert( _generator->current() == nullptr, "expected no current node" );
@@ -270,8 +270,8 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
     if ( others->length() == 1 and others->first()->isUnknownExpression() and ( (UnknownExpression *) others->first() )->isUnlikely() ) {
         // generate an uncommon branch for the unknown case, not a send
         useUncommonBranchForUnknown = true;
-        if ( CompilerDebug )
-            cout( PrintInlining )->print( "%*s*making %s uncommon (2)\n", depth, "", sel->as_string() );
+        if ( CompilerDebug and PrintInlining )
+            SPDLOG_INFO( "{} {} making {} uncommon (2)", depth, "", sel->as_string() );
     }
 
     // now do the type test and inline the individual cases
@@ -285,8 +285,8 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
             sprintf( s, "begin type-case of [%s] (ends at node [%d])", sel->copy_null_terminated(), _merge->id() );
             _generator->comment( s );
         }
-        if ( CompilerDebug ) {
-            cout( PrintInlining )->print( "%*s*type-casing %s (%d cases)\n", depth, "", sel->as_string(), scopes->length() );
+        if ( CompilerDebug and PrintInlining ) {
+            SPDLOG_INFO( "{} {} type-casing {} ({} cases)", depth, "", sel->as_string(), scopes->length() );
         }
 
         typeCase = NodeFactory::TypeTestNode( r->pseudoRegister(), klasses, info->_needRealSend or containsUnknown );
@@ -379,8 +379,16 @@ Expression *Inliner::doInline( Node *start ) {
     // HACK -- fix
 #define calleeSize( n ) 0
 
-    if ( CompilerDebug ) {
-        cout( PrintInlining )->print( "%*s*inlining %s, cost %ld/size %ld (0x{0:x})%s\n", depth, "", _callee->selector()->as_string(), inliningPolicy.calleeCost, calleeSize( _callee->rscope ), PrintHexAddresses ? _callee : 0, _callee->rscope->isNullScope() ? "" : "*" );
+    if ( CompilerDebug and PrintInlining ) {
+//        SPDLOG_INFO( "{} {} inlining {}, cost {}, size {}, 0x{0:x}, {}",
+//                     depth,
+//                     "",
+//                     _callee->selector()->as_string(),
+//                     inliningPolicy.calleeCost,
+//                     calleeSize( _callee->rscope ),
+//                     PrintHexAddresses ? _callee : 0,
+//                     _callee->rscope->isNullScope() ? "" : "*" );
+
         if ( PrintInlining )
             _callee->method()->pretty_print();
     }

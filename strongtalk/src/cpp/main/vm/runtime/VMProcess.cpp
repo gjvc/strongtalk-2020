@@ -9,7 +9,7 @@
 #include "vm/oop/ProcessOopDescriptor.hpp"
 #include "vm/oop/AssociationOopDescriptor.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/runtime/Sweeper.hpp"
 #include "vm/memory/OopFactory.hpp"
 

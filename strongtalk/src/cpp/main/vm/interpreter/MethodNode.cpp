@@ -4,11 +4,11 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/interpreter/MethodNode.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/system/dll.hpp"
 
 

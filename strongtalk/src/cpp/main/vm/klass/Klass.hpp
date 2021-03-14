@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/oop/MemOopDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
@@ -324,7 +324,7 @@ public:
 public:
     // actual Oop size of obj in memory
     virtual std::int32_t oop_size( Oop obj ) const {
-        static_cast<void>(obj); // unused
+        st_unused( obj ); // unused
         return non_indexable_size();
     }
 
@@ -351,12 +351,12 @@ public:
     }
 
 
-    virtual bool oop_is_double() const {
+    virtual bool oopIsDouble() const {
         return false;
     }
 
 
-    virtual bool oop_is_block() const {
+    virtual bool oopIsBlock() const {
         return false;
     }
 
@@ -421,22 +421,22 @@ public:
     }
 
 
-    virtual bool oop_is_association() const {
+    virtual bool oopIsAssociation() const {
         return false;
     }
 
 
-    virtual bool oop_is_context() const {
+    virtual bool oopIsContext() const {
         return false;
     }
 
 
-    virtual bool oop_is_message() const {
+    virtual bool oopIsMessage() const {
         return false;
     }
 
 
-    virtual bool oop_is_indexable() const {
+    virtual bool oopIsIndexable() const {
         return false;
     }
 

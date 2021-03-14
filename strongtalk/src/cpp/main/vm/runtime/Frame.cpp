@@ -240,7 +240,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
         if ( ActivationShowByteCodeIndex ) {
             stream->print( " byteCodeIndex=0x%08x ", vf->byteCodeIndex() );
         }
-        SPDLOG_INFO( " @ 0x%lx", static_cast<const void *>(fp()) );
+        SPDLOG_INFO( " @ 0x{0:x}", static_cast<const void *>(fp()) );
         print_context_chain( vf->interpreter_context(), stream );
         if ( ActivationShowExpressionStack ) {
             GrowableArray<Oop> *stack = vf->expression_stack();
@@ -258,7 +258,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
         CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( this );
         st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
         vf->code()->print_value_on( stream );
-        SPDLOG_INFO( " @ 0x%lx", static_cast<const void *>(fp()) );
+        SPDLOG_INFO( " @ 0x{0:x}", static_cast<const void *>(fp()) );
 
         while ( true ) {
             stream->print( "    " );
@@ -276,7 +276,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
     if ( is_deoptimized_frame() ) {
         stream->print( "D " );
         frame_array()->print_value();
-        SPDLOG_INFO( " @ 0x%lx", static_cast<const void *>(fp()) );
+        SPDLOG_INFO( " @ 0x{0:x}", static_cast<const void *>(fp()) );
 
         DeoptimizedVirtualFrame *vf = (DeoptimizedVirtualFrame *) VirtualFrame::new_vframe( this );
         st_assert( vf->is_deoptimized_frame(), "should be deoptimized VirtualFrame" );
@@ -350,7 +350,7 @@ bool Frame::oop_iterate_interpreted_float_frame( OopClosure *blk ) {
 
 
 bool Frame::oop_iterate_compiled_float_frame( OopClosure *blk ) {
-    static_cast<void>(blk); // unused
+    st_unused( blk ); // unused
 
     SPDLOG_WARN( "oop_iterate_compiled_float_frame not implemented" );
     return false;
@@ -499,7 +499,7 @@ void Frame::convert_heap_code_pointer() {
     // Save the offset
     MarkSweep::add_heap_code_offset( h - obj );
     if ( WizardMode )
-        SPDLOG_INFO( "[0x%lx+%d]", obj, h - obj );
+        SPDLOG_INFO( "[0x{0:x}+{:d}]", obj, h - obj );
 }
 
 
@@ -510,7 +510,7 @@ void Frame::restore_heap_code_pointer() {
     std::uint8_t *obj   = hp();
     std::int32_t offset = MarkSweep::next_heap_code_offset();
     if ( WizardMode )
-        SPDLOG_INFO( "[0x%lx+%d]", obj, offset );
+        SPDLOG_INFO( "[0x{0:x}+{:d}]", obj, offset );
     set_hp( obj + offset );
 }
 

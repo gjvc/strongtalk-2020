@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/interpreter/HeapCodeBuffer.hpp"

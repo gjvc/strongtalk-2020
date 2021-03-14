@@ -16,9 +16,9 @@
 #include "vm/compiler/RegisterAllocator.hpp"
 #include "vm/compiler/CompiledLoop.hpp"
 #include "vm/recompiler/RecompilationPolicy.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oop/ContextOopDescriptor.hpp"
 
@@ -59,7 +59,7 @@ void OldCodeGenerator::endOfBasicBlock( Node *node ) {
 
 
 void OldCodeGenerator::beginOfNode( Node *node ) {
-    static_cast<void>(node); // unused
+    st_unused( node ); // unused
     // assume that all nodes that may terminate a basic block need a jump at the end
     // (turned off for individual nodes by their gen() methods if no jump is needed
     // because they generate code patterns that generate the jumps already)
@@ -68,7 +68,7 @@ void OldCodeGenerator::beginOfNode( Node *node ) {
 
 
 void OldCodeGenerator::endOfNode( Node *node ) {
-    static_cast<void>(node); // unused
+    st_unused( node ); // unused
     // nothing to do
 }
 
@@ -434,7 +434,7 @@ extern "C" void verifyReturn( Oop obj ) {
         ResourceMark resourceMark;
         callDepth--;
         indent();
-        SPDLOG_INFO( "return %s from %s", obj->print_value_string(), nativeMethodName() );
+        SPDLOG_INFO( "return [{}] from [{}]", obj->print_value_string(), nativeMethodName() );
     }
 }
 
@@ -454,9 +454,9 @@ static void verifyReturnCode( Register reg ) {
 
 
 extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32_t nlrScopeID, Oop nlrResult ) {
-    static_cast<void>(nlrScopeID); // unused
+    st_unused( nlrScopeID ); // unused
 
-    SPDLOG_INFO( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( nlrResult ) );
+    SPDLOG_INFO( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, {:d}, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( nlrResult ) );
     if ( nlrFrame <= fp ) {
         error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", nlrFrame, fp );
     }
@@ -468,7 +468,7 @@ extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32
         ResourceMark resourceMark;
         callDepth--;
         indent();
-        SPDLOG_INFO( "NonLocalReturn %s from/thru %s", nlrResult->print_value_string(), nativeMethodName() );
+        SPDLOG_INFO( "NonLocalReturn [{}] from/thru [{}]", nlrResult->print_value_string(), nativeMethodName() );
     }
 }
 
@@ -534,7 +534,7 @@ extern "C" void verifyArguments( Oop recv, std::int32_t ebp, std::int32_t nofArg
     if ( TraceCalls ) {
         callDepth++;
         indent();
-        SPDLOG_INFO( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
+        SPDLOG_INFO( "calling {} {} ", nativeMethodName(), recv->print_value_string() );
     }
     verifyObject( recv );
     std::int32_t i    = nofArgs;
@@ -544,7 +544,7 @@ extern "C" void verifyArguments( Oop recv, std::int32_t ebp, std::int32_t nofArg
         verifyObject( *arg );
         if ( TraceCalls ) {
             ResourceMark resourceMark;
-            SPDLOG_INFO( "%s, ", ( *arg )->print_value_string() );
+            SPDLOG_INFO( "{}, ", ( *arg )->print_value_string() );
         }
     }
     if ( VerifyDebugInfo ) {
@@ -823,19 +823,21 @@ static void checkRecompilation( Label &recompile_stub_call, Register t ) {
 }
 
 
-static void verify_context_chain( Register closure, std::int32_t chain_length, Register temp1, Register temp2 ) {
-    // Generates code to verify the context chain of a block closure. If the chain
-    // contains deoptimized contextOops, the block has to be deoptimized as well.
-    // Method: A bit in the mark field of each context indicates whether it has
-    //         been deoptimized or not. All mark fields of the contexts in the
-    //         context chain are or-ed together and the bit is checked at the end.
+static void verify_context_chain( Register closure, std::int32_t chain_length, const Register & temp1, const Register & temp2 ) {
+    // Generates code to verify the context chain of a block closure.
+    // If the chain contains deoptimized contextOops, the block has to be deoptimized as well.
+    // Method: A bit in the mark field of each context indicates whether it has been deoptimized or not.
+    //         All mark fields of the contexts in the context chain are or-ed together and the bit is checked at the end.
     st_assert( closure not_eq temp1 and closure not_eq temp2 and temp1 not_eq temp2, "registers must be different" );
     st_assert( chain_length >= 1, "must have at least one context in the chain" );
-    const Register context = temp1;
-    const Register sum     = temp2;
+
+    const Register context{ temp1 };
+    const Register sum{ temp2 };
+
     // initialize sum with mark of first context
     theMacroAssembler->movl( context, Address( closure, BlockClosureOopDescriptor::context_byte_offset() ) );
     theMacroAssembler->movl( sum, Address( context, MemOopDescriptor::mark_byte_offset() ) );
+
     // 'or' the mark fields of the remaining contexts in the chain to sum
     for ( std::size_t i = chain_length - 1; i-- > 0; ) {
         theMacroAssembler->movl( context, Address( context, ContextOopDescriptor::parent_byte_offset() ) );
@@ -925,7 +927,7 @@ void PrologueNode::gen() {
         theCompiler->set_float_section_start_offset( -2 );        // float_section after ebp & magic word
     }
     // allocate normal temporaries
-    std::int32_t nofTemps  = theAllocator->nofStackTemps();
+    std::int32_t nofTemps  = theRegisterAllocator->nofStackTemps();
     if ( nofTemps > 0 ) {
         st_assert( first_temp_offset == -1, "check this code" );
         frame_size += nofTemps;
@@ -962,7 +964,8 @@ void PrologueNode::gen() {
                 case MethodOopDescriptor::expects_nil:
                     verifyNilOrContextCode( c );
                     break;
-                case MethodOopDescriptor::expects_self     :   [[fallthrough]];
+                case MethodOopDescriptor::expects_self     :
+                    [[fallthrough]];
                 case MethodOopDescriptor::expects_parameter:
                     verifyOopCode( c );
                     break;
@@ -1106,7 +1109,7 @@ static bool setupseudoRegisterister( PseudoRegister *dst, PseudoRegister *arg, A
     bool result = producesResult( op );
     if ( result ) {
         // operation generates result, try to use as few registers as possible
-        if ( ( dst->_location == arg->_location ) /* or lastUsageOf(arg) */) {
+        if ( ( dst->_location == arg->_location ) /* or lastUsageOf(arg) */ ) {
             // arg is not used anymore afterwards, can be overwritten
             x = movePseudoRegisterToReg( arg, t );
         } else {
@@ -1131,7 +1134,7 @@ static bool setupseudoRegisteristers( PseudoRegister *dst, PseudoRegister *arg1,
     bool result = producesResult( op );
     if ( result ) {
         // operation generates result, try to use as few registers as possible
-        if ( ( dst->_location == arg1->_location ) /* or lastUsageOf(arg1) */) {
+        if ( ( dst->_location == arg1->_location ) /* or lastUsageOf(arg1) */ ) {
             // arg1 is not used anymore afterwards, can be overwritten
             x = movePseudoRegisterToReg( arg1, t1 );
             y = movePseudoRegisterToReg( arg2, t2 );
@@ -1157,11 +1160,13 @@ static void arithRROp( ArithOpCode op, Register x, Register y ) {
         case ArithOpCode::TestArithOp:
             theMacroAssembler->testl( x, y );
             break;
-        case ArithOpCode::tAddArithOp  :   [[fallthrough]];
+        case ArithOpCode::tAddArithOp  :
+            [[fallthrough]];
         case ArithOpCode::AddArithOp:
             theMacroAssembler->addl( x, y );
             break;
-        case ArithOpCode::tSubArithOp  :   [[fallthrough]];
+        case ArithOpCode::tSubArithOp  :
+            [[fallthrough]];
         case ArithOpCode::SubArithOp:
             theMacroAssembler->subl( x, y );
             break;
@@ -1170,27 +1175,33 @@ static void arithRROp( ArithOpCode op, Register x, Register y ) {
         case ArithOpCode::MulArithOp:
             theMacroAssembler->imull( x, y );
             break;
-        case ArithOpCode::tDivArithOp  :   [[fallthrough]];
+        case ArithOpCode::tDivArithOp  :
+            [[fallthrough]];
         case ArithOpCode::DivArithOp  : Unimplemented();
             break;
-        case ArithOpCode::tModArithOp  :   [[fallthrough]];
+        case ArithOpCode::tModArithOp  :
+            [[fallthrough]];
         case ArithOpCode::ModArithOp  : Unimplemented();
             break;
-        case ArithOpCode::tAndArithOp  :   [[fallthrough]];
+        case ArithOpCode::tAndArithOp  :
+            [[fallthrough]];
         case ArithOpCode::AndArithOp:
             theMacroAssembler->andl( x, y );
             break;
-        case ArithOpCode::tOrArithOp   :   [[fallthrough]];
+        case ArithOpCode::tOrArithOp   :
+            [[fallthrough]];
         case ArithOpCode::OrArithOp:
             theMacroAssembler->orl( x, y );
             break;
-        case ArithOpCode::tXOrArithOp  :   [[fallthrough]];
+        case ArithOpCode::tXOrArithOp  :
+            [[fallthrough]];
         case ArithOpCode::XOrArithOp:
             theMacroAssembler->xorl( x, y );
             break;
         case ArithOpCode::tShiftArithOp: Unimplemented();
         case ArithOpCode::ShiftArithOp: Unimplemented();
-        case ArithOpCode::tCmpArithOp  :   [[fallthrough]];
+        case ArithOpCode::tCmpArithOp  :
+            [[fallthrough]];
         case ArithOpCode::CmpArithOp:
             theMacroAssembler->cmpl( x, y );
             break;
@@ -1205,11 +1216,13 @@ static void arithRCOp( ArithOpCode op, Register x, std::int32_t y ) {
         case ArithOpCode::TestArithOp:
             theMacroAssembler->testl( x, y );
             break;
-        case ArithOpCode::tAddArithOp  :   [[fallthrough]];
+        case ArithOpCode::tAddArithOp  :
+            [[fallthrough]];
         case ArithOpCode::AddArithOp:
             theMacroAssembler->addl( x, y );
             break;
-        case ArithOpCode::tSubArithOp  :   [[fallthrough]];
+        case ArithOpCode::tSubArithOp  :
+            [[fallthrough]];
         case ArithOpCode::SubArithOp:
             theMacroAssembler->subl( x, y );
             break;
@@ -1218,21 +1231,26 @@ static void arithRCOp( ArithOpCode op, Register x, std::int32_t y ) {
         case ArithOpCode::MulArithOp:
             theMacroAssembler->imull( x, x, y );
             break;
-        case ArithOpCode::tDivArithOp  :   [[fallthrough]];
+        case ArithOpCode::tDivArithOp  :
+            [[fallthrough]];
         case ArithOpCode::DivArithOp  : Unimplemented();
             break;
-        case ArithOpCode::tModArithOp  :   [[fallthrough]];
+        case ArithOpCode::tModArithOp  :
+            [[fallthrough]];
         case ArithOpCode::ModArithOp  : Unimplemented();
             break;
-        case ArithOpCode::tAndArithOp  :   [[fallthrough]];
+        case ArithOpCode::tAndArithOp  :
+            [[fallthrough]];
         case ArithOpCode::AndArithOp:
             theMacroAssembler->andl( x, y );
             break;
-        case ArithOpCode::tOrArithOp   :   [[fallthrough]];
+        case ArithOpCode::tOrArithOp   :
+            [[fallthrough]];
         case ArithOpCode::OrArithOp:
             theMacroAssembler->orl( x, y );
             break;
-        case ArithOpCode::tXOrArithOp  :   [[fallthrough]];
+        case ArithOpCode::tXOrArithOp  :
+            [[fallthrough]];
         case ArithOpCode::XOrArithOp:
             theMacroAssembler->xorl( x, y );
             break;
@@ -1249,7 +1267,8 @@ static void arithRCOp( ArithOpCode op, Register x, std::int32_t y ) {
             }
             break;
         case ArithOpCode::ShiftArithOp: Unimplemented();
-        case ArithOpCode::tCmpArithOp  :   [[fallthrough]];
+        case ArithOpCode::tCmpArithOp  :
+            [[fallthrough]];
         case ArithOpCode::CmpArithOp:
             theMacroAssembler->cmpl( x, y );
             break;
@@ -1726,7 +1745,7 @@ static void testForSingleKlass( Register obj, KlassOop klass, Register klassReg,
 
 
 static bool testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2, Register klassReg, bool hasUnknown, Label &success1, Label &success2, Label &failure ) {
-    static_cast<void>(klassReg); // unused
+    st_unused( klassReg ); // unused
 
     Oop bool1 = Universe::trueObject();
     Oop bool2 = Universe::falseObject();
@@ -2070,7 +2089,8 @@ void BlockCreateNode::materialize() {
             case MethodOopDescriptor::expects_nil:
                 verifyNilOrContextCode( contextReg );
                 break;
-            case MethodOopDescriptor::expects_self     :   [[fallthrough]];
+            case MethodOopDescriptor::expects_self     :
+                [[fallthrough]];
             case MethodOopDescriptor::expects_parameter:
                 verifyOopCode( contextReg );
                 break;
@@ -2260,7 +2280,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
                     guarantee( _lowerBound->cpseudoRegister() == _lowerBound, "should use cpseudoRegister()" );
                 } else {
                     const Register t = movePseudoRegisterToReg( _lowerBound ? _lowerBound : _loopVar, tempseudoRegister );
-                    static_cast<void>( t ); // unused
+                    st_unused(  t  ); // unused
                     theMacroAssembler->cmpl( boundReg, smiOopFromValue( 1 ) );
                     theMacroAssembler->jcc( Assembler::Condition::less, failure );
                 }

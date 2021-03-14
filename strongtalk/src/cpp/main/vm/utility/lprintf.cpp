@@ -4,8 +4,8 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/platform/os.hpp"
 
 #include <cstring>
 #include <fstream>
@@ -71,6 +71,7 @@ extern "C" void lprintf( const char *m, ... ) {
     }
 }
 
+
 extern "C" void lputc( const char c ) {
 
     check_log_file();
@@ -89,6 +90,7 @@ extern "C" void lputc( const char c ) {
     }
 
 }
+
 
 extern "C" void lputs( const char *str ) {
     check_log_file();
@@ -125,6 +127,7 @@ extern "C" void my_sprintf( char *&buf, const char *format, ... ) {
 
     buf += strlen( buf );
 }
+
 
 extern "C" void my_sprintf_len( char *&buf, const std::int32_t len, const char *format, ... ) {
     char *oldbuf = buf;

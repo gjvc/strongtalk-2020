@@ -4,12 +4,10 @@
 //
 
 #include "vm/oop/MemOopDescriptor.hpp"
-#include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/AgeTable.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/utility/OutputStream.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/utility/StringOutputStream.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
@@ -60,7 +58,7 @@ Oop MemOopDescriptor::scavenge() {
 
 void MemOopDescriptor::follow_contents() {
     st_assert( is_gc_marked(), "pointer reversal should have taken place" );
-    // SPDLOG_INFO("[%s, 0x%lx, 0x%lx]", blueprint()->name(), this, klass());
+    // SPDLOG_INFO("[{}, 0x{0:x}, 0x{0:x}]", blueprint()->name(), this, klass());
     blueprint()->oop_follow_contents( this );
 }
 
@@ -72,7 +70,7 @@ Oop MemOopDescriptor::copy_to_survivor_space() {
     Oop  *x        = Universe::allocate_in_survivor_space( this, s, is_new );
 
 #ifdef VERBOSE_SCAVENGING
-    SPDLOG_INFO("{copy %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
+    SPDLOG_INFO("{copy {} 0x{0:x} -> 0x{0:x} ({:d})}", blueprint()->name(), oops(), x, s);
 #endif
 
     MemOop p = as_memOop( x );
@@ -83,7 +81,7 @@ Oop MemOopDescriptor::copy_to_survivor_space() {
         Universe::age_table->add( p, s );
     } else {
 # ifdef VERBOSE_SCAVENGING
-        SPDLOG_INFO("{tenuring %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
+        SPDLOG_INFO("{tenuring {} 0x{0:x} -> 0x{0:x} ({:d})}", blueprint()->name(), oops(), x, s);
 # endif
     }
     forward_to( p );
@@ -138,12 +136,6 @@ void MemOopDescriptor::bootstrap_header( Bootstrap *stream ) {
 }
 
 
-void MemOopDescriptor::bootstrap_object( Bootstrap *stream ) {
-    bootstrap_header( stream );
-    bootstrap_body( stream, header_size() );
-}
-
-
 void MemOopDescriptor::bootstrap_body( Bootstrap *stream, std::int32_t h_size ) {
     std::int32_t offset = h_size;
     std::int32_t s      = blueprint()->non_indexable_size();
@@ -152,6 +144,12 @@ void MemOopDescriptor::bootstrap_body( Bootstrap *stream, std::int32_t h_size ) 
         stream->read_oop( (Oop *) addr() + offset );
         offset++;
     }
+}
+
+
+void MemOopDescriptor::bootstrap_object( Bootstrap *stream ) {
+    bootstrap_header( stream );
+    bootstrap_body( stream, header_size() );
 }
 
 
@@ -282,7 +280,7 @@ void MemOopDescriptor::raw_at_put( std::int32_t which, Oop contents, bool cs ) {
 
 
 std::int32_t MemOopDescriptor::size() const {
-    return blueprint()->oop_size( MemOop( this ) );
+    return blueprint()->oop_size( reinterpret_cast<MemOop>( const_cast<MemOop>( this ) ) );
 }
 
 

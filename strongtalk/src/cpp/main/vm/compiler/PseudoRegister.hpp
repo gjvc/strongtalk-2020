@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/code/LogicalAddress.hpp"
-#include "vm/compiler/slist.hpp"
+#include "vm/utility/slist.hpp"
 #include "vm/compiler/CompileTimeClosure.hpp"
 #include "vm/compiler/DefinitionUsage.hpp"
 #include "vm/compiler/BasicBlock.hpp"
@@ -40,7 +40,7 @@ protected:
     std::int16_t              _usageCount;       // number of uses (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
     std::int16_t              _definitionCount;  // number of definitions  (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
     std::int16_t              _softUsageCount;   // number of "soft" uses
-    LogicalAddress            *_logicalAddress; // for new backend only: logical address if created or nullptr
+    LogicalAddress            *_logicalAddress;  // for new backend only: logical address if created or nullptr
     static const std::int32_t AvgBBIndexLen;     // estimated # of BasicBlock instances in which this appears
 
 public:
@@ -352,7 +352,7 @@ public:
 
 
     virtual void print_short() {
-        SPDLOG_INFO( "%s", name() );
+        SPDLOG_INFO( "{}", name() );
     }
 
 
@@ -405,7 +405,7 @@ public:
 
 
     bool isLiveAt( Node *n ) const {
-        static_cast<void>(n); // unused
+        st_unused( n ); // unused
         return false;
     }
 

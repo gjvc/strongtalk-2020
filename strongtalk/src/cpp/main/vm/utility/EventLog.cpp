@@ -68,12 +68,12 @@ void EventLog::printPartial( std::int32_t n ) {
 
     //
     for ( i = 0; i < n; i++, e = prevEvent( e, _eventBuffer, _end ) ) {
-        static_cast<void>( nullptr );
+        st_unused(  nullptr  );
     }
 
     // skip empty entries
     for ( i = 0; e not_eq _next and e->_name == noEvent; i++, e = nextEvent( e, _eventBuffer, _end ) ) {
-        static_cast<void>( nullptr );
+        st_unused(  nullptr  );
     }
 
     std::int32_t indent = 0;
@@ -91,7 +91,7 @@ void EventLog::printPartial( std::int32_t n ) {
                 s = "- ";
                 break;
         }
-        SPDLOG_INFO( "%*.s%s", 2 * indent, " ", s );
+//        SPDLOG_INFO( "%*.s{}", 2 * indent, " ", s );
         SPDLOG_INFO( "{}  {}  {}  {}", e->_name, e->args[ 0 ], e->args[ 1 ], e->args[ 2 ] );
         SPDLOG_INFO( "" );
         if ( e->_status == EventLogEventStatus::starting ) {

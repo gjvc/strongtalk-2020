@@ -4,27 +4,30 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/runtime/Process.hpp"
-#include "vm/runtime/Processes.hpp"
-#include "vm/system/os.hpp"
-#include "vm/runtime/flags.hpp"
+#include "vm/code/StubRoutines.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
+#include "vm/interpreter/InterpretedInlineCache.hpp"
+#include "vm/interpreter/Interpreter.hpp"
+#include "vm/memory/MarkSweep.hpp"
+#include "vm/memory/OopFactory.hpp"
+#include "vm/memory/Scavenge.hpp"
 #include "vm/oop/ContextOopDescriptor.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
-#include "vm/runtime/StackChunkBuilder.hpp"
-#include "vm/runtime/ResourceMark.hpp"
-#include "vm/memory/Scavenge.hpp"
-#include "vm/memory/MarkSweep.hpp"
-#include "vm/memory/vmSymbols.hpp"
-#include "vm/interpreter/Interpreter.hpp"
-#include "vm/code/StubRoutines.hpp"
-#include "vm/runtime/ErrorHandler.hpp"
-#include "vm/memory/OopFactory.hpp"
-#include "vm/runtime/vmOperations.hpp"
-#include "vm/runtime/Delta.hpp"
+#include "vm/oop/Oop.hpp"
 #include "vm/oop/ProcessOopDescriptor.hpp"
-#include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/platform/os.hpp"
+#include "vm/primitive/InterpretedPrimitiveCache.hpp"
+#include "vm/runtime/Delta.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/ErrorHandler.hpp"
+#include "vm/runtime/flags.hpp"
+#include "vm/runtime/Processes.hpp"
+#include "vm/runtime/ResourceMark.hpp"
+#include "vm/runtime/StackChunkBuilder.hpp"
+#include "vm/runtime/VMOperation.hpp"
+#include "vm/runtime/VMProcess.hpp"
+#include "vm/runtime/VMSymbol.hpp"
+
 
 
 // The tricky part is to restore the original return address of the primitive before the delta call.
@@ -238,7 +241,7 @@ bool DeltaProcess::wait_for_async_dll( std::int32_t timeout_in_ms ) {
     }
 
     if ( TraceProcessEvents ) {
-        SPDLOG_INFO( "Waiting for async {:d} ms", timeout_in_ms );
+        SPDLOG_INFO( "Waiting for async {} ms", timeout_in_ms );
     }
 
     _is_idle = true;
@@ -305,7 +308,7 @@ void DeltaProcess::runMainProcess() {
 // Code entry point for at Delta process
 std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
-    SPDLOG_INFO( "delta-process-launch-delta-process:  thread_id [{:d}]", process->thread_id() );
+    SPDLOG_INFO( "delta-process-launch-delta-process:  thread_id [{}]", process->thread_id() );
 
     // Wait until we get the torch
     process->suspend_at_creation();
@@ -316,7 +319,7 @@ std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
     DeltaProcess *p     = static_cast<DeltaProcess *>(process);
     Oop          result = Delta::call( p->receiver(), p->selector() );
-    static_cast<void>( result );
+    st_unused(  result  );
 
     if ( have_nlr_through_C ) {
         if ( nlr_home_id == ErrorHandler::aborting_nlr_home_id() ) {
@@ -359,7 +362,7 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread 
               : os::starting_thread( &_thread_id );
 
     _stack_limit = (char *) os::stack_limit( _thread );
-    SPDLOG_INFO( "stack limit is [{:d}] bytes", _stack_limit );
+    SPDLOG_INFO( "stack limit is [{}] bytes", _stack_limit );
 
     SPDLOG_INFO( "creating DeltaProcess 0x{0:x}", static_cast<const void *>( this ) );
 
@@ -693,7 +696,7 @@ void trace_deoptimization_start() {
         frame_array->print_value();
 
         //
-        SPDLOG_INFO( " @ 0x%lx", static_cast<const void *>(old_fp) );
+        SPDLOG_INFO( " @ 0x{0:x}", static_cast<const void *>(old_fp) );
     }
 
 }
@@ -935,7 +938,7 @@ std::int32_t DeltaProcess::depth() {
 
 
 std::int32_t DeltaProcess::vdepth( Frame *f ) {
-    static_cast<void>(f); // unused
+    st_unused( f ); // unused
     Unimplemented();
     return 0;
 }

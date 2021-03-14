@@ -4,7 +4,8 @@
 ####  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 ####
 
-# announce  -------------------------------------------------------------------
+
+# announce --------------------------------------------------------------------
 
 message ( STATUS "" )
 message ( STATUS "-----------------------------------------------------------------------------" )
@@ -21,7 +22,11 @@ cmake_minimum_required ( VERSION 3.0 )
 
 # toolchain -------------------------------------------------------------------
 
-set ( build-type debug )
+if ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
+    set ( build-type debug )
+else ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
+    set ( build-type release )
+endif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
 
 
 # toolchain -------------------------------------------------------------------
@@ -94,6 +99,11 @@ set ( cpp-main-dir ${cpp-src-dir}/main )
 set ( cpp-test-dir ${cpp-src-dir}/test )
 
 
+# include directories ---------------------------------------------------------
+
+set ( googletest-include-dir ${ext-dir}/googletest/googletest/include )
+
+
 # object directories ----------------------------------------------------------
 
 set ( fmt-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/fmt/ )
@@ -129,17 +139,17 @@ message ( STATUS "CMAKE_CXX_COMPILER_ID. . . . [${CMAKE_CXX_COMPILER_ID}]" )
 message ( STATUS "CMAKE_CXX_COMPILER_LAUNCHER. [${CMAKE_CXX_COMPILER_LAUNCHER}]" )
 message ( STATUS "CMAKE_CXX_STANDARD_REQUIRED. [${CMAKE_CXX_STANDARD_REQUIRED}]" )
 message ( STATUS "CMAKE_C_COMPILER. . . . . . .[${CMAKE_C_COMPILER}]" )
-message ( STATUS "CMAKE_C_COMPILER_LAUNCHER    [${CMAKE_C_COMPILER_LAUNCHER}]" )
-message ( STATUS "CMAKE_HOST_SYSTEM_NAME       [${CMAKE_HOST_SYSTEM_NAME}]" )
-message ( STATUS "CMAKE_HOST_SYSTEM_VERSION    [${CMAKE_HOST_SYSTEM_VERSION}]" )
-message ( STATUS "CMAKE_SYSTEM . . . . . .     [${CMAKE_SYSTEM}]" )
-message ( STATUS "CMAKE_SYSTEM_NAME            [${CMAKE_SYSTEM_NAME}]" )
-message ( STATUS "CMAKE_VERBOSE_MAKEFILE       [${CMAKE_VERBOSE_MAKEFILE}]" )
-message ( STATUS "CMAKE_VERSION . . . . . .    [${CMAKE_VERSION}]" )
+message ( STATUS "CMAKE_C_COMPILER_LAUNCHER. . [${CMAKE_C_COMPILER_LAUNCHER}]" )
+message ( STATUS "CMAKE_HOST_SYSTEM_NAME. . . .[${CMAKE_HOST_SYSTEM_NAME}]" )
+message ( STATUS "CMAKE_HOST_SYSTEM_VERSION. . [${CMAKE_HOST_SYSTEM_VERSION}]" )
+message ( STATUS "CMAKE_SYSTEM . . . . . . . . [${CMAKE_SYSTEM}]" )
+message ( STATUS "CMAKE_SYSTEM_NAME. . . . . . [${CMAKE_SYSTEM_NAME}]" )
+message ( STATUS "CMAKE_VERBOSE_MAKEFILE. . . .[${CMAKE_VERBOSE_MAKEFILE}]" )
+message ( STATUS "CMAKE_VERSION . . . . . . . .[${CMAKE_VERSION}]" )
 message ( STATUS "" )
 message ( STATUS "" )
 message ( STATUS "-----------------------------------------------------------------------------" )
-message ( STATUS ">>> toolchain variables" )
+message ( STATUS ">>> toolchain" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS "" )
 message ( STATUS "arch . . . . . . . . . [${arch}]" )
@@ -174,13 +184,11 @@ list ( FILTER st20-main-library-sources EXCLUDE REGEX "src/cpp/main/vm/main/main
 # library ---------------------------------------------------------------------
 
 include_directories ( ${cpp-main-dir} )
-include_directories ( ${cpp-test-dir} )
 include_directories ( ${cpp-auto-dir} )
 
-include_directories ( SYSTEM ${ext-dir}/googletest/googletest/include )
-include_directories ( SYSTEM ${ext-dir}/nasm/include )
 include_directories ( SYSTEM ${ext-dir}/nasm )
 include_directories ( SYSTEM ${ext-dir}/nasm/disasm )
+include_directories ( SYSTEM ${ext-dir}/nasm/include )
 include_directories ( SYSTEM ${ext-dir}/nasm/x86 )
 include_directories ( SYSTEM ${ext-dir}/spdlog/include )
 
@@ -190,7 +198,7 @@ add_compile_definitions ( GIT_CURRENT_REVISION=${GIT_CURRENT_REVISION} )
 add_compile_options ( -fpermissive )
 
 
-# library ----------------------------------------------------------------------
+# main library ----------------------------------------------------------------
 
 file ( GLOB_RECURSE st20-main-library-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/*/*.cpp" "${cpp-auto-dir}/vm/*/*.cpp" )
 list ( FILTER st20-main-library-sources EXCLUDE REGEX "src/cpp/main/vm/main/main.cpp" )
@@ -199,7 +207,7 @@ add_library ( st20-main-library-object OBJECT ${st20-main-library-sources} )
 add_library ( st20-main-library-static STATIC $<TARGET_OBJECTS:st20-main-library-object> )
 
 
-# binary ----------------------------------------------------------------------
+# main ------------------------------------------------------------------------
 
 file ( GLOB_RECURSE st20-main-binary-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/main/*.cpp" )
 add_executable ( st20-main-binary ${st20-main-binary-sources} )
@@ -210,19 +218,31 @@ target_link_options ( st20-main-binary PUBLIC -static -static-libgcc -static-lib
 target_link_libraries ( st20-main-binary PUBLIC st20-main-library-static spdlog )
 
 
-# test ------------------------------------------------------------------------
+# test library ----------------------------------------------------------------
 
 file ( GLOB st20-test-library-sources ${CMAKE_SOURCE_DIR} "${cpp-test-dir}/test/*/*.cpp" )
 list ( FILTER st20-test-library-sources EXCLUDE REGEX "src/cpp/test/test/main/main.cpp" )
-
 add_library ( st20-test-library-object OBJECT ${st20-test-library-sources} )
 add_library ( st20-test-library-static STATIC $<TARGET_OBJECTS:st20-test-library-object> )
+target_include_directories ( st20-test-library-object PRIVATE ${cpp-test-dir} )
+target_include_directories ( st20-test-library-object PUBLIC ${googletest-include-dir} )
+
+
+# test ------------------------------------------------------------------------
 
 file ( GLOB_RECURSE st20-test-binary-sources ${CMAKE_SOURCE_DIR} "${cpp-test-dir}/test/main/*.cpp" )
 add_executable ( st20-test-binary ${st20-test-binary-sources} )
+set_target_properties ( st20-test-binary PROPERTIES OUTPUT_NAME st20-test )
+target_include_directories ( st20-test-binary PRIVATE ${cpp-test-dir} )
+        target_include_directories ( st20-test-binary PUBLIC ${googletest-include-dir} )
+
 target_link_directories ( st20-test-binary PUBLIC ${spdlog-object-dir} )
 target_link_directories ( st20-test-binary PUBLIC ${googletest-object-dir}/lib )
+target_link_options ( st20-test-binary PUBLIC -static -static-libgcc -static-libstdc++ )
 target_link_libraries ( st20-test-binary PUBLIC st20-test-library-static st20-main-library-static spdlog gtest )
+
+
+# debrief ---------------------------------------------------------------------
 
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS ">>> complete" )

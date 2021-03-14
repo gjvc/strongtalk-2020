@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "allocation.hpp"
 #include "vm/memory/Reflection.hpp"
@@ -40,7 +40,7 @@ protected:
     void compute_mapping() {
         _mapping                     = new GrowableArray<std::int32_t>( 20 );
         std::int32_t old_header_size = _oldKlass->klass_part()->oop_header_size();
-//        std::int32_t new_header_size = _newKlass->klass_part()->oop_header_size();
+        std::int32_t new_header_size = _newKlass->klass_part()->oop_header_size();
         std::int32_t n               = _oldKlass->klass_part()->number_of_instance_variables();
 
         for ( std::int32_t old_index = 0; old_index < n; old_index++ ) {
@@ -103,7 +103,7 @@ public:
 
 
     virtual MemOop allocate( MemOop src ) {
-        static_cast<void>(src); // unused
+        st_unused( src ); // unused
         return MemOop( _newKlass->klass_part()->allocateObject() );
     }
 };
@@ -304,7 +304,7 @@ public:
 
 
     MemOop allocate( MemOop src ) {
-        static_cast<void>(src); // unused
+        st_unused( src ); // unused
 
         Unimplemented();
         return nullptr;

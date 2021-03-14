@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/assembler/Location.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
@@ -66,7 +66,7 @@ public:
 
 
     virtual Oop value( const Frame *f = nullptr ) const {
-        static_cast<void>(f); // unused
+        st_unused( f ); // unused
         SubclassResponsibility();
         return nullptr;
     }
@@ -81,7 +81,7 @@ public:
 
 
     virtual bool equal( NameDescriptor *other ) const {
-        static_cast<void>(other); // unused
+        st_unused( other ); // unused
         return false;
     }
 
@@ -142,7 +142,7 @@ struct ValueNameDescriptor : public NameDescriptor {
 
 
     Oop value( const Frame *f = nullptr ) const {
-        static_cast<void>(f); // unused
+        st_unused( f ); // unused
         return _v;
     }
 

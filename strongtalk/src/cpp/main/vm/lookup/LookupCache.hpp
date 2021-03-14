@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/lookup/LookupResult.hpp"
 
 constexpr std::int32_t primary_cache_size   = 16 * 1024;

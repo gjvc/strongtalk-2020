@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/interpreter/Interpreter.hpp"
 #include "vm/code/StubRoutines.hpp"
@@ -180,12 +180,12 @@ void Interpreter::trace_bytecode() {
             }
             std::uint8_t *ip   = DeltaProcess::active()->last_frame().hp();
             const char   *name = ByteCodes::name( (ByteCodes::Code) *ip );
-            SPDLOG_INFO( "%9d 0x{0:x}: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
+            SPDLOG_INFO( "%9d 0x{0:x}: %02x {}", NumberOfBytecodesExecuted, ip, *ip, name );
         }
     } else if ( TraceBytecodes ) {
         std::uint8_t *ip   = DeltaProcess::active()->last_frame().hp();
         const char   *name = ByteCodes::name( (ByteCodes::Code) *ip );
-        SPDLOG_INFO( "%9d 0x{0:x}: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
+        SPDLOG_INFO( "%9d 0x{0:x}: %02x {}", NumberOfBytecodesExecuted, ip, *ip, name );
     }
 }
 

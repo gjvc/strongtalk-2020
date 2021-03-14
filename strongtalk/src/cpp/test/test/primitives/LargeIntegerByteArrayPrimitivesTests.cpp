@@ -4,15 +4,15 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/Integer.hpp"
 #include "vm/utility/IntegerOps.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/primitive/ByteArrayPrimitives.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 
 #include <gtest/gtest.h>
 
@@ -28,70 +28,69 @@ typedef Oop(__CALLING_CONVENTION divfn)( Oop, Oop );
     EXPECT_EQ( expected, actual ) << message;
 
 #define ASSERT_EQ_M2( expected, actual, prefix ) \
-  ASSERT_EQ_M( expected, actual, report(prefix, expected, actual ) )
+    ASSERT_EQ_M( expected, actual, report(prefix, expected, actual ) )
 
 #define ASSERT_EQ_MH( expected, actual, prefix ) \
-  ASSERT_EQ_M( expected, actual, reportHex(prefix, expected, actual ) )
+    ASSERT_EQ_M( expected, actual, reportHex(prefix, expected, actual ) )
 
 #define ASSERT_EQ_MS( expected, actual, prefix ) \
-  ASSERT_TRUE_M( (const char*)!strcmp( expected, actual ), report( prefix, expected, actual ) )
+    ASSERT_TRUE_M( (const char*)!strcmp( expected, actual ), report( prefix, expected, actual ) )
 
 #define CHECK_DIV_WITH_SMI( fn, xstring, ystring, expected ) \
-  IntegerOps::string_to_Integer(xstring, 16, as_Integer(x)); \
-  IntegerOps::string_to_Integer(ystring, 16, as_Integer(y)); \
-  SmallIntegerOop result = SmallIntegerOop(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
-  ASSERT_TRUE_M(result->isSmallIntegerOop(), "Should be small integer"); \
-  ASSERT_EQ_MH(expected, result->value(), "Wrong result")
+    IntegerOps::string_to_Integer(xstring, 16, as_Integer(x)); \
+    IntegerOps::string_to_Integer(ystring, 16, as_Integer(y)); \
+    SmallIntegerOop result = SmallIntegerOop(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
+    ASSERT_TRUE_M(result->isSmallIntegerOop(), "Should be small integer"); \
+    ASSERT_EQ_MH(expected, result->value(), "Wrong result")
 
 #define CHECK_DIV_WITH_LRG( fn, xstring, ystring, expected ) \
-  IntegerOps::string_to_Integer(xstring, 16, as_Integer(x)); \
-  IntegerOps::string_to_Integer(ystring, 16, as_Integer(y)); \
-  ByteArrayOop result = ByteArrayOop(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
-  ASSERT_TRUE_M(result->isByteArray(), "Should be byteArray"); \
-  ASSERT_EQ_MS(expected, as_Hex(result->number()), "Wrong result")
+    IntegerOps::string_to_Integer(xstring, 16, as_Integer(x)); \
+    IntegerOps::string_to_Integer(ystring, 16, as_Integer(y)); \
+    ByteArrayOop result = ByteArrayOop(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
+    ASSERT_TRUE_M(result->isByteArray(), "Should be byteArray"); \
+    ASSERT_EQ_MS(expected, as_Hex(result->number()), "Wrong result")
 
 #define CHECK_ARG_TYPE( fn ) \
-  IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
-  SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(smiOopFromValue(10), x->as_oop())); \
-  ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
-  ASSERT_EQ_MS(vmSymbols::first_argument_has_wrong_type()->chars(), result->chars(), "Wrong result")
+    IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
+    SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(smiOopFromValue(10), x->as_oop())); \
+    ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
+    ASSERT_EQ_MS(vmSymbols::first_argument_has_wrong_type()->chars(), result->chars(), "Wrong result")
 
 #define CHECK_ARG_TYPE2( fn ) \
-  IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
-  SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(x->as_oop(), x->as_oop())); \
-  ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
-  ASSERT_EQ_MS(vmSymbols::first_argument_has_wrong_type()->chars(), result->chars(), "Wrong result")
+    IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
+    SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(x->as_oop(), x->as_oop())); \
+    ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
+    ASSERT_EQ_MS(vmSymbols::first_argument_has_wrong_type()->chars(), result->chars(), "Wrong result")
 
 #define CHECK_INVALID( fn, x, y, errorSymbol ) \
-  SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
-  ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
-  ASSERT_EQ_MS(vmSymbols::errorSymbol()->chars(), result->chars(), "Wrong result")
+    SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
+    ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
+    ASSERT_EQ_MS(vmSymbols::errorSymbol()->chars(), result->chars(), "Wrong result")
 
 #define CHECK_X_INVALID( fn ) \
-  ((Digit*)ByteArrayOop(x->as_oop())->bytes())[0] = 1; \
-  IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(y)); \
-  CHECK_INVALID(fn, x, y, argument_is_invalid)
+    ((Digit*)ByteArrayOop(x->as_oop())->bytes())[0] = 1; \
+    IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(y)); \
+    CHECK_INVALID(fn, x, y, argument_is_invalid)
 
 #define CHECK_Y_INVALID( fn ) \
-  ((Digit*)ByteArrayOop(y->as_oop())->bytes())[0] = 1; \
-  IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
-  CHECK_INVALID(fn, x, y, argument_is_invalid)
+    ((Digit*)ByteArrayOop(y->as_oop())->bytes())[0] = 1; \
+    IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
+    CHECK_INVALID(fn, x, y, argument_is_invalid)
 
 #define CHECK_Y_ZERO( fn ) \
-  IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
-  CHECK_INVALID(fn, x, y, division_by_zero)
+    IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
+    CHECK_INVALID(fn, x, y, division_by_zero)
 
 
 class LargeIntegerByteArrayPrimitivesTests : public ::testing::Test {
 
 public:
-    LargeIntegerByteArrayPrimitivesTests()  :
-    ::testing::Test(),
-    rm{nullptr},
-    x{nullptr},
-    y{nullptr},
-    resultString{}
-    {}
+    LargeIntegerByteArrayPrimitivesTests() :
+        ::testing::Test(),
+        rm{ nullptr },
+        x{ nullptr },
+        y{ nullptr },
+        resultString{} {}
 
 
 protected:

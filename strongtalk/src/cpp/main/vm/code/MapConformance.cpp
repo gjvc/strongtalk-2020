@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/utility/OutputStream.hpp"
 #include "vm/utility/GrowableArray.hpp"
@@ -290,7 +290,7 @@ void MapConformance::append_mapping( Variable src_register, Variable src_stack, 
 
 
 void MapConformance::generate( Variable free_register1, Variable free_register2 ) {
-    static_cast<void>(free_register2); // unused
+    st_unused( free_register2 ); // unused
 
     _free_register         = free_register1;
     // There is max. 2 used variables per mapping.
@@ -306,7 +306,7 @@ void MapConformance::generate( Variable free_register1, Variable free_register2 
 
 
 void MapConformance::move( Variable src, Variable dst ) {
-    SPDLOG_INFO( "move {:d} {:d}", src.value(), dst.value() );
+    SPDLOG_INFO( "move {} {}", src.value(), dst.value() );
 //    _console->print( "	move  " );
 //    src.print();
 //    _console->print( ",	" );
@@ -316,7 +316,7 @@ void MapConformance::move( Variable src, Variable dst ) {
 
 
 void MapConformance::push( Variable src ) {
-    SPDLOG_INFO( "push {:d}", src.value() );
+    SPDLOG_INFO( "push {}", src.value() );
 //    _console->print( "	push  " );
 //    src.print();
 //    _console->cr();
@@ -324,7 +324,7 @@ void MapConformance::push( Variable src ) {
 
 
 void MapConformance::pop( Variable dst ) {
-    SPDLOG_INFO( "pop {:d}", dst.value() );
+    SPDLOG_INFO( "pop {}", dst.value() );
 //    _console->print( "	pop  " );
 //    dst.print();
 //    _console->cr();

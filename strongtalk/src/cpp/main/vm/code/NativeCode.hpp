@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/memory/Universe.hpp"
 
@@ -26,7 +26,7 @@ public:
 
 
     void *operator new( std::size_t size ) throw() {
-        static_cast<void>(size); // unused
+        st_unused( size ); // unused
         SubclassResponsibility();
         return nullptr;
     }

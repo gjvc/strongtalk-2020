@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/runtime/Frame.hpp"
@@ -15,7 +15,7 @@
 #include "vm/utility/EventLog.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/recompiler/RecompilationPolicy.hpp"
-#include "vm/runtime/uncommonBranch.hpp"
+#include "vm/runtime/UncommonBranch.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 
@@ -66,7 +66,7 @@ static bool has_invalid_context( Frame *f ) {
     while ( true ) {
         ContextOop con = vf->compiled_context();
 
-        // SPDLOG_INFO("checking context fp = 0x%lx, pc = 0x%lx", f->fp(), f->pc());
+        // SPDLOG_INFO("checking context fp = 0x{0:x}, pc = 0x{0:x}", f->fp(), f->pc());
         if ( con ) {
             con->print();
         }
@@ -154,7 +154,7 @@ void uncommon_trap() {
         _console->print( " #%d", nm->uncommon_trap_counter() );
 
         if ( WizardMode )
-            SPDLOG_INFO( "{:d} called from {:x}", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
+            SPDLOG_INFO( "{} called from {:x}", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
         _console->cr();
 
         if ( TraceDeoptimization )

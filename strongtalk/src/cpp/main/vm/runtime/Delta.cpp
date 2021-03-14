@@ -7,7 +7,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
@@ -119,7 +119,7 @@ Oop Delta::call( Oop receiver, Oop selector, Oop arg1 ) {
 
 
 Oop Delta::call( Oop receiver, Oop selector, Oop arg1, Oop arg2 ) {
-    static_cast<void>(arg2); // unused
+    st_unused( arg2 ); // unused
 
     static DeltaCallCache cache;
     return call_generic( &cache, receiver, selector, 2, &arg1 );
@@ -127,8 +127,8 @@ Oop Delta::call( Oop receiver, Oop selector, Oop arg1, Oop arg2 ) {
 
 
 Oop Delta::call( Oop receiver, Oop selector, Oop arg1, Oop arg2, Oop arg3 ) {
-    static_cast<void>(arg2); // unused
-    static_cast<void>(arg3); // unused
+    st_unused( arg2 ); // unused
+    st_unused( arg3 ); // unused
 
     static DeltaCallCache cache;
     return call_generic( &cache, receiver, selector, 3, &arg1 );

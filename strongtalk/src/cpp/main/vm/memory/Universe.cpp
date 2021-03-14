@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/code/InliningDatabase.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -26,7 +26,7 @@
 #include "vm/oop/MixinOopDescriptor.hpp"
 #include "vm/runtime/Timer.hpp"
 #include "vm/runtime/Delta.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/utility/EventLog.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/memory/Scavenge.hpp"
@@ -55,9 +55,9 @@ std::int32_t   Universe::scavengeCount;
 KlassOop smiKlassObject     = KlassOop( MarkOopDescriptor::bad() );
 KlassOop contextKlassObject = KlassOop( MarkOopDescriptor::bad() );
 KlassOop doubleKlassObject  = KlassOop( MarkOopDescriptor::bad() );
-KlassOop Universe::_memOopKlassObject    = KlassOop( MarkOopDescriptor::bad() );
-KlassOop Universe::_objectArrayKlassObject  = KlassOop( MarkOopDescriptor::bad() );
-KlassOop Universe::_byteArrayKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_memOopKlassObject      = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_objectArrayKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_byteArrayKlassObject   = KlassOop( MarkOopDescriptor::bad() );
 KlassOop symbolKlassObject = KlassOop( MarkOopDescriptor::bad() );
 KlassOop Universe::_associationKlassObject = KlassOop( MarkOopDescriptor::bad() );
 KlassOop zeroArgumentBlockKlassObject  = KlassOop( MarkOopDescriptor::bad() );
@@ -94,9 +94,9 @@ void Universe::genesis() {
 
     ResourceMark resourceMark;
 
-    SPDLOG_INFO( "%vm-backend-implementation[{}]", UseNewBackend | TryNewBackend ? "new" : "old" );
+    SPDLOG_INFO( "vm-backend-implementation[{}]", UseNewBackend | TryNewBackend ? "new" : "old" );
     if ( UseNewBackend | TryNewBackend ) {
-        SPDLOG_INFO( "%vm-backend-makeConformant[{}]", UseNewMakeConformant ? "yes" : "no" );
+        SPDLOG_INFO( "vm-backend-makeConformant[{}]", UseNewMakeConformant ? "yes" : "no" );
     }
 
     if ( not Interpreter::is_optimized() ) {
@@ -130,7 +130,7 @@ void Universe::genesis() {
 
     remembered_set = new RememberedSet; // uses _boundary's
 
-    tenuring_threshold = AgeTable::table_size;    // don't tenure anything at first
+    tenuring_threshold = AgeTable::table_size; // don't tenure anything at first
 
     LookupCache::flush();
 
@@ -156,7 +156,9 @@ void Universe::cleanup_after_bootstrap() {
 
 
 void Universe::check_root( Oop *p ) {
-    if ( *p == MarkOopDescriptor::bad() ) st_fatal( "MarkOopDescriptor::bad() found in roots" );
+    if ( *p == MarkOopDescriptor::bad() ) {
+        st_fatal( "MarkOopDescriptor::bad() found in roots" );
+    }
 }
 
 
@@ -177,7 +179,7 @@ void Universe::switch_pointers( Oop from, Oop to ) {
 
 
 MemOop Universe::relocate( MemOop p ) {
-    static_cast<void>(p); // unused
+    st_unused( p ); // unused
 
     //APPLY_TO_SPACES(SPACE_OOP_RELOCATE_TEMPLATE);
     ShouldNotReachHere(); // Oop not in any old Space
@@ -286,7 +288,7 @@ static void decode_method( MethodOop method, KlassOop klass ) {
 
 
 static void decode_klass( SymbolOop name, KlassOop klass ) {
-    static_cast<void>(name); // unused
+    st_unused( name ); // unused
 
     ObjectArrayOop f{ nullptr };
 
@@ -795,7 +797,7 @@ void Universe::scavenge( Oop *p ) {
         TraceTime   t( "Scavenge", PrintScavenge );
 
         if ( PrintScavenge and WizardMode ) {
-            SPDLOG_INFO( " {:d}", tenuring_threshold );
+            SPDLOG_INFO( " {}", tenuring_threshold );
         }
 
         if ( VerifyBeforeScavenge ) {
@@ -866,7 +868,8 @@ Space *Universe::spaceFor( void *p ) {
     }
 
     {
-        FOR_EACH_OLD_SPACE( s )if ( s->contains( p ) )
+        FOR_EACH_OLD_SPACE( s )
+            if ( s->contains( p ) )
                 return s;
     }
 

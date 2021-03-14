@@ -5,20 +5,20 @@
 
 #include "vm/primitive/SystemPrimitives.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/memory/Reflection.hpp"
 #include "vm/oop/DoubleOopDescriptor.hpp"
 #include "vm/oop/ProxyOopDescriptor.hpp"
 #include "vm/oop/ProcessOopDescriptor.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/utility/Integer.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/interpreter/DispatchTable.hpp"
 #include "vm/memory/SnapshotDescriptor.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/system/dll.hpp"
 #include "vm/runtime/FlatProfiler.hpp"
 #include "vm/klass/WeakArrayKlass.hpp"
@@ -28,6 +28,7 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 
 
 TRACE_FUNC( TraceSystemPrims, "system" )
@@ -675,7 +676,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
         VMProcess::execute( &op );
 
         if ( TraceInliningDatabase ) {
-            SPDLOG_INFO( "compiling {%s} completed", str );
+            SPDLOG_INFO( "compiling [{}] completed", str );
             SPDLOG_INFO( "[Database]" );
             rs->print_inlining_database_on( _console, nullptr, -1, 0 );
             SPDLOG_INFO( "[Compiled method]" );
@@ -683,7 +684,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
         }
     } else {
         if ( TraceInliningDatabase ) {
-            SPDLOG_INFO( "compiling {%s} failed", str );
+            SPDLOG_INFO( "compiling [{}] failed", str );
         }
     }
     return trueObject;
@@ -704,7 +705,7 @@ PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
         if ( TraceInliningDatabase ) {
             _console->print( "Compiling " );
             op.result()->_lookupKey.print_on( _console );
-            SPDLOG_INFO( " in background = 0x%lx", static_cast<const void *>(op.result()) );
+            SPDLOG_INFO( " in background = 0x{0:x}", static_cast<const void *>(op.result()) );
         }
     }
     return end_of_table ? falseObject : trueObject;

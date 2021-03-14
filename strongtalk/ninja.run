@@ -4,8 +4,7 @@
 
 # bash ------------------------------------------------------------------------
 
-set -o errexit -o nounset
-${BASH_DEBUG:+trap '(read -p "[${BASH_SOURCE}:${LINENO}] [${BASH_COMMAND}] ")' DEBUG}
+set -o errexit -o nounset -o pipefail
 
 
 # location --------------------------------------------------------------------
@@ -25,49 +24,52 @@ compiler_family="gcc"
 compiler_version="10"
 runtime="posix"
 toolchain_name="${arch}-${platform}-${compiler_family}-${compiler_version}-${runtime}"
-object_root=${_DIRNAME}/obj/${toolchain_name}/cmake/debug/
+build_type="debug"
+object_root="${_DIRNAME}/obj/${toolchain_name}/cmake/${build_type}/src"
+
+
+# logging ---------------------------------------------------------------------
+
+function banner() {
+echo
+echo
+echo "-----------------------------------------------------------------------------"
+echo ">>> ${@}"
+echo "-----------------------------------------------------------------------------"
+echo
+}
 
 
 # generate and build ----------------------------------------------------------
 
-rm -rf "${object_root}/src"
-echo
-echo
-echo "-----------------------------------------------------------------------------"
-echo ">>> ccache summary"
-echo "-----------------------------------------------------------------------------"
-CCACHE_DIR=.ccache ccache --show-stats | grep cache | sort
+banner ccache
+CCACHE_DIR=${_DIRNAME}/.ccache ccache --show-stats
 
-echo
-echo
-echo "-----------------------------------------------------------------------------"
-echo ">>> cmake"
-echo "-----------------------------------------------------------------------------"
-echo
+
+# generate --------------------------------------------------------------------
+
+banner cmake
+[[ -d "${object_root}" ]] && rm -rf "${object_root}"
 cmake \
+    -D CMAKE_BUILD_TYPE=Debug \
     -G Ninja \
-    -B "${object_root}" \
-    -S .
+    -S . \
+    -B "${object_root}"
 
 
-echo
-echo
-echo "-----------------------------------------------------------------------------"
-echo ">>> ninja"
-echo "-----------------------------------------------------------------------------"
-echo
+# build -----------------------------------------------------------------------
+
+banner ninja
 ninja \
-    -C ${object_root} \
+    -C "${object_root}" \
     -k 0
 
-ls -al ${object_root}/*.{a,exe} | column -t
+banner result
+ls -al "${object_root}/"*.{a,exe} | column -t
 
-echo
-echo
-echo "-----------------------------------------------------------------------------"
-echo ">>> ccache summary"
-echo "-----------------------------------------------------------------------------"
-CCACHE_DIR=.ccache ccache --show-stats | grep cache | sort
 
-echo
-echo
+banner ccache
+CCACHE_DIR=${_DIRNAME}/.ccache ccache --show-stats
+CCACHE_DIR=${_DIRNAME}/.ccache ccache --zero-stats
+
+banner complete

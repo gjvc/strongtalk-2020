@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
 #include "vm/memory/util.hpp"
@@ -176,8 +176,8 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, cons
 }
 
 
-#define FOR_EACH_OOPADDR( VAR )                              \
-    for (Oop* VAR = oops(), *CONC(VAR, _end) = oops() + oops_size();          \
+#define FOR_EACH_OOPADDR( VAR ) \
+    for (Oop* VAR = oops(), *CONC(VAR, _end) = oops() + oops_size(); \
          VAR < CONC(VAR, _end); VAR++)
 
 
@@ -204,9 +204,9 @@ void NativeMethodScopes::scavenge_contents() {
 
 void NativeMethodScopes::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
 
-    static_cast<void>(from); // unused
-    static_cast<void>(to); // unused
-    static_cast<void>(nativeMethods_to_invalidate); // unused
+    st_unused( from ); // unused
+    st_unused( to ); // unused
+    st_unused( nativeMethods_to_invalidate ); // unused
 
 
 //  This is tricky!
@@ -288,5 +288,5 @@ void NativeMethodScopes::print_partition() {
     std::int32_t v_size = value_size() * sizeof( std::int32_t );
     std::int32_t total  = v_size + p_size + o_size + d_size;
 
-    SPDLOG_INFO( "{deps {}%%, oops {}%%, bytes {}%%, pcs %d%%}", d_size * 100 / total, o_size * 100 / total, v_size * 100 / total, p_size * 100 / total );
+    SPDLOG_INFO( "{deps {}%%, oops {}%%, bytes {}%%, pcs {:d}%%}", d_size * 100 / total, o_size * 100 / total, v_size * 100 / total, p_size * 100 / total );
 }

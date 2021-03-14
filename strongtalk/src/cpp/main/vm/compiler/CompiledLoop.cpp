@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/compiler/CompiledLoop.hpp"
 #include "vm/compiler/BasicBlock.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
@@ -181,19 +181,19 @@ public:
 
 
     virtual void normal_send( InterpretedInlineCache *ic ) {
-        static_cast<void>(ic); // unused
+        st_unused( ic ); // unused
         send();
     }
 
 
     virtual void self_send( InterpretedInlineCache *ic ) {
-        static_cast<void>(ic); // unused
+        st_unused( ic ); // unused
         send();
     }
 
 
     virtual void super_send( InterpretedInlineCache *ic ) {
-        static_cast<void>(ic); // unused
+        st_unused( ic ); // unused
         send();
     }
 };
@@ -533,7 +533,7 @@ void CompiledLoop::removeLoopVarOverflow() {
     BranchNode *overflowCheck = (BranchNode *) n;
     st_assert( overflowCheck->op() == BranchOpCode::VSBranchOp, "should be overflow check" );
     if ( CompilerDebug or PrintLoopOpts ) {
-        cout( PrintLoopOpts )->print( "*removing overflow check at node N%d\n", overflowCheck->id() );
+        SPDLOG_INFO( "*removing overflow check at node N{}", overflowCheck->id() );
     }
     Node *taken = overflowCheck->next( 1 );      // overflow handling code
     taken->removeUpToMerge();
@@ -553,7 +553,7 @@ void CompiledLoop::removeLoopVarOverflow() {
                 AssignNode *assign = (AssignNode *) a;
                 if ( assign->src() == _incNode->dest() and assign->dest() == _loopVar ) {
                     if ( CompilerDebug or PrintLoopOpts ) {
-                        cout( PrintLoopOpts )->print( "*optimizing loopVar increment at N%d\n", _incNode->id() );
+                        SPDLOG_INFO( "*optimizing loopVar increment at N{}", _incNode->id() );
                     }
                     _incNode->setDest( _incNode->bb(), _loopVar );
                     assign->eliminate( assign->bb(), nullptr, true, false );
@@ -838,8 +838,8 @@ void CompiledLoop::findRegCandidates() {
 
 
 void CompiledLoop::print() {
-    SPDLOG_INFO( "((CompiledLoop*)0x{0:x}) = [N{}..N{}], cond = [N{}..N%d], body = [N%d..N%d] (byteCodeIndex %d..%d)", static_cast<const void *>(this), _firstNodeID, _lastNodeID, _startOfCond->id(), _endOfCond->id(), _startOfBody->id(), _endOfBody->id(), _startOfLoop->byteCodeIndex(), _endOfLoop->byteCodeIndex() );
-    SPDLOG_INFO( "\tloopVar=%s, lower=%s, upper=%s", _loopVar->safeName(), _lowerBound->safeName(), _upperBound->safeName() );
+    SPDLOG_INFO( "((CompiledLoop*)0x{0:x}) = [N{}..N{}], cond = [N{}..N%d], body = [N%d..N%d] (byteCodeIndex {:d}..{:d})", static_cast<const void *>(this), _firstNodeID, _lastNodeID, _startOfCond->id(), _endOfCond->id(), _startOfBody->id(), _endOfBody->id(), _startOfLoop->byteCodeIndex(), _endOfLoop->byteCodeIndex() );
+    SPDLOG_INFO( "loopVar={}, lower={}, upper={}", _loopVar->safeName(), _lowerBound->safeName(), _upperBound->safeName() );
 }
 
 
@@ -874,5 +874,5 @@ void HoistedTypeTest::print() {
 
 
 void LoopPseudoRegisterCandidate::print() {
-    SPDLOG_INFO( "((LoopPseudoRegisterCandidate*)0x{0:x}): %s, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
+    SPDLOG_INFO( "((LoopPseudoRegisterCandidate*)0x{0:x}): {}, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
 }

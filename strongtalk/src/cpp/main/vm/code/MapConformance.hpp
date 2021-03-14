@@ -23,9 +23,9 @@
 // 30 bits signed offset
 // 2  bits describes type
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/OutputStream.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/code/MapConformance.hpp"

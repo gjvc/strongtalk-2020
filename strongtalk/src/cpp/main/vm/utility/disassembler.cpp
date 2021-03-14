@@ -6,7 +6,7 @@
 
 #include "vm/memory/util.hpp"
 #include "disassembler.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/code/RelocationInformation.hpp"
 

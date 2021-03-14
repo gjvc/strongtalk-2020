@@ -907,7 +907,7 @@ void print_selector_cr( SymbolOop selector ) {
     st_assert( length < 100, "selector longer than 99 characters - buffer overrun" );
     strncpy( buffer, selector->chars(), length );
     buffer[ length ] = '\0';
-    SPDLOG_INFO( "%s", buffer );
+    SPDLOG_INFO( "{}", buffer );
 }
 
 
@@ -918,7 +918,7 @@ void InlinedScope::generateDebugInfo() {
         if ( isMethodScope() ) {
             _console->print( "Method: " );
             print_selector_cr( method()->selector() );
-            SPDLOG_INFO( "self: %s", _self->pseudoRegister()->name() );
+            SPDLOG_INFO( "self: {}", _self->pseudoRegister()->name() );
         } else {
             MethodOop m;
             _console->print( "Method: " );
@@ -942,7 +942,7 @@ void InlinedScope::generateDebugInfo() {
                 PseudoRegister *pseudoRegister = _temporaries->at( i )->pseudoRegister();
                 rec->addTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    SPDLOG_INFO( "temp[%2d]: %s", i, pseudoRegister->name() );
+                    SPDLOG_INFO( "temp[{:d}]: {}", i, pseudoRegister->name() );
             }
         }
         // float temporaries
@@ -952,7 +952,7 @@ void InlinedScope::generateDebugInfo() {
                 PseudoRegister *pseudoRegister = _floatTemporaries->at( i )->pseudoRegister();
                 rec->addTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    SPDLOG_INFO( "float[%2d]: %s", i, pseudoRegister->name() );
+                    SPDLOG_INFO( "float[{:f}]: {}", i, pseudoRegister->name() );
             }
         }
         // context temporaries
@@ -962,7 +962,7 @@ void InlinedScope::generateDebugInfo() {
                 PseudoRegister *pseudoRegister = _contextTemporaries->at( i )->pseudoRegister();
                 rec->addContextTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    SPDLOG_INFO( "c_temp[%2d]: %s", i, pseudoRegister->name() );
+                    SPDLOG_INFO( "c_temp[{:d}]: {}", i, pseudoRegister->name() );
             }
         }
         // expr stack
@@ -978,7 +978,7 @@ void InlinedScope::generateDebugInfo() {
                     //       this with Lars.
                     rec->addExprStack( _scopeInfo, i, r->createLogicalAddress() );
                     if ( PrintDebugInfoGeneration )
-                        SPDLOG_INFO( "expr[%2d]: %s", i, r->name() );
+                        SPDLOG_INFO( "expr[{:d}]: {}", i, r->name() );
                 } else {
                     // r's scope is too low (i.e. it's not actually live anymore)
                     // this can only happen if the expression is discarded; thus it's safe not to describe this entry
@@ -1086,7 +1086,7 @@ void InlinedScope::printTree() {
 
 
 void InlinedScope::print() {
-    SPDLOG_INFO( " method: 0x{0:x}\n\tid: {:d}", static_cast<void *>( method() ), scopeID() );
+    SPDLOG_INFO( " method: 0x{0:x}\n\tid: {}", static_cast<void *>( method() ), scopeID() );
     SPDLOG_INFO( "self:   " );
     self()->print();
     for ( std::size_t i = 0; i < nofArguments(); i++ ) {
@@ -1140,7 +1140,7 @@ void BlockScope::print_short() {
 
 
 void OutlinedScope::print_short( const char *name ) {
-    SPDLOG_INFO( "(%s*)0x{0:x} (", name, static_cast<void *>( this ) );
+    SPDLOG_INFO( "({}*)0x{0:x} (", name, static_cast<void *>( this ) );
     _scope->selector()->print_symbol_on();
     SPDLOG_INFO( ")" );
 }

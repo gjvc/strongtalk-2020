@@ -10,6 +10,7 @@
 #include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
+
 // symbols are immutable, canonicalized byteArrays.
 
 class SymbolOopDescriptor : public ByteArrayOopDescriptor {

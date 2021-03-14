@@ -12,7 +12,7 @@
 
 
 SymbolOop SymbolKlass::allocateSymbol( const char *value, std::int32_t len ) {
-    SPDLOG_INFO( "oops-SymbolKlass: SymbolKlass::allocateSymbol: symbol[{}]", value );
+//    SPDLOG_INFO( "oops-SymbolKlass: SymbolKlass::allocateSymbol: symbol[{}]", value );
     SymbolOop sym = as_symbolOop( Universe::allocate_tenured( object_size( len ) ) );
     sym->init_untagged_contents_mark();
     sym->set_klass_field( Universe::symbolKlassObject() );
@@ -43,7 +43,7 @@ void setKlassVirtualTableFromSymbolKlass( Klass *k ) {
 
 
 Oop SymbolKlass::scavenge( Oop obj ) {
-    static_cast<void>(obj); // unused
+    st_unused( obj ); // unused
 
     ShouldNotCallThis(); // shouldn't need to scavenge canonical symbols
     // (should be tenured)
@@ -83,7 +83,7 @@ void SymbolKlass::print( Oop obj ) {
 
 
 Oop SymbolKlass::oop_shallow_copy( Oop obj, bool tenured ) {
-    static_cast<void>(tenured); // unused
+    st_unused( tenured ); // unused
 
     st_assert_symbol( obj, "dispatch check" );
     return obj;

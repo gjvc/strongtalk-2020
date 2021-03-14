@@ -139,18 +139,18 @@ public:
     static std::int32_t Integer_to_string_result_size_in_bytes( Integer &x, std::int32_t base );
 
     // arithmetic/binary operations & tests
-    static void add( Integer &x, Integer &y, Integer &z );    // z := x + y
-    static void sub( Integer &x, Integer &y, Integer &z );    // z := x - y
-    static void mul( Integer &x, Integer &y, Integer &z );    // z := x * y
-    static void quo( Integer &x, Integer &y, Integer &z );    // z := x quo y
-    static void rem( Integer &x, Integer &y, Integer &z );    // z := x rem y
-    static void Div( Integer &x, Integer &y, Integer &z );    // z := x div y
-    static void Mod( Integer &x, Integer &y, Integer &z );    // z := x mod y
+    static void add( Integer &x, Integer &y, Integer &z );      // z := x + y
+    static void sub( Integer &x, Integer &y, Integer &z );      // z := x - y
+    static void mul( Integer &x, Integer &y, Integer &z );      // z := x * y
+    static void quo( Integer &x, Integer &y, Integer &z );      // z := x quo y
+    static void rem( Integer &x, Integer &y, Integer &z );      // z := x rem y
+    static void Div( Integer &x, Integer &y, Integer &z );      // z := x div y
+    static void Mod( Integer &x, Integer &y, Integer &z );      // z := x mod y
 
-    static void And( Integer &x, Integer &y, Integer &z );   // z := x and y, bitwise, assuming 2's complement representation
-    static void Or( Integer &x, Integer &y, Integer &z );    // z := x or  y, bitwise, assuming 2's complement representation
-    static void Xor( Integer &x, Integer &y, Integer &z );   // z := x xor y, bitwise, assuming 2's complement representation
-    static void ash( Integer &x, std::int32_t n, Integer &z );         // z := x * 2^n
+    static void And( Integer &x, Integer &y, Integer &z );      // z := x and y, bitwise, assuming 2's complement representation
+    static void Or( Integer &x, Integer &y, Integer &z );       // z := x or  y, bitwise, assuming 2's complement representation
+    static void Xor( Integer &x, Integer &y, Integer &z );      // z := x xor y, bitwise, assuming 2's complement representation
+    static void ash( Integer &x, std::int32_t n, Integer &z );  // z := x * 2^n
 
     static std::int32_t cmp( Integer &x, Integer &y );    // returns < 0 for x < y; 0 for x = y; > 0 for x > y
 

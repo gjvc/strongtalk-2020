@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/code/LogicalAddress.hpp"
 #include "vm/code/ScopeDescriptorNode.hpp"
 #include "vm/memory/Array.hpp"
@@ -21,7 +21,7 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/BasicBlock.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
 #include "vm/code/NameDescriptor.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
@@ -30,7 +30,7 @@
 
 
 void LocationNameDescriptor::print() {
-    SPDLOG_INFO( "[@{} = {}]  0x{0:x}", location().name(), offset );
+    SPDLOG_INFO( "[@{} = 0x{0:x}]", location().name(), offset );
 
 //    _console->print( "@%s  (0x%08x)", location().name(), offset );
 }
@@ -55,7 +55,7 @@ void BlockValueNameDescriptor::print() {
 
 
 void MemoizedBlockNameDescriptor::print() {
-    SPDLOG_INFO( "[@{} = {}]  0x{0:x}", location().name(), block_method()->print_value_string() );
+    SPDLOG_INFO( "[@{} = {}]", location().name(), block_method()->print_value_string() );
 
 //    _console->print( "[@%s =", location().name() );
 //    block_method()->print_value();

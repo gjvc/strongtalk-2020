@@ -92,19 +92,19 @@ void Sweeper::step() {
 
 
 void Sweeper::print() const {
-    SPDLOG_INFO( "%s", name() );
+    SPDLOG_INFO( "{}", name() );
 }
 
 
 void Sweeper::activate() {
     _is_active = true;
-    SPDLOG_INFO( "Activating %s", name() );
+    SPDLOG_INFO( "Activating {}", name() );
 }
 
 
 void Sweeper::deactivate() {
     _is_active = false;
-    SPDLOG_INFO( "Deactivating %s", name() );
+    SPDLOG_INFO( "Deactivating {}", name() );
 }
 
 // ---------------- HeapSweeper -----------------
@@ -230,7 +230,7 @@ void MethodSweeper::task() {
         }
     }
 
-    SPDLOG_INFO( "MethodSweeper task [%d, %d] #%d", begin, end, result );
+    SPDLOG_INFO( "MethodSweeper task [%d, {:d}] #{:d}", begin, end, result );
 
     if ( _index > length ) {
         deactivate();

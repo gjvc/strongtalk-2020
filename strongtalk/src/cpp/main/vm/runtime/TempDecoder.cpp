@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
 #include "vm/klass/Klass.hpp"
@@ -185,27 +185,27 @@ void TempPrinter::decode( MethodOop method, std::int32_t byteCodeIndex ) {
 
 
 void TempPrinter::parameter( ByteArrayOop name, std::int32_t index ) {
-    SPDLOG_INFO( "  param:      %s@{}", name->as_string(), index );
+    SPDLOG_INFO( "  param:      {}@{}", name->as_string(), index );
 }
 
 
 void TempPrinter::stack_temp( ByteArrayOop name, std::int32_t no ) {
-    SPDLOG_INFO( "  stack temp: %s@{}", name->as_string(), no );
+    SPDLOG_INFO( "  stack temp: {}@{}", name->as_string(), no );
 }
 
 
 void TempPrinter::stack_float_temp( ByteArrayOop name, std::int32_t fno ) {
-    SPDLOG_INFO( "  stack float temp: %s@{}", name->as_string(), fno );
+    SPDLOG_INFO( "  stack float temp: {}@{}", name->as_string(), fno );
 }
 
 
 void TempPrinter::heap_temp( ByteArrayOop name, std::int32_t no ) {
-    SPDLOG_INFO( "  heap temp:  %s@{}", name->as_string(), no );
+    SPDLOG_INFO( "  heap temp:  {}@{}", name->as_string(), no );
 }
 
 
 void TempPrinter::heap_parameter( ByteArrayOop name, std::int32_t no ) {
-    SPDLOG_INFO( "  heap param:  %s@{}", name->as_string(), no );
+    SPDLOG_INFO( "  heap param:  {}@{}", name->as_string(), no );
 }
 
 

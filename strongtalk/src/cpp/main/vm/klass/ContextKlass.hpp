@@ -9,7 +9,7 @@
 #include "vm/klass/MemOopKlass.hpp"
 #include "vm/oop/BlockClosureOopDescriptor.hpp"
 #include "vm/oop/MemOopDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/oop/ContextOopDescriptor.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
@@ -18,7 +18,7 @@ class ContextKlass : public MemOopKlass {
 
 public:
     // testers
-    bool oop_is_context() const {
+    bool oopIsContext() const {
         return true;
     }
 

@@ -6,7 +6,7 @@
 #include "vm/runtime/StackChunkBuilder.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/oop/MethodOopDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
@@ -42,14 +42,14 @@ void StackChunkBuilder::append( DeltaVirtualFrame *f ) {
         _virtualFrameCount++;
 
         // Append the frame information to the array
-        /*methodOop */method = f->method();
+        //methodOop method = f->method();
         array->push( f->receiver() );
         array->push( method );
         array->push( smiOopFromValue( f->byteCodeIndex() ) );
 
         // push locals
-        /*std::int32_t*/ number_of_temps = method->number_of_stack_temporaries();
-        /*GrowableArray<Oop>* */ stack   = f->expression_stack();
+        //std::int32_t number_of_temps = method->number_of_stack_temporaries();
+        //GrowableArray<Oop>*  stack   = f->expression_stack();
 
         // push number of locals
         std::int32_t locals = number_of_temps + stack->length();

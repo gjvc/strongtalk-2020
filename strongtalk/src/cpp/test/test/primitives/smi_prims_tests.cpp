@@ -5,8 +5,8 @@
 
 #include "vm/memory/OopFactory.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/runtime/VMSymbol.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/utility/Integer.hpp"
 #include "vm/utility/IntegerOps.hpp"
 
@@ -21,7 +21,11 @@ extern "C" std::int32_t expansion_count;
 class SmiPrimitivesTests : public ::testing::Test {
 
 public:
-    SmiPrimitivesTests() : ::testing::Test(), smiQuo{}, quoSymbol{} {}
+    SmiPrimitivesTests() :
+        ::testing::Test(),
+        smiQuo{},
+        quoSymbol{} {}
+
 
 protected:
     void SetUp() override {

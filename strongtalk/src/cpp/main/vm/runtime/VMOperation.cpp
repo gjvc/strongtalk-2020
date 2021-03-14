@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/utility/EventLog.hpp"
 #include "vm/runtime/ErrorHandler.hpp"
 #include "vm/memory/MarkSweep.hpp"
@@ -11,11 +11,11 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/Bootstrap.hpp"
 #include "vm/runtime/arguments.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "VMSymbol.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/code/InliningDatabase.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/runtime/init.hpp"
 
 
@@ -123,7 +123,7 @@ void load_image() {
 
 
 std::int32_t vmProcessMain( void *ignored ) {
-    static_cast<void>(ignored); // unused
+    st_unused( ignored ); // unused
 
     Processes::start( new VMProcess );
     return 0;
@@ -156,7 +156,7 @@ std::int32_t vm_main( std::int32_t argc, char *argv[] ) {
     SPDLOG_INFO( "status-main-process-created" );
 
     createVMProcess();
-    SPDLOG_INFO( "%vm-process-created" );
+    SPDLOG_INFO( "vm-process-created" );
 
     DeltaProcess::runMainProcess();
 

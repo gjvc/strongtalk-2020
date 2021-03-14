@@ -20,6 +20,7 @@ class OopPrimitivesPerformTest : public ::testing::Test {
 public:
     OopPrimitivesPerformTest() : ::testing::Test(), fixture{} {}
 
+
 protected:
     void SetUp() override {
         KlassOop objectClass = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
@@ -91,17 +92,21 @@ TEST_F( OopPrimitivesPerformTest, twoArgPerformWithUnknownShouldInvokeDoesNotUnd
 
 
 TEST_F( OopPrimitivesPerformTest, threeArgPerformWithUnknownShouldInvokeDoesNotUnderstand ) {
-    SymbolOop                      selector      = OopFactory::new_symbol( "unknown:with:with:", 18 );
-    SymbolOop                      arg1          = OopFactory::new_symbol( "arg1", 4 );
-    SymbolOop                      arg2          = OopFactory::new_symbol( "arg2", 4 );
-    SymbolOop                      arg3          = OopFactory::new_symbol( "arg3", 4 );
-    Oop                            result        = OopPrimitives::performWithWithWith( arg3, arg2, arg1, selector, fixture );
-    KlassOop                       expectedKlass = KlassOop( Universe::find_global( "Message" ) );
+
+    SymbolOop selector      = OopFactory::new_symbol( "unknown:with:with:", 18 );
+    SymbolOop arg1          = OopFactory::new_symbol( "arg1", 4 );
+    SymbolOop arg2          = OopFactory::new_symbol( "arg2", 4 );
+    SymbolOop arg3          = OopFactory::new_symbol( "arg3", 4 );
+    Oop       result        = OopPrimitives::performWithWithWith( arg3, arg2, arg1, selector, fixture );
+    KlassOop  expectedKlass = KlassOop( Universe::find_global( "Message" ) );
+
     EXPECT_TRUE( result->isMemOop() ) << "result should be object";
     EXPECT_EQ( expectedKlass, result->klass() ) << "wrong class returned";
     EXPECT_EQ( fixture, MemOop     ( result ) ->raw_at( 2 ) ) << "message should contain receiver";
     EXPECT_EQ( selector, MemOop    ( result ) ->raw_at( 3 ) ) << "message should contain selector";
-    Oop                            args          = MemOop( result )->raw_at( 4 );
+
+    Oop args = MemOop( result )->raw_at( 4 );
+
     EXPECT_TRUE( args->isObjectArray() ) << "args should be object array";
     EXPECT_EQ( 3, ObjectArrayOop   ( args ) -> length() ) << "wrong number of arguments";
     EXPECT_EQ( arg1, ObjectArrayOop( args ) ->obj_at( 1 ) ) << "message should contain argument 1";

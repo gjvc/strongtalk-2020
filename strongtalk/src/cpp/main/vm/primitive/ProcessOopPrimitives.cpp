@@ -19,7 +19,7 @@
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/oop/VirtualFrameOopDescriptor.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"

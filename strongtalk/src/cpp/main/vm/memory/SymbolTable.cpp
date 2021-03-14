@@ -11,16 +11,15 @@
 #define FOR_ALL_ENTRIES( entry ) \
   for (entry = firstBucket(); entry <= lastBucket(); entry ++)
 
-#define FOR_ALL_SYMBOL_ADDR( bucket, var, code )                            \
-                                                                            \
-    {                                                                       \
-        if ( bucket->is_symbol() ) {                                        \
-            var = (SymbolOop*) bucket; code;                                \
-        } else {                                                            \
+#define FOR_ALL_SYMBOL_ADDR( bucket, var, code ) \
+    { \
+        if ( bucket->is_symbol() ) { \
+            var = (SymbolOop*) bucket; code; \
+        } else { \
             for (SymbolTableLink* l = bucket->get_link(); l; l = l->_next) { \
-                var = &l->_symbol; code;                                     \
-            }                                                               \
-        }                                                                   \
+                var = &l->_symbol; code; \
+            } \
+        } \
     }
 
 
@@ -195,9 +194,8 @@ void SymbolTable::follow_used_symbols() {
     // throw out unreachable symbols
     SymbolTableEntry *e{ nullptr };
     FOR_ALL_ENTRIES( e ) {
-        // If we have a one element list; preserve the symbol but remove the chain
-        // This moving around cannot take place after follow_root has been called
-        // since follow_root reverse pointers.
+        // If we have a single-element list; preserve the symbol but remove the chain
+        // This moving around cannot take place after follow_root has been called since follow_root reverse pointers.
         if ( e->get_link() and not e->get_link()->_next ) {
             SymbolTableLink *old = e->get_link();
             e->set_symbol( old->_symbol );
@@ -421,7 +419,7 @@ void SymbolTable::print_histogram() {
             SPDLOG_INFO( "" );
         }
     }
-    SPDLOG_INFO( " {} {:d}: {:d}", "Number chains longer than", results_length, out_of_range );
+    SPDLOG_INFO( " {} {}: {}", "Number chains longer than", results_length, out_of_range );
 }
 
 

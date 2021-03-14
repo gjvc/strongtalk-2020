@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/recompiler/Recompilee.hpp"

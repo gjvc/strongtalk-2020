@@ -262,19 +262,19 @@ void pm( std::int32_t m ) {
 
 void print_codes( const char *class_name, const char *selector ) {
     Command c( "print_codes" );
-    SPDLOG_INFO( "Finding %s in %s.", selector, class_name );
+    SPDLOG_INFO( "Finding [{}] in [{}]", selector, class_name );
     Oop result = Universe::find_global( class_name );
     if ( not result ) {
-        SPDLOG_INFO( "Could not find global %s.", class_name );
+        SPDLOG_INFO( "Could not find global {}.", class_name );
     } else if ( not result->is_klass() ) {
-        SPDLOG_INFO( "Global %s is not a class.", class_name );
+        SPDLOG_INFO( "Global {} is not a class.", class_name );
     } else {
         SymbolOop sel    = OopFactory::new_symbol( selector );
         MethodOop method = KlassOop( result )->klass_part()->lookup( sel );
         if ( not method )
             method = result->blueprint()->lookup( sel );
         if ( not method ) {
-            SPDLOG_INFO( "Method %s is not in %s.", selector, class_name );
+            SPDLOG_INFO( "Method [{}] is not in [{}]", selector, class_name );
         } else {
             method->pretty_print();
             method->print_codes();

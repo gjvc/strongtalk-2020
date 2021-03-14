@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "allocation.hpp"
 #include "vm/memory/Generation.hpp"
 #include "vm/memory/Space.hpp"

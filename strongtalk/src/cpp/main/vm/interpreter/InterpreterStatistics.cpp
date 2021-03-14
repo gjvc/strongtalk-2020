@@ -5,15 +5,15 @@
 //
 
 
-#include "vm/interpreter/interpreterStatistics.hpp"
+#include "vm/interpreter/InterpreterStatistics.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 
 #include <array>
 
-std::array<std::uint32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)>         InterpreterStatistics::_bytecode_counters;
-std::array<std::int32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)>          InterpreterStatistics::_bytecode_generation_order;
+std::array<std::uint32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)> InterpreterStatistics::_bytecode_counters;
+std::array<std::int32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)>  InterpreterStatistics::_bytecode_generation_order;
 
-bool       InterpreterStatistics::_is_initialized = false;
+bool InterpreterStatistics::_is_initialized{ false };
 
 
 void InterpreterStatistics::reset_bytecode_counters() {

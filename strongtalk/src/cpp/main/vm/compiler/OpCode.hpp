@@ -7,7 +7,7 @@
 #pragma once
 
 #include <array>
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 
 
 enum class BranchOpCode {

@@ -4,11 +4,11 @@
 //
 
 #include "vm/primitive/ProxyOopPrimitives.hpp"
-#include "vm/system/platform.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/oop/DoubleOopDescriptor.hpp"
@@ -27,10 +27,10 @@ std::int32_t ProxyOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_proxy(), "receiver must be proxy")
 
-#define ASSERT_RECEIVER_ACCESS                    \
-  ASSERT_RECEIVER                        \
- /* if (proxyOop(receiver)->is_null())				\
-    return markSymbol(vmSymbols::null_proxy_access());	*/    \
+#define ASSERT_RECEIVER_ACCESS \
+  ASSERT_RECEIVER \
+ /* if (proxyOop(receiver)->is_null()) \
+    return markSymbol(vmSymbols::null_proxy_access());	*/ \
 
 
 

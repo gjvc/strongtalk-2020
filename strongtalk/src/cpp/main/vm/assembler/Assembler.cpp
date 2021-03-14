@@ -14,7 +14,7 @@
 #define emit_disp( L, type, info ) \
     { \
         Displacement disp( (L), (type), (info) ); \
-        L.link_to( offset() );  \
+        L.link_to( offset() ); \
         emit_long( std::int32_t(disp.data()) ); \
     }
 
@@ -353,33 +353,33 @@ void Assembler::movsxw( const Register &dst, const Register &src ) {
 
 
 void Assembler::cmovccl( Condition cc, const Register &dst, std::int32_t imm32 ) {
-    static_cast<void>(cc); // unused
-    static_cast<void>(dst); // unused
-    static_cast<void>(imm32); // unused
+    st_unused( cc ); // unused
+    st_unused( dst ); // unused
+    st_unused( imm32 ); // unused
     Unimplemented();
 }
 
 
 void Assembler::cmovccl( Condition cc, const Register &dst, Oop obj ) {
-    static_cast<void>(cc); // unused
-    static_cast<void>(dst); // unused
-    static_cast<void>(obj); // unused
+    st_unused( cc ); // unused
+    st_unused( dst ); // unused
+    st_unused( obj ); // unused
     Unimplemented();
 }
 
 
 void Assembler::cmovccl( Condition cc, const Register &dst, const Register &src ) {
-    static_cast<void>(cc); // unused
-    static_cast<void>(dst); // unused
-    static_cast<void>(src); // unused
+    st_unused( cc ); // unused
+    st_unused( dst ); // unused
+    st_unused( src ); // unused
     Unimplemented();
 }
 
 
 void Assembler::cmovccl( Condition cc, const Register &dst, const Address &src ) {
-    static_cast<void>(cc); // unused
-    static_cast<void>(dst); // unused
-    static_cast<void>(src); // unused
+    st_unused( cc ); // unused
+    st_unused( dst ); // unused
+    st_unused( src ); // unused
     Unimplemented();
 }
 
@@ -596,8 +596,8 @@ void Assembler::sarl( const Register &dst ) {
 
 
 void Assembler::sbbl( const Register &dst, std::int32_t imm32 ) {
-    static_cast<void>(dst); // unused
-    static_cast<void>(imm32); // unused
+    st_unused( dst ); // unused
+    st_unused( imm32 ); // unused
     Unimplemented();
 }
 
@@ -885,8 +885,8 @@ void Assembler::bind( Label &L ) {
 
 
 void Assembler::merge( const Label &L, const Label &with ) {
-    static_cast<void>(L); // unused
-    static_cast<void>(with); // unused
+    st_unused( L ); // unused
+    st_unused( with ); // unused
     Unimplemented();
 }
 

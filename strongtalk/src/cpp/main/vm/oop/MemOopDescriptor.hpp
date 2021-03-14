@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/oop/OopDescriptor.hpp"
 #include "vm/oop/MarkOopDescriptor.hpp"
@@ -16,9 +16,10 @@
 
 //
 // memOops are all OOPs that actually take up space in the heap (not immediate like SMIs)
-// a memOops ia a tagged (Smalltalk OOPs) pointer
-// a MemOopDescriptor* is an untagged C pointer
-// (see OopDescriptor.hpp)
+//
+// type                 description
+// MemOopDescriptor *   untagged C pointer
+// MemOop *             tagged (Smalltalk OOPs) pointer
 //
 
 
@@ -28,24 +29,23 @@ MemOop as_memOop( void *p );
 class MemOopDescriptor : public OopDescriptor {
 
 protected:
-    // instance variable
-    // markOop _mark;			    // see comment in OopDescriptor.hpp
-    KlassOop _klass_field;          // the receiver's class
+    MarkOop  _mark;             //
+    KlassOop _klass_field;      // receiver's class
 
 public:
-    // returns the header size of a MemOop
-    static std::int32_t header_size() {
+
+    static constexpr std::int32_t header_size() {
         return sizeof( MemOopDescriptor ) / OOP_SIZE;
     }
 
 
     // field offsets for code generation
-    static std::int32_t mark_byte_offset() {
+    static constexpr std::int32_t mark_byte_offset() {
         return ( 0 * OOP_SIZE ) - MEMOOP_TAG;
     }
 
 
-    static std::int32_t klass_byte_offset() {
+    static constexpr std::int32_t klass_byte_offset() {
         return ( 1 * OOP_SIZE ) - MEMOOP_TAG;
     }
 
@@ -100,7 +100,7 @@ public:
 
 
     void set_klass_field( KlassOop k, bool cs = true ) {
-        static_cast<void>(cs); // unused
+        st_unused( cs ); // unused
         // %optimization
         //   since klasses are tenured the store check can be avoided
         addr()->_klass_field = k;
@@ -113,7 +113,7 @@ public:
 
 
     Klass *blueprint() const {
-//            return klass_field()->klass_part(); // Member access into incomplete type 'class KlassOopDescriptor'
+        //            return klass_field()->klass_part(); // Member access into incomplete type 'class KlassOopDescriptor'
         // "return klass_field()->klass_part();" has #include problems
         return (Klass *) ( ( (const char *) klass_field() ) + sizeof( MemOopDescriptor ) - MEMOOP_TAG );
     }

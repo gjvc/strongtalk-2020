@@ -13,7 +13,7 @@
 
 
 void Generation::print() {
-    SPDLOG_INFO( " total {:d} KBytes, {:d} percent used ", capacity() / 1024, ( 100 * used() ) / capacity() );
+    SPDLOG_INFO( " total {} KBytes, {} percent used ", capacity() / 1024, ( 100 * used() ) / capacity() );
     SPDLOG_INFO( " [0x{0:x}, 0x{0:x}[", _lowBoundary, _highBoundary );
 }
 
@@ -146,7 +146,7 @@ void NewGeneration::verify() {
 // this version used with old_gen
 // ensure that you surround the call with {} to prevent s leaking out!
 
-#define FOR_EACH_OLD_SPACE( s )   \
+#define FOR_EACH_OLD_SPACE( s ) \
   for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace )
 
 

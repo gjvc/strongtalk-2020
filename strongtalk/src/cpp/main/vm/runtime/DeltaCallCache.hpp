@@ -6,11 +6,8 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
-#include "vm/lookup/LookupKey.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/lookup/LookupResult.hpp"
-#include "vm/lookup/LookupCache.hpp"
-#include "vm/oop/SymbolOopDescriptor.hpp"
 
 
 // A DeltaCallCache caches methods for Delta calls.
@@ -42,23 +39,11 @@ public:
     void operator delete( void *ptr ) { (void) ptr; }
 
 
-    bool match( KlassOop klass, SymbolOop selector ) {
-        return Oop( selector ) == _key.selector_or_method() and klass == _key.klass();
-    }
+    bool match( KlassOop klass, SymbolOop selector );
 
 
-    LookupResult lookup( KlassOop klass, SymbolOop selector ) {
-        if ( not match( klass, selector ) ) {
-            _result = interpreter_normal_lookup( klass, selector );
-            if ( not _result.is_empty() ) {
-                _key.initialize( klass, selector );
-            }
-        }
-        return _result;
-    }
+    LookupResult lookup( KlassOop klass, SymbolOop selector );
 
 
-    LookupResult result() {
-        return _result;
-    }
+    LookupResult result();
 };

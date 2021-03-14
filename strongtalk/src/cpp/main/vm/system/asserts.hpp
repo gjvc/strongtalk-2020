@@ -4,7 +4,6 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-
 #pragma once
 
 #include <iostream>
@@ -26,10 +25,12 @@ void error_breakpoint();                        // called at every error or fata
 
 //#define STRINGIFY( x ) #x
 
-#define st_assert( expression, message )                                        \
-    if ( not ( expression ) ) {                                                 \
-        report_assertion_failure( #expression, __FILE__, __LINE__, message );   \
-        breakpoint();                                                           \
+#define st_unused( expression ) static_cast<void>( expression )
+
+#define st_assert( expression, message ) \
+    if ( not ( expression ) ) { \
+        report_assertion_failure( #expression, __FILE__, __LINE__, message ); \
+        breakpoint(); \
     }
 
 
@@ -44,7 +45,6 @@ void error_breakpoint();                        // called at every error or fata
 #define st_assert_doubleValueArray( obj, msg ) st_assert_is_type( obj, DoubleValueArray, msg )
 #define st_assert_symbol( obj, msg )           st_assert_is_type( obj, Symbol, msg )
 #define st_assert_double( obj, msg )           st_assert_is_type( obj, Double, msg )
-
 
 #define st_assert_oop_aligned( p )             st_assert( reinterpret_cast<std::int32_t>(p) % 4 == 0, "not word-aligned" )
 

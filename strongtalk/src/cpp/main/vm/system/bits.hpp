@@ -8,7 +8,7 @@
 
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 
 #include <cassert>
 #include <cstdint>
@@ -85,20 +85,10 @@ constexpr auto roundBits( auto x, const auto n ) { return roundMask( x, nthMask(
 constexpr std::int32_t INTEGER_TAG  = 0;
 constexpr std::int32_t MEMOOP_TAG   = 1;
 constexpr std::int32_t MARK_TAG     = 3;
+
 constexpr std::int32_t MARK_TAG_BIT = 2;    // if ( (Oop & MARK_TAG_BIT) not_eq 0 )  then Oop is a markOop
 constexpr std::int32_t TAG_SIZE     = 2;
 constexpr std::int32_t TAG_MASK     = nthMask( TAG_SIZE );
-//constexpr std::int32_t Num_Tags     = nthBit( TAG_SIZE );
-
-//
-//// -----------------------------------------------------------------------------
-//
-//enum class oop_tags {
-//    oop_tag_int,    //
-//    oop_tag_mem,    //
-//    oop_tag_mark,   //
-//    num_tags,       //
-//};
 
 
 // -----------------------------------------------------------------------------

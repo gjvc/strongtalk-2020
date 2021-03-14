@@ -13,7 +13,7 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/primitive/ObjectArrayPrimitives.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 
 
@@ -25,8 +25,10 @@ extern "C" std::int32_t expansion_count;
 class ObjectArrayPrimitivesTests : public ::testing::Test {
 
 public:
-    ObjectArrayPrimitivesTests()
-        : ::testing::Test(), arrayClass{} {}
+    ObjectArrayPrimitivesTests() :
+        ::testing::Test(),
+        arrayClass{} {}
+
 
 protected:
     void SetUp() override {
@@ -37,6 +39,7 @@ protected:
     void TearDown() override {
         MarkSweep::collect();
     }
+
 
     KlassOop arrayClass;
 

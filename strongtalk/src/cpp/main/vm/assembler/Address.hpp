@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/assembler/Register.hpp"
 #include "vm/code/RelocationInformation.hpp"
 

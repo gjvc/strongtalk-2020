@@ -18,7 +18,7 @@
 #include "vm/utility/EventLog.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/recompiler/RecompilationPolicy.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/compiler/CompiledLoop.hpp"
 #include "vm/oop/ProxyOopDescriptor.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
@@ -427,7 +427,7 @@ void CodeGenerator::initialize( InlinedScope *scope ) {
 
 
 void CodeGenerator::finalize( InlinedScope *scope ) {
-    static_cast<void>(scope); // unused
+    st_unused( scope ); // unused
 
     // first generate stubs if there are any
     generateMergeStubs();
@@ -795,10 +795,10 @@ void CodeGenerator::verifyReturn( Oop result ) {
 
 
 void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, std::int32_t nlrScopeID, Oop result ) {
-    static_cast<void>(nlrScopeID); // unused
+    st_unused( nlrScopeID ); // unused
 
     _numberOfNonLocalReturns++;
-    SPDLOG_INFO( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( result ) );
+    SPDLOG_INFO( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, {:d}, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( result ) );
     if ( nlrFrame <= fp )
         spdlog::error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", static_cast<const void *>( nlrFrame ), static_cast<const void *>( fp ) );
 
@@ -1452,13 +1452,13 @@ void CodeGenerator::aTArithRRNode( TArithRRNode *node ) {
 
 
 void CodeGenerator::aFloatArithRRNode( FloatArithRRNode *node ) {
-    static_cast<void>(node); // unused
+    st_unused( node ); // unused
     Unimplemented();
 }
 
 
 void CodeGenerator::aFloatUnaryArithNode( FloatUnaryArithNode *node ) {
-    static_cast<void>(node); // unused
+    st_unused( node ); // unused
     Unimplemented();
 }
 
@@ -1796,8 +1796,8 @@ void CodeGenerator::testForSingleKlass( Register obj, KlassOop klass, Register k
 
 
 void CodeGenerator::generateTypeTests( LoopHeaderNode *node, Label &failure ) {
-    static_cast<void>(node); // unused
-    static_cast<void>(failure); // unused
+    st_unused( node ); // unused
+    st_unused( failure ); // unused
 
     Unimplemented();
 
@@ -1871,8 +1871,8 @@ void CodeGenerator::handleConstantTypeTest(ConstPseudoRegister* r, GrowableArray
 
 
 void CodeGenerator::generateIntegerLoopTest( PseudoRegister *pseudoRegister, LoopHeaderNode *node, Label &failure ) {
-    static_cast<void>(node); // unused
-    static_cast<void>(failure); // unused
+    st_unused( node ); // unused
+    st_unused( failure ); // unused
 
     if ( pseudoRegister not_eq nullptr ) {
         if ( pseudoRegister->isConstPseudoRegister() ) {
@@ -1935,8 +1935,8 @@ void CodeGenerator::generateIntegerLoopTests( LoopHeaderNode *node, Label &failu
 
 
 void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure ) {
-    static_cast<void>(node); // unused
-    static_cast<void>(failure); // unused
+    st_unused( node ); // unused
+    st_unused( failure ); // unused
 
     st_assert( node->isIntegerLoop(), "must be integer loop" );
     if ( node->upperLoad() == nullptr ) return;
@@ -2157,7 +2157,7 @@ void CodeGenerator::aNonLocalReturnSetupNode( NonLocalReturnSetupNode *node ) {
 
 
 void CodeGenerator::anInlinedReturnNode( InlinedReturnNode *node ) {
-    static_cast<void>(node); // unused
+    st_unused( node ); // unused
     // Not generated anymore for new backend
     ShouldNotReachHere();
 }

@@ -5,7 +5,7 @@
 //
 
 #include "vm/oop/OopDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/utility/OutputStream.hpp"
@@ -13,12 +13,12 @@
 #include "vm/utility/ConsoleOutputStream.hpp"
 
 
-// Called during bootstrappingInProgress for computing vtbl values see (create_*Klass)
-OopDescriptor::OopDescriptor() : _mark{ nullptr } {
-    if ( not bootstrappingInProgress ) {
-        ShouldNotCallThis();
-    }
-}
+//// Called during bootstrappingInProgress for computing vtbl values see (create_*Klass)
+//OopDescriptor::OopDescriptor() {
+//    if ( not bootstrappingInProgress ) {
+//        ShouldNotCallThis();
+//    }
+//}
 
 
 void OopDescriptor::print_value_on( ConsoleOutputStream *stream ) {
@@ -48,7 +48,7 @@ void OopDescriptor::print_on( ConsoleOutputStream *stream ) {
     } else if ( isSmallIntegerOop() ) {
         SmallIntegerOop( this )->print_on( stream );
     } else {
-        MemOop( this )->print_on( stream );
+        reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->print_on( stream );
     }
 }
 
@@ -79,7 +79,7 @@ char *OopDescriptor::print_value_string() {
 
 KlassOop OopDescriptor::klass() const {
     if ( isMemOop() )
-        return MemOop( this )->klass_field();
+        return reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->klass_field();
     st_assert( isSmallIntegerOop(), "tag must be small_int_t" );
     return smiKlassObject;
 }
@@ -94,12 +94,12 @@ small_int_t OopDescriptor::identity_hash() {
     if ( isSmallIntegerOop() )
         return SmallIntegerOop( this )->identity_hash();
     st_assert( isMemOop(), "tag must be mem" );
-    return MemOop( this )->identity_hash();
+    return reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->identity_hash();
 }
 
 
 Oop OopDescriptor::scavenge() {
-    return isMemOop() ? MemOop( this )->scavenge() : this;
+    return isMemOop() ? reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->scavenge() : this;
 }
 
 
@@ -111,12 +111,12 @@ Oop OopDescriptor::relocate() {
 
 // generation testers
 bool OopDescriptor::is_old() const {
-    return isMemOop() and MemOop( this )->is_old();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->is_old();
 }
 
 
 bool OopDescriptor::is_new() const {
-    return isMemOop() and MemOop( this )->is_new();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->is_new();
 }
 
 
@@ -127,87 +127,87 @@ Generation *OopDescriptor::my_generation() {
 
 // type test operations
 bool OopDescriptor::isDouble() const {
-    return isMemOop() and MemOop( this )->klass_field() == doubleKlassObject;
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->klass_field() == doubleKlassObject;
 }
 
 
 bool OopDescriptor::is_block() const {
-    return isMemOop() and MemOop( this )->blueprint()->oop_is_block();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsBlock();
 }
 
 
 bool OopDescriptor::isByteArray() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsByteArray();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsByteArray();
 }
 
 
 bool OopDescriptor::isDoubleByteArray() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsDoubleByteArray();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsDoubleByteArray();
 }
 
 
 bool OopDescriptor::isDoubleValueArray() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsDoubleValueArray();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsDoubleValueArray();
 }
 
 
 bool OopDescriptor::isSymbol() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsSymbol();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsSymbol();
 }
 
 
 bool OopDescriptor::isObjectArray() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsObjectArray();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsObjectArray();
 }
 
 
 bool OopDescriptor::is_weakArray() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsWeakArray();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsWeakArray();
 }
 
 
 bool OopDescriptor::is_association() const {
-    return isMemOop() and MemOop( this )->blueprint()->oop_is_association();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsAssociation();
 }
 
 
 bool OopDescriptor::is_context() const {
-    return isMemOop() and MemOop( this )->blueprint()->oop_is_context();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsContext();
 }
 
 
 bool OopDescriptor::is_klass() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsKlass();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsKlass();
 }
 
 
 bool OopDescriptor::is_proxy() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsProxy();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsProxy();
 }
 
 
 bool OopDescriptor::is_mixin() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsMixin();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsMixin();
 }
 
 
 bool OopDescriptor::is_process() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsProcess();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsProcess();
 }
 
 
 bool OopDescriptor::is_VirtualFrame() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsVirtualFrame();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsVirtualFrame();
 }
 
 
 bool OopDescriptor::is_method() const {
-    return isMemOop() and MemOop( this )->blueprint()->oopIsMethod();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsMethod();
 }
 
 
 bool OopDescriptor::is_indexable() const {
-    return isMemOop() and MemOop( this )->blueprint()->oop_is_indexable();
+    return isMemOop() and reinterpret_cast<MemOop>( const_cast<Oop>( this ) )->blueprint()->oopIsIndexable();
 }
 
 

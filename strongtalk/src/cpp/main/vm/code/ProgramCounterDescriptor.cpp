@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
@@ -28,11 +28,11 @@ ScopeDescriptor *ProgramCounterDescriptor::containingDesc( const NativeMethod *n
 
 void ProgramCounterDescriptor::print( NativeMethod *nm ) {
     printIndent();
-    SPDLOG_INFO( "ProgramCounterDescriptor {0:x}: pc: 0x{0:x}; scope: %5ld; byte code: %ld", static_cast<void *>(this), real_pc( nm ), _scope, (std::int32_t) _byteCodeIndex );
+    SPDLOG_INFO( "ProgramCounterDescriptor [0x{0:x}], PC [0x{0:x}], scope [{}], byte code [{}]", static_cast<void *>(this), real_pc( nm ), _scope, (std::int32_t) _byteCodeIndex );
 }
 
 
 bool ProgramCounterDescriptor::verify( NativeMethod *nm ) {
-    static_cast<void>(nm); // unused
+    st_unused( nm ); // unused
     return true;
 }

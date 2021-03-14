@@ -42,12 +42,12 @@ inline void Set_Byte_Map_Base( const char *base ) {
     byte_map_base = base;
 }
 
-
-inline void setSPMax( const char *m ) {
-    MaxSP = m;
-}
-
-
-inline const char *currentSPMax() {
-    return MaxSP;
-}
+//
+//inline void setSPMax( const char *m ) {
+//    MaxSP = m;
+//}
+//
+//
+//inline const char *currentSPMax() {
+//    return MaxSP;
+//}

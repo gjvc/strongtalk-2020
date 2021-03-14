@@ -268,12 +268,12 @@ void Compiler::initialize( RecompilationScope *remote_scope ) {
     initNodes();        // same here (before creating nodes)
     initLimits();
 
-    theCompiler  = lastCompiler = this;
-    _code        = new CodeBuffer( CompilerInstrsSize, CompilerInstrsSize / 2 );
-    countID      = -1;
-    topScope     = nullptr;
-    bbIterator   = new BasicBlockIterator;
-    theAllocator = new RegisterAllocator();
+    theCompiler          = lastCompiler = this;
+    _code                = new CodeBuffer( CompilerInstrsSize, CompilerInstrsSize / 2 );
+    countID              = -1;
+    topScope             = nullptr;
+    bbIterator           = new BasicBlockIterator;
+    theRegisterAllocator = new RegisterAllocator();
     st_assert( method, "must have method" );
 
     Scope::initialize();
@@ -557,9 +557,9 @@ NativeMethod *Compiler::compile() {
     // the previous context after calling a primitive; i.e., self or the previous
     // context should not be allocated to a register. Currently not working correctly
     // -> allocated to stack as a temporary fix for the problem.
-    theAllocator->preAllocate( topScope->self()->pseudoRegister() );
+    theRegisterAllocator->preAllocate( topScope->self()->pseudoRegister() );
     bbIterator->localAlloc();        // allocate regs within basic blocks
-    theAllocator->allocate( bbIterator->globals );
+    theRegisterAllocator->allocate( bbIterator->globals );
 
     if ( PrintCode )
         print_code( false );
@@ -604,7 +604,7 @@ NativeMethod *Compiler::compile() {
 
     reporter->finish_reporting();
     if ( should_trace ) {
-        SPDLOG_INFO( ": 0x{0:x} (%d bytes; level %ld v%d)", static_cast<void *>( nm ), nm->instructionsLength(), nm->level(), nm->version() );
+        SPDLOG_INFO( ": 0x{0:x} ({:d} bytes; level %ld v{:d})", static_cast<void *>( nm ), nm->instructionsLength(), nm->level(), nm->version() );
         //flush_logFile();
     }
 
@@ -648,7 +648,7 @@ void Compiler::computeBlockInfo() {
     // (could avoid iteration with topo sort, but there are few contexts anyway)
     bool changed = EliminateContexts;
     while ( changed ) {
-        changed              = false;
+        changed             = false;
         for ( std::size_t i = allContexts->length() - 1; i >= 0; i-- ) {
             InlinedScope *s = allContexts->at( i );
             if ( s == nullptr )
@@ -678,13 +678,13 @@ void Compiler::computeBlockInfo() {
             }
 
             // TO DO: check if context is needed for NonLocalReturns (noUplevelAccesses alone does not allow elimination)
-            static_cast<void>( noUplevelAccesses );
+            st_unused( noUplevelAccesses );
 //            if ( noUplevelAccesses or contextPR->isSinglyUsed() ) {
             if ( contextPR->isSinglyUsed() ) {
                 // can eliminate context -- no uplevel-accessed vars (single use is context initializer)
-                if ( CompilerDebug )
+                if ( CompilerDebug ) {
                     cout( PrintEliminateContexts )->print( "%*s*eliminating context %s\n", s->depth, "", contextPR->safeName() );
-
+                }
                 contextPR->scope()->gen()->removeContextCreation();
                 allContexts->at_put( i, nullptr );      // make code generator break if it tries to access this context
                 changed = true;
@@ -814,7 +814,7 @@ void Compiler::print() {
     print_short();
     SPDLOG_INFO( ":" );
     key->print();
-    SPDLOG_INFO( "\tmethod: %s", method->toString() );
+    SPDLOG_INFO( "\tmethod: {}", method->toString() );
     SPDLOG_INFO( "\tp ((Compiler*)0x{0:x})->print_code()", static_cast<void *>( this ) );
 }
 
@@ -829,12 +829,12 @@ void Compiler::print_key( ConsoleOutputStream *stream ) {
     if ( topScope == nullptr )
         return; // print_key may be used during fatals where the compiler isn't set up yet
 
-    stream->print( " (no. %d, method 0x{0:x}", compilationCount, method );
     // print the parent scope offset for block compiles.
     if ( blockScope ) {
-        _console->print( ", parent offset %d", blockScope->parent()->offset() );
+        SPDLOG_INFO( "(no. {:d}, method 0x{0:x})", compilationCount, static_cast<const void *>( method ) );
+    } else {
+        SPDLOG_INFO( "(no. {:d}, method 0x{0:x}, parent offset {:d})", compilationCount, static_cast<const void *>( method ), blockScope->parent()->offset() );
     }
-    stream->print( ")..." );
 }
 
 

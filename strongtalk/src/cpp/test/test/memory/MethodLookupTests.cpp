@@ -20,6 +20,7 @@ public:
         ::testing::Test(),
         fixture{ nullptr } {}
 
+
 protected:
     void SetUp() override {
         fixture = new PersistentHandle( Universe::find_global( "DoesNotUnderstandFixture" ) );

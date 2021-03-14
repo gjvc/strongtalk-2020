@@ -1,11 +1,30 @@
 #! /bin/bash
 
+# vim: syntax=bash
+
+# bash ------------------------------------------------------------------------
+
+set -o errexit -o nounset -o pipefail
+${BASH_DEBUG:+trap '(read -p "[${BASH_SOURCE}:${LINENO}] [${BASH_COMMAND}] ")' DEBUG}
+
+
+# object root -----------------------------------------------------------------
+
+readonly arch="i686"
+readonly platform="w64-mingw32"
+readonly compiler_family="gcc"
+readonly compiler_version="10"
+readonly runtime="posix"
+readonly toolchain_name="${arch}-${platform}-${compiler_family}-${compiler_version}-${runtime}"
+readonly build_type="debug"
+readonly object_root="${_DIRNAME}/obj/${toolchain_name}/gnu-make/${build_type}/"
+
 
 # -----------------------------------------------------------------------------
 
 make clean
 make \
-obj/i686-w64-mingw32-gcc-10-posix/gnu-make/debug/st20-main.exe \
+${object_root}/st20-main.exe \
 |& tee make.out.all \
 |& grep '^src/.pp/main.*\..pp:.*: warning:.*' \
 |& sort -u \
@@ -28,7 +47,8 @@ obj/i686-w64-mingw32-gcc-10-posix/gnu-make/debug/st20-main.exe \
 >( grep -- -Wunused-parameter      | nl >| make.out.warning.unused-parameter     ) \
 >( grep -- -Wunused-value          | nl >| make.out.warning.unused-value         ) \
 >( grep -- -fpermissive            | nl >| make.out.warning.permissive           ) \
-| egrep -v '(-Wcomment|-Weffc|-Wformat|-Wimplicit-fallthrough|-Wnarrowing|-Wnon-virtual-dtor|-Wpedantic|-Wreorder|-Wshift-negative-value|-Wsign-compare|-Wstrict-aliasing|-Wswitch|-Wtype-limits|-Wunused-function|-Wunused-parameter|-Wunused-value|-fpermissive)'
+| egrep -v '-W(comment|effc|format|implicit-fallthrough|narrowing|non-virtual-dtor|pedantic|reorder|shift-negative-value|sign-compare|strict-aliasing|switch|type-limits|unused-function|unused-parameter|unused-value)' \
+| egrep -v '-fpermissive'
 
 
 # -----------------------------------------------------------------------------

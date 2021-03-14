@@ -3,9 +3,9 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/allocation.hpp"
@@ -19,31 +19,31 @@
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirst( std::int32_t a, std::int32_t b ) {
     // a
-    static_cast<void>(b); // unused
+    st_unused( b );
     return a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirstPointer( std::int32_t *a, std::int32_t b ) {
     // a
-    static_cast<void>(b); // unused
+    st_unused( b );
     return *a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecond( std::int32_t a, std::int32_t b ) {
-    static_cast<void>(a); // unused
+    st_unused( a );
     // b
     return b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecondPointer( std::int32_t a, std::int32_t *b ) {
-    static_cast<void>(a); // unused
+    st_unused( a );
     // b
     return *b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION forceScavenge2( std::int32_t ignore1, std::int32_t ignore2 ) {
-    static_cast<void>(ignore1); // unused
-    static_cast<void>(ignore2); // unused
+    st_unused( ignore1 );
+    st_unused( ignore2 );
     Universe::scavenge();
     return -1;
 }
@@ -141,7 +141,7 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
-        static_cast<void>(message); // unused
+        st_unused( message );
         char         text[200];
         bool         ok;
         std::int32_t actual = asInt( ok, ByteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );

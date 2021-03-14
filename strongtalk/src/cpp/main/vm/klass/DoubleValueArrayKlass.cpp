@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/oop/DoubleValueArrayOopDescriptor.hpp"
 #include "vm/klass/DoubleValueArrayKlass.hpp"
 #include "vm/memory/util.hpp"
@@ -15,8 +15,8 @@
 
 
 Oop DoubleValueArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( tenured ); // unused
 
     st_fatal( "should never call allocateObject in doubleValueArrayKlass" );
     return MarkOopDescriptor::bad();
@@ -25,8 +25,8 @@ Oop DoubleValueArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) 
 
 Oop DoubleValueArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
 
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(permit_tenured); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( permit_tenured ); // unused
 
     //
     KlassOop     k        = as_klassOop();
@@ -80,7 +80,7 @@ bool DoubleValueArrayKlass::oop_verify( Oop obj ) {
 
 
 void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
-    static_cast<void>(stream); // unused
+    st_unused( stream ); // unused
 
     st_assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
 //    DoubleValueArrayOop array = DoubleValueArrayOop( obj );

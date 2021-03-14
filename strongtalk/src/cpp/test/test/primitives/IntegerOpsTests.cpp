@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/Integer.hpp"
 #include "vm/utility/IntegerOps.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -29,48 +29,48 @@
   ASSERT_TRUE_M( (const char*)!strcmp( expected, actual ), report( prefix, expected, actual ) )
 
 
-#define CHECK_SIZE( op, first, second, expected )\
-  IntegerOps::string_to_Integer(first, 16, *x);\
-  IntegerOps::string_to_Integer(second, 16, *y);\
+#define CHECK_SIZE( op, first, second, expected ) \
+  IntegerOps::string_to_Integer(first, 16, *x); \
+  IntegerOps::string_to_Integer(second, 16, *y); \
   ASSERT_EQ_M2(expected, IntegerOps::op(*x, *y), "Wrong size")
 
-#define CHECK_AND_SIZE( first, second, expected )\
+#define CHECK_AND_SIZE( first, second, expected ) \
   CHECK_SIZE(and_result_size_in_bytes, first, second, expected)
 
-#define CHECK_OR_SIZE( first, second, expected )\
+#define CHECK_OR_SIZE( first, second, expected ) \
   CHECK_SIZE(or_result_size_in_bytes, first, second, expected)
 
-#define CHECK_XOR_SIZE( first, second, expected )\
+#define CHECK_XOR_SIZE( first, second, expected ) \
   CHECK_SIZE(xor_result_size_in_bytes, first, second, expected)
 
-#define CHECK_OP( op, first, second, expected )\
-  IntegerOps::string_to_Integer(first, 16, *x);\
-  IntegerOps::string_to_Integer(second, 16, *y);\
-  IntegerOps::op(*x, *y, *z);\
-  char result[100];\
-  IntegerOps::Integer_to_string(*z, 16, result);\
-  ASSERT_TRUE_M(z->is_valid(), "Not a valid Integer");\
+#define CHECK_OP( op, first, second, expected ) \
+  IntegerOps::string_to_Integer(first, 16, *x); \
+  IntegerOps::string_to_Integer(second, 16, *y); \
+  IntegerOps::op(*x, *y, *z); \
+  char result[100]; \
+  IntegerOps::Integer_to_string(*z, 16, result); \
+  ASSERT_TRUE_M(z->is_valid(), "Not a valid Integer"); \
   ASSERT_EQ_MS(expected, result , "Wrong result")
 
-#define CHECK_AND( first, second, expected )\
+#define CHECK_AND( first, second, expected ) \
   CHECK_OP(And, first, second, expected)
 
-#define CHECK_OR( first, second, expected )\
+#define CHECK_OR( first, second, expected ) \
   CHECK_OP(Or, first, second, expected)
 
-#define CHECK_XOR( first, second, expected )\
+#define CHECK_XOR( first, second, expected ) \
   CHECK_OP(Xor, first, second, expected)
 
-#define CHECK_ASH_SIZE( first, second, expected )\
-  IntegerOps::string_to_Integer(first, 16, *x);\
+#define CHECK_ASH_SIZE( first, second, expected ) \
+  IntegerOps::string_to_Integer(first, 16, *x); \
   ASSERT_EQ_M2(expected, IntegerOps::ash_result_size_in_bytes(*x, second) , "Wrong result")
 
-#define CHECK_ASH( first, second, expected )\
-  IntegerOps::string_to_Integer(first, 16, *x);\
-  IntegerOps::ash(*x, second, *z);\
-  char result[100];\
-  IntegerOps::Integer_to_string(*z, 16, result);\
-  ASSERT_TRUE_M(z->is_valid(), "Not a valid Integer");\
+#define CHECK_ASH( first, second, expected ) \
+  IntegerOps::string_to_Integer(first, 16, *x); \
+  IntegerOps::ash(*x, second, *z); \
+  char result[100]; \
+  IntegerOps::Integer_to_string(*z, 16, result); \
+  ASSERT_TRUE_M(z->is_valid(), "Not a valid Integer"); \
   ASSERT_EQ_MS(expected, result , "Wrong result")
 
 
@@ -78,12 +78,11 @@ class IntegerOpsTests : public ::testing::Test {
 
 public:
     IntegerOpsTests() :
-    ::testing::Test(),
-    rm{nullptr},
-    x{nullptr},
-    y{nullptr},
-    z{nullptr}
-    {}
+        ::testing::Test(),
+        rm{ nullptr },
+        x{ nullptr },
+        y{ nullptr },
+        z{ nullptr } {}
 
 
 protected:

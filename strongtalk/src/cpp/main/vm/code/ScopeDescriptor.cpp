@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/runtime/flags.hpp"
@@ -397,7 +397,7 @@ private:
         if ( UseNewBackend ) {
             _console->print( "%5d: ", pc - _pc0 );
         }
-        SPDLOG_INFO( "{}[%d]\t", title, no );
+        SPDLOG_INFO( "{}[{:d}]\t", title, no );
         nd->print();
         _console->cr();
     }
@@ -572,7 +572,7 @@ NameDescriptor *BlockScopeDescriptor::self() const {
 
 
 ScopeDescriptor *BlockScopeDescriptor::parent( bool cross_NativeMethod_boundary ) const {
-    static_cast<void>(cross_NativeMethod_boundary); // unused
+    st_unused( cross_NativeMethod_boundary ); // unused
     return _parentScopeOffset ? _scopes->at( _offset - _parentScopeOffset, pc() ) : nullptr;
 }
 

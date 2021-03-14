@@ -13,7 +13,7 @@
 #include "vm/klass/WeakArrayKlass.hpp"
 #include "vm/runtime/VMProcess.hpp"
 #include "vm/runtime/Processes.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/SymbolTable.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -156,7 +156,7 @@ Oop MarkSweep::collect( Oop p ) {
     }
 
     if ( PrintGC ) {
-        SPDLOG_INFO( "%garbage-collection:  before [{:3f}M], after [{:3f}M]", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
+        SPDLOG_INFO( "garbage-collection:  before [{:3f}M], after [{:3f}M]", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
     }
 
     return p;
@@ -251,7 +251,7 @@ std::int32_t MarkSweep::next_heap_code_offset() {
 
 void MarkSweep::mark_sweep_phase1( Oop *p ) {
 
-    static_cast<void>(p); // unused
+    st_unused( p ); // unused
 
     // Recursively traverse all live objects and mark them by reversing pointers.
     EventMarker em( "1 reverse pointers" );

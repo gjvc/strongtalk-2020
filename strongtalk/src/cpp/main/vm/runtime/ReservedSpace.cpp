@@ -7,7 +7,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/utility/OutputStream.hpp"
 #include "vm/runtime/ReservedSpace.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 
 
 ReservedSpace::ReservedSpace( std::int32_t size ) :

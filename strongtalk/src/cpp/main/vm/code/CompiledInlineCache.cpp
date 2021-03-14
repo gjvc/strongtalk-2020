@@ -6,7 +6,7 @@
 #include "vm/code/CompiledInlineCache.hpp"
 #include "vm/runtime/evaluator.hpp"
 #include "vm/runtime/Delta.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/code/PolymorphicInlineCache.hpp"
@@ -17,7 +17,7 @@
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/utility/EventLog.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
@@ -649,7 +649,7 @@ char *PrimitiveInlineCache::end_addr() {
 void PrimitiveInlineCache::print() {
     SPDLOG_INFO( "\tPrimitive inline cache" );
     PrimitiveDescriptor *pd = primitive();
-    SPDLOG_INFO( "\t- name        : %s", pd->name() );
+    SPDLOG_INFO( "\t- name        : {}", pd->name() );
     if ( pd->can_perform_NonLocalReturn() ) {
         SPDLOG_INFO( "\t- NonLocalReturn testcode: 0x{0:x}", NonLocalReturn_testcode() );
     }

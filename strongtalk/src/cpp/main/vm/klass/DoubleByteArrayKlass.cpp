@@ -11,8 +11,8 @@
 
 
 Oop DoubleByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( tenured ); // unused
 
     st_fatal( "should never call allocateObject in doubleByteArrayKlass" );
     return MarkOopDescriptor::bad();

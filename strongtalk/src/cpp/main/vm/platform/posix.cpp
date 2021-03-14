@@ -12,7 +12,7 @@
 #include "vm/memory/util.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utility/LongInteger64.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/utility/GrowableArray.hpp"
 
 
@@ -578,7 +578,7 @@ static void handler( std::int32_t signum, siginfo_t * info, void * context ) {
     trace_stack( os::current_thread_id() );
 
     if ( !userHandler ) {
-        SPDLOG_INFO( "signal: %d\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
+        SPDLOG_INFO( "signal: {:d}\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
         os_dump_context2( ( ucontext_t * ) context );
     } else {
         mcontext_t mcontext = ( ( ucontext_t * ) context )->uc_mcontext;
@@ -639,6 +639,5 @@ void os_init() {
 void os_exit() {
     ThreadCritical::release();
 }
-
 
 #endif

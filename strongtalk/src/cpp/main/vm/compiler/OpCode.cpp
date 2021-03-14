@@ -10,7 +10,7 @@
 #include <array>
 
 
-std::array<const char *, static_cast<std::size_t >( BranchOpCode::LastBranchOp )> BranchOpName = { // indexed by BranchOpCode
+std::array<const char *, static_cast<std::size_t >( BranchOpCode::LastBranchOp )> BranchOpName = {
     "B=",       //
     "B#",       //
     "B<",       //
@@ -21,15 +21,15 @@ std::array<const char *, static_cast<std::size_t >( BranchOpCode::LastBranchOp )
     "B>=",      //
     "Bu>",      //
     "Bu>=",     //
-    "Bovfl",    //
-    "Bnofvl",   //
+    "Bovfl",   //
+    "Bnofvl",  //
 };
 
 
 std::array<const char *, static_cast<std::size_t >( ArithOpCode::LastArithOp )> ArithOpName = {
 
     "nil (INVALID)", //
-    "test",
+    "test", //
 
     "+", //
     "-", //
@@ -75,46 +75,42 @@ std::array<bool, static_cast<std::size_t >( ArithOpCode::LastArithOp )> ArithOpI
 
 
     false, //
-    true,
+    true,   //
 
-    true, //
-    false, //
-    true, //
-    false, //
-    false, //
-    true, //
-    true, //
-    true, //
-    false, //
-    false, //
-    // untagged operations
+    true, // untagged operation
+    false, // untagged operation
+    true, // untagged operation
+    false, // untagged operation
+    false, // untagged operation
+    true, // untagged operation
+    true, // untagged operation
+    true, // untagged operation
+    false, // untagged operation
+    false, // untagged operation
 
-    true, //
-    false, //
-    true, //
-    false, //
-    false, //
-    true, //
-    true, //
-    true, //
-    false, //
-    false, //
-    // tagged operations
+    true, // tagged operation
+    false, // tagged operation
+    true, // tagged operation
+    false, // tagged operation
+    false, // tagged operation
+    true, // tagged operation
+    true, // tagged operation
+    true, // tagged operation
+    false, // tagged operation
+    false, // tagged operation
 
-    true, //
-    false, //
-    true, //
-    false, //
-    false, //
-    false, //
-    false, //
-    false, //
-    false, //
-    false, //
-    // untagged float operations
+    true, // untagged float operation
+    false, // untagged float operation
+    true, // untagged float operation
+    false, // untagged float operation
+    false, // untagged float operation
+    false, // untagged float operation
+    false, // untagged float operation
+    false, // untagged float operation
+    false, // untagged float operation
+    false, // untagged float operation
 
-    false, //
-// tagged float operation
+    false, // tagged float operation
 
 };
 

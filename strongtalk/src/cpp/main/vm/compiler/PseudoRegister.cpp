@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/assembler/Assembler.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/compiler/Compiler.hpp"
@@ -328,7 +328,7 @@ void PseudoRegister::addDUHelper( Node *n, SList<DefinitionUsage *> *l, Definiti
     SListElem<DefinitionUsage *> *prev = nullptr;
 
     for ( SListElem<DefinitionUsage *> *e = l->head(); e and e->data()->_node->num() < myNum; prev = e, e = e->next() ) {
-        static_cast<void>( 0 );
+        st_unused(  0  );
     }
     l->insertAfter( prev, el );
 }
@@ -405,7 +405,7 @@ bool PseudoRegister::extendLiveRange( Node *n ) {
 
 
 bool PseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
-    static_cast<void>(byteCodeIndex); // unused
+    st_unused( byteCodeIndex ); // unused
 
     // the receiver is being copy-propagated to n
     // PseudoRegisters currently can't be propagated outside their scope
@@ -578,8 +578,8 @@ bool PseudoRegister::canBeEliminated( bool withUses ) const {
                 // ok, all definitions are the same
             } else {
                 if ( not checkEquivalentDefs() ) {
-                    if ( CompilerDebug )
-                        cout( PrintEliminateUnnededNodes )->print( "*not eliminating %s: >1 def and debug-visible\n", name() );
+                    if ( CompilerDebug and PrintEliminateUnnededNodes )
+                        SPDLOG_INFO( "*not eliminating {}: >1 def and debug-visible", name() );
                     return false;
                 }
             }
@@ -589,8 +589,8 @@ bool PseudoRegister::canBeEliminated( bool withUses ) const {
         SListElem<Definition *>       *e     = info->_definitions.head();
         if ( not e ) {
             // info not in first elem - would have to search
-            if ( CompilerDebug )
-                cout( PrintEliminateUnnededNodes )->print( "*not eliminating %s: def not in first info\n", name() );
+            if ( CompilerDebug and PrintEliminateUnnededNodes )
+                SPDLOG_INFO( "*not eliminating {}: def not in first info", name() );
             return false;
         }
         NonTrivialNode *defNode = e->data()->_node;
@@ -622,8 +622,8 @@ bool PseudoRegister::canBeEliminated( bool withUses ) const {
         }
 
         if ( not ok ) {
-            if ( CompilerDebug )
-                cout( PrintEliminateUnnededNodes )->print( "*not eliminating %s: can't recover debug info\n", name() );
+            if ( CompilerDebug and PrintEliminateUnnededNodes )
+                SPDLOG_INFO( "*not eliminating {}: can't recover debug info", name() );
             return false;                // can't eliminate this PseudoRegister
         }
     }
@@ -641,8 +641,7 @@ bool BlockPseudoRegister::canBeEliminated( bool withUses ) const {
     if ( uplevelR() )
         return false;
 
-    // escaping, unused block; can be eliminated
-    // also, the block doesn't escape anymore
+    // escaping, unused block; can be eliminated also, the block doesn't escape anymore
     // _escapes = false;
     st_assert( nuses() == 0, "still has uses" );
     return true;
@@ -671,9 +670,9 @@ void PseudoRegister::eliminateUses( DefinitionUsageInfo *info, BasicBlock *bb ) 
     while ( usageElement ) {
         std::int32_t oldLength = info->_usages.length();      // for debugging
         Node         *n        = usageElement->data()->_node;
-        if ( CompilerDebug ) {
+        if ( CompilerDebug and PrintEliminateUnnededNodes ) {
             char buf[1024];
-            cout( PrintEliminateUnnededNodes )->print( "*%seliminating node N%ld: %s\n", n->canBeEliminated() ? "" : "not ", n->id(), n->toString( buf ) );
+            SPDLOG_INFO( "*{}eliminating node N{}: {}", n->canBeEliminated() ? "" : "not ", n->id(), n->toString( buf ) );
         }
         st_assert( n->canBeEliminated(), "must be able to eliminate this" );
         n->eliminate( bb, this );
@@ -899,7 +898,7 @@ InlinedScope *BlockPseudoRegister::parent() const {
 
 
 NameNode *BlockPseudoRegister::locNameNode( bool mustBeLegal ) const {
-    static_cast<void>(mustBeLegal); // unused
+    st_unused( mustBeLegal ); // unused
 
     st_assert( not _location.isTemporaryRegister(), "shouldn't be in temp reg" );
     // for now, always use MemoizedName to describe block (even if always created)
@@ -933,13 +932,13 @@ NameNode *PseudoRegister::nameNode( bool mustBeLegal ) const {
 
 
 NameNode *ConstPseudoRegister::nameNode( bool mustBeLegal ) const {
-    static_cast<void>(mustBeLegal); // unused
+    st_unused( mustBeLegal ); // unused
     return newValueName( constant );
 }
 
 
 NameNode *NoResultPseudoRegister::nameNode( bool mustBeLegal ) const {
-    static_cast<void>(mustBeLegal); // unused
+    st_unused( mustBeLegal ); // unused
     return new IllegalName;
 }
 
@@ -1071,8 +1070,8 @@ public:
 
 
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
-        static_cast<void>(type); // unused
-        static_cast<void>(nofArgs); // unused
+        st_unused( type ); // unused
+        st_unused( nofArgs ); // unused
 
         // recursively search nested blocks
         _nestingLevel++;
@@ -1130,7 +1129,7 @@ const char *PseudoRegister::name() const {
 
 
 void PseudoRegister::print() {
-    SPDLOG_INFO( "%s: ", name() );
+    SPDLOG_INFO( "{}: ", name() );
     printDefsAndUses( &_dus );
     SPDLOG_INFO( "" );
 }
@@ -1151,7 +1150,7 @@ void BlockPseudoRegister::print() {
     if ( _escapeNodes ) {
         SPDLOG_INFO( "; escapes at: " );
         for ( std::size_t i = 0; i < _escapeNodes->length(); i++ )
-            SPDLOG_INFO( "N%d ", _escapeNodes->at( i )->id() );
+            SPDLOG_INFO( "N{:d} ", _escapeNodes->at( i )->id() );
     }
     SPDLOG_INFO( "" );
 }

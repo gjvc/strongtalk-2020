@@ -19,7 +19,7 @@
 #include "vm/interpreter/MethodInterval.hpp"
 #include "vm/interpreter/MethodIntervalFactory.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/MethodClosure.hpp"
@@ -90,7 +90,7 @@ public:
 
 
     virtual void add( astNode *statement ) {
-        static_cast<void>(statement); // unused
+        st_unused( statement ); // unused
         st_fatal( "subclass should implement add" );
     }
 
@@ -111,13 +111,13 @@ public:
 
 
     virtual bool should_wrap_argument( astNode *argument ) {
-        static_cast<void>(argument); // unused
+        st_unused( argument ); // unused
         return false;
     };
 
 
     virtual astNode *argument_at( std::int32_t i ) {
-        static_cast<void>(i); // unused
+        st_unused( i ); // unused
         return nullptr;
     }
 };
@@ -822,7 +822,7 @@ PrintWrapper::~PrintWrapper() {
 
 
 bool astNode::print( PrettyPrintStream *output ) {
-    static_cast<void>(output); // unused
+    st_unused( output ); // unused
 
     if ( ActivationShowNameDescs ) {
         if ( _scopeNode and _scopeNode->sd() ) {
@@ -2083,7 +2083,7 @@ public:
 
 
     std::int32_t width( PrettyPrintStream *output ) {
-        static_cast<void>(output); // unused
+        st_unused( output ); // unused
         return 0;
     }
 };
@@ -2282,8 +2282,8 @@ public:
 
 
     void allocate_context( std::int32_t nofTemps, bool forMethod ) {
-        static_cast<void>(nofTemps); // unused
-        static_cast<void>(forMethod); // unused
+        st_unused( nofTemps ); // unused
+        st_unused( forMethod ); // unused
 
         scope()->context_allocated();
     }
@@ -2408,7 +2408,7 @@ public:
 
     // call backs to ignore
     void allocate_temporaries( std::int32_t nofTemps ) {
-        static_cast<void>(nofTemps); // unused
+        st_unused( nofTemps ); // unused
     }
 
 
@@ -2421,8 +2421,8 @@ public:
 
 
     void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
-        static_cast<void>(argNo); // unused
-        static_cast<void>(no); // unused
+        st_unused( argNo ); // unused
+        st_unused( no ); // unused
     }
 
 
@@ -2431,19 +2431,19 @@ public:
 
 
     void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
-        static_cast<void>(pdesc); // unused
-        static_cast<void>(failure_start); // unused
+        st_unused( pdesc ); // unused
+        st_unused( failure_start ); // unused
     }
 
 
     void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
-        static_cast<void>(nofFloatTemps); // unused
-        static_cast<void>(nofFloatExprs); // unused
+        st_unused( nofFloatTemps ); // unused
+        st_unused( nofFloatExprs ); // unused
     }
 
 
     void float_floatify( Floats::Function f, std::int32_t tof ) {
-        static_cast<void>(tof); // unused
+        st_unused( tof ); // unused
         normal_send( Floats::selector_for( f ) );
         pop();
     }
@@ -2457,14 +2457,14 @@ public:
 
 
     void float_set( std::int32_t tof, DoubleOop value ) {
-        static_cast<void>(tof); // unused
-        static_cast<void>(value); // unused
+        st_unused( tof ); // unused
+        st_unused( value ); // unused
     }
 
 
     void float_nullary( Floats::Function f, std::int32_t tof ) {
-        static_cast<void>(f); // unused
-        static_cast<void>(tof); // unused
+        st_unused( f ); // unused
+        st_unused( tof ); // unused
     }
 
 
@@ -2573,7 +2573,7 @@ void MethodPrettyPrinter::pop() {
 
 
 void MethodPrettyPrinter::method_return( std::int32_t nofArgs ) {
-    static_cast<void>(nofArgs); // unused
+    st_unused( nofArgs ); // unused
 
     // This has to be on a statement boundary.
     if ( _size() == 1 ) {
@@ -2593,7 +2593,7 @@ void MethodPrettyPrinter::method_return( std::int32_t nofArgs ) {
 
 
 void MethodPrettyPrinter::nonlocal_return( std::int32_t nofArgs ) {
-    static_cast<void>(nofArgs); // unused
+    st_unused( nofArgs ); // unused
 
     // This has to be on a statement boundary.
     astNode *expr = _pop();
@@ -2730,7 +2730,7 @@ astNode *generateForMethod( MethodOop method, KlassOop klass, std::int32_t byteC
 
 
 astNode *generateForBlock( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex, std::int32_t nofArgs ) {
-    static_cast<void>(nofArgs); // unused
+    st_unused( nofArgs ); // unused
 
     return generate( new scopeNode( method, klass, byteCodeIndex ) );
 }
@@ -2820,18 +2820,18 @@ bool should_wrap( std::int32_t type, astNode *arg ) {
 
 
 void PrintParams::parameter( ByteArrayOop name, std::int32_t index ) {
-    static_cast<void>(name); // unused
+    st_unused( name ); // unused
     _elements->push( _scope->parameter_at( index, true ) );
 }
 
 
 void PrintTemps::stack_temp( ByteArrayOop name, std::int32_t offset ) {
-    static_cast<void>(name); // unused
+    st_unused( name ); // unused
     _elements->push( _scope->stack_temp_at( offset ) );
 }
 
 
 void PrintTemps::heap_temp( ByteArrayOop name, std::int32_t offset ) {
-    static_cast<void>(name); // unused
+    st_unused( name ); // unused
     _elements->push( _scope->heap_temp_at( offset ) );
 }

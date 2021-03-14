@@ -6,7 +6,7 @@
 
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/lookup/CacheElement.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -346,7 +346,7 @@ Oop LookupCache::normal_lookup( KlassOop receiver_klass, SymbolOop selector ) {
 
 
 static void print_counter( const char *title, std::int32_t counter, std::int32_t total ) {
-    SPDLOG_INFO( "%20s: %3.1f%% (%d)", title, total == 0 ? 0.0 : 100.0 * (double) counter / (double) total, counter );
+    SPDLOG_INFO( "%20s: %3.1f%% ({:d})", title, total == 0 ? 0.0 : 100.0 * (double) counter / (double) total, counter );
 }
 
 
@@ -359,7 +359,7 @@ void LookupCache::clear_statistics() {
 
 void LookupCache::print_statistics() {
     std::int32_t total = number_of_primary_hits + number_of_secondary_hits + number_of_misses;
-    SPDLOG_INFO( "Lookup Cache: size(%d, %d)", primary_cache_size, secondary_cache_size );
+    SPDLOG_INFO( "Lookup Cache: size({:d}, {:d})", primary_cache_size, secondary_cache_size );
     print_counter( "Primary Hit Ratio", number_of_primary_hits, total );
     print_counter( "Secondary Hit Ratio", number_of_secondary_hits, total );
     print_counter( "Miss Ratio", number_of_misses, total );

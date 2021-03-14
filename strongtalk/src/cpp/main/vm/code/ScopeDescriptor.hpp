@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/code/NameDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
@@ -23,30 +23,30 @@ class NameDescriptorClosure {
 
 public:
     virtual void arg( std::int32_t no, NameDescriptor *a, const char *pc ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(a); // unused
-        static_cast<void>(pc); // unused
+        st_unused( no ); // unused
+        st_unused( a ); // unused
+        st_unused( pc ); // unused
     }
 
 
     virtual void temp( std::int32_t no, NameDescriptor *t, const char *pc ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(t); // unused
-        static_cast<void>(pc); // unused
+        st_unused( no ); // unused
+        st_unused( t ); // unused
+        st_unused( pc ); // unused
     }
 
 
     virtual void context_temp( std::int32_t no, NameDescriptor *c, const char *pc ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(c); // unused
-        static_cast<void>(pc); // unused
+        st_unused( no ); // unused
+        st_unused( c ); // unused
+        st_unused( pc ); // unused
     }
 
 
     virtual void stack_expr( std::int32_t no, NameDescriptor *e, const char *pc ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(e); // unused
-        static_cast<void>(pc); // unused
+        st_unused( no ); // unused
+        st_unused( e ); // unused
+        st_unused( pc ); // unused
     }
 
 
@@ -356,7 +356,7 @@ public:
 
 
     ScopeDescriptor *parent( bool cross_NativeMethod_boundary = false ) const {
-        static_cast<void>(cross_NativeMethod_boundary); // unused
+        st_unused( cross_NativeMethod_boundary ); // unused
         return nullptr;
     }
 

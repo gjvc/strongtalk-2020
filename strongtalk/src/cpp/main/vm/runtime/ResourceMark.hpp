@@ -20,7 +20,7 @@ public:
     AbstractResourceMark &operator=( const AbstractResourceMark & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)ptr; }
+    void operator delete( void *ptr ) { (void) ptr; }
 
 
 };
@@ -33,6 +33,7 @@ class ResourceAreaChunk;
 
 
 class ResourceMark : StackAllocatedObject {
+
 public:
 
     ResourceMark();
@@ -41,7 +42,7 @@ public:
     ResourceMark &operator=( const ResourceMark & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)ptr; }
+    void operator delete( void *ptr );
 
 
 protected:
@@ -78,6 +79,6 @@ public:
     ~FinalResourceMark();
 
 
-    static void operator delete( void *p ) { (void)p; }
+    static void operator delete( void *p ) { (void) p; }
 
 };

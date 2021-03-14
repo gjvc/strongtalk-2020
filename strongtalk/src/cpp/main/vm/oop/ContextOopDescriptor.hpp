@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/klass/MemOopKlass.hpp"
 #include "vm/oop/BlockClosureOopDescriptor.hpp"
 #include "vm/oop/MemOopDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
 
@@ -29,9 +29,12 @@ private:
     //  - the frame   	(if the activation creating the block is alive and a first-level block)
     //  - smiOop_zero 	(when the activation creating the block is dead)
     //  - outer context 	(if the corresponding method is a block method??)
+    //
     // The transition from frame to smiOop_zero happens when the block is zapped
     // by the epilog code of the method or a non local return.
     // NOTE: the frame is needed in case of a non local return.
+    //
+
     ContextOop addr() const {
         return ContextOop( MemOopDescriptor::addr() );
     }
@@ -64,7 +67,7 @@ public:
     }
 
 
-    void set_home_fp( std::int32_t *fp ) { /* this should be void ** or similar to allow for 64-bit */
+    void set_home_fp( std::int32_t *fp ) { // this should be void ** or similar to allow for 64-bit
         st_assert( Oop(fp)->isSmallIntegerOop(), "checking alignment" );
         set_parent( Oop( fp ) );
     }
@@ -117,6 +120,29 @@ public:
     static std::int32_t parent_byte_offset();
 
     static std::int32_t temp0_byte_offset();
+
+
+
+//
+//    std::int32_t ContextOopDescriptor::parent_word_offset() {
+//        return 2; // word offset of parent context
+//    }
+//
+//
+//    std::int32_t ContextOopDescriptor::temp0_word_offset() {
+//        return 3; // word offset of first context temp
+//    }
+//
+//
+//    std::int32_t ContextOopDescriptor::parent_byte_offset() {
+//        return byteOffset( parent_word_offset() );
+//    }
+//
+//
+//    std::int32_t ContextOopDescriptor::temp0_byte_offset() {
+//        return byteOffset( temp0_word_offset() );
+//    }
+
 
 
     // Accessors for storing and reading the forward reference

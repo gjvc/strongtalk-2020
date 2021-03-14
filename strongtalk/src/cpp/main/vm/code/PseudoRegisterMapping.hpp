@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/code/Locations.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
@@ -22,7 +22,7 @@ class PseudoRegister;
 class PseudoRegisterClosure : public PrintableResourceObject {
 public:
     virtual void pseudoRegister_do( PseudoRegister *pseudoRegister ) {
-        static_cast<void>(pseudoRegister); // unused
+        st_unused( pseudoRegister ); // unused
     }        // called for each PseudoRegister in the mapping
 };
 

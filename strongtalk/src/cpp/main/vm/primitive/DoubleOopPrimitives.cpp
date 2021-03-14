@@ -10,7 +10,7 @@
 #include "vm/memory/Universe.hpp"
 #include "vm/oop/DoubleOopDescriptor.hpp"
 #include "vm/oop/DoubleByteArrayOopDescriptor.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
@@ -33,17 +33,17 @@ static Oop new_double( double value ) {
 
 #define ASSERT_RECEIVER st_assert(receiver->isDouble(), "receiver must be double")
 
-#define DOUBLE_RELATIONAL_OP( op )                                      \
-  ASSERT_RECEIVER;                                                      \
-  if (not argument->isDouble())                                        \
-    return markSymbol(vmSymbols::first_argument_has_wrong_type());      \
-  return DoubleOop(receiver)->value() op DoubleOop(argument)->value()   \
+#define DOUBLE_RELATIONAL_OP( op ) \
+  ASSERT_RECEIVER; \
+  if (not argument->isDouble()) \
+    return markSymbol(vmSymbols::first_argument_has_wrong_type()); \
+  return DoubleOop(receiver)->value() op DoubleOop(argument)->value() \
          ? trueObject : falseObject
 
-#define DOUBLE_ARITH_OP( op )                                           \
-  ASSERT_RECEIVER;                                                      \
-  if (not argument->isDouble())                                        \
-    return markSymbol(vmSymbols::first_argument_has_wrong_type());      \
+#define DOUBLE_ARITH_OP( op ) \
+  ASSERT_RECEIVER; \
+  if (not argument->isDouble()) \
+    return markSymbol(vmSymbols::first_argument_has_wrong_type()); \
   return new_double(DoubleOop(receiver)->value() op DoubleOop(argument)->value())
 
 
@@ -430,39 +430,39 @@ static void trap() {
 
 
 extern "C" Oop __CALLING_CONVENTION double_subtract( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 
 extern "C" Oop __CALLING_CONVENTION double_divide( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 
 extern "C" Oop __CALLING_CONVENTION double_add( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 
 extern "C" Oop __CALLING_CONVENTION double_multiply( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 
 extern "C" Oop __CALLING_CONVENTION double_from_smi( Oop receiver ) {
-    static_cast<void>(receiver); // unused
+    st_unused( receiver ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }

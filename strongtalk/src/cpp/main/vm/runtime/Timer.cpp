@@ -4,7 +4,7 @@
 //
 
 #include "vm/runtime/Timer.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/utility/OutputStream.hpp"
 
 

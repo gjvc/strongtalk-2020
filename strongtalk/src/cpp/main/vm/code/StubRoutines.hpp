@@ -8,7 +8,7 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/utility/LongInteger64.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 
 //

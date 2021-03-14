@@ -243,7 +243,7 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
 //    Oop             word2_after = second_word();
 
     // log modification
-    SPDLOG_INFO( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition {:d})", static_cast<const void *>( this ), static_cast<const void *>( receiver_klass ), transition );
+    SPDLOG_INFO( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition {})", static_cast<const void *>( this ), static_cast<const void *>( receiver_klass ), transition );
     SPDLOG_INFO( "  from ({}, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_before ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
     SPDLOG_INFO( "  to   ({}, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_after ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
 
@@ -822,5 +822,5 @@ bool InterpretedInlineCacheIterator::is_super_send() const {
 
 
 void InterpretedInlineCacheIterator::print() {
-    SPDLOG_INFO( "InterpretedInlineCacheIterator 0x{0:x} for ic 0x{0:x} (%s)", static_cast<const void *>(this), static_cast<const void *>(_ic), selector()->as_string() );
+    SPDLOG_INFO( "InterpretedInlineCacheIterator 0x{0:x} for ic 0x{0:x} ({})", static_cast<const void *>(this), static_cast<const void *>(_ic), selector()->as_string() );
 }

@@ -7,7 +7,7 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
 
@@ -18,8 +18,8 @@ void setKlassVirtualTableFromKlassKlass( Klass *k ) {
 
 
 Oop KlassKlass::allocateObject( bool permit_scavenge, bool tenured ) {
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( tenured ); // unused
 
     // allocate
     MemOop obj = as_memOop( Universe::allocate_tenured( non_indexable_size() ) );
@@ -31,7 +31,7 @@ Oop KlassKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 KlassOop KlassKlass::create_subclass( MixinOop mixin, Format format ) {
-    static_cast<void>(format); // unused
+    st_unused( format ); // unused
 
     KlassKlass o;
     return create_generic_class( as_klassOop(), mixin, o.vtbl_value() );
@@ -102,7 +102,7 @@ bool KlassKlass::oop_verify( Oop obj ) {
         std::int32_t b = k->oop_header_size();
         std::int32_t c = k->number_of_instance_variables();
         if ( a not_eq b + c ) {
-            SPDLOG_WARN( "KlassKlass::oop_verify: inconsistent: non_indexable_size [{:d}] should be sum of oop_header_size [{:d}] and number_of_instance_variables [{:d}]", a, b, c );
+            SPDLOG_WARN( "inconsistent: non_indexable_size [{}] should be sum of oop_header_size [{}] and number_of_instance_variables [{}]", a, b, c );
         }
     }
 
@@ -171,8 +171,8 @@ Oop KlassKlass::oop_primitive_allocate_size( Oop obj, std::int32_t size ) {
 
 
 Oop KlassKlass::oop_shallow_copy( Oop obj, bool tenured ) {
-    static_cast<void>(obj); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( obj ); // unused
+    st_unused( tenured ); // unused
 
     return markSymbol( vmSymbols::not_clonable() );
 }

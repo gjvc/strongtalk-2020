@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/klass/Klass.hpp"
 #include "vm/oop/OopDescriptor.hpp"
 #include "vm/klass/ByteArrayKlass.hpp"

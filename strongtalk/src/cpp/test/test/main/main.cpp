@@ -4,18 +4,18 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/arguments.hpp"
 #include "vm/runtime/init.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/oop/ProcessOopDescriptor.hpp"
 #include "vm/oop/AssociationOopDescriptor.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 
 #include "test/runtime/testProcess.hpp"
 #include "vm/runtime/Processes.hpp"
@@ -105,24 +105,25 @@ void stop_vm_process() {
 int main( int argc, char *argv[] ) {
 
     SPDLOG_INFO( "-----------------------------------------------------------------------------" );
-    SPDLOG_INFO( ">>> STRONGTALK TEST HARNESS" );
+    SPDLOG_INFO( ">>> STRONGTALK GTEST_TEST HARNESS" );
     SPDLOG_INFO( "-----------------------------------------------------------------------------" );
 
     ::testing::InitGoogleTest( &argc, argv );
 
     parse_arguments( argc, argv );
     init_globals();
-    load_image();
-    ResourceMark resourceMark;
+//    load_image();
+//    ResourceMark resourceMark;
 
-    vmSymbols::initialize();
+//    vmSymbols::initialize();
+//
 
-    done = os::create_event( false );
-
-    TestDeltaProcess testProcess;
-    start_vm_process( &testProcess );
-    os::wait_for_event( done );
-    stop_vm_process();
+//    done = os::create_event( false );
+//
+//    TestDeltaProcess testProcess;
+//    start_vm_process( &testProcess );
+//    os::wait_for_event( done );
+//    stop_vm_process();
 
     return EXIT_SUCCESS;
 }

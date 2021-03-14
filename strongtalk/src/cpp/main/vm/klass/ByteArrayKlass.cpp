@@ -4,7 +4,7 @@
 //
 
 #include "vm/klass/ByteArrayKlass.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/oop/ByteArrayOopDescriptor.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/runtime/flags.hpp"
@@ -13,8 +13,8 @@
 
 Oop ByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( tenured ); // unused
 
     st_assert( not can_inline_allocation(), "using nonstandard allocation" );
 

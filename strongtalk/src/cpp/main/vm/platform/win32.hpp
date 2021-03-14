@@ -6,10 +6,11 @@
 
 #pragma once
 
+
 #if defined( __MINGW32__ ) || defined( _MSC_VER )
 
-#include "vm/system/platform.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/platform.hpp"
+#include "os.hpp"
 #include "vm/utility/EventLog.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utility/GrowableArray.hpp"

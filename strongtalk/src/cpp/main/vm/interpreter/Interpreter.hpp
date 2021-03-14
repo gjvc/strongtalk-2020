@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/assembler/Label.hpp"
 #include "vm/oop/DoubleOopDescriptor.hpp"
 

@@ -4,7 +4,7 @@
 //
 
 #include "vm/interpreter/HeapCodeBuffer.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/oop/ByteArrayOopDescriptor.hpp"

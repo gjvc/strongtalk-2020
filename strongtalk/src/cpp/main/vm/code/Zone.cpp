@@ -3,12 +3,12 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/code/PolymorphicInlineCache.hpp"
 #include "vm/code/NativeMethod.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/code/Zone.hpp"
 #include "vm/runtime/Timer.hpp"
@@ -18,19 +18,19 @@
 #include "vm/runtime/Processes.hpp"
 
 
-constexpr std::int32_t LRU_RESOLUTION     = 16;    /* resolution (in secs) of LRU timer */
-constexpr std::int32_t LRU_RETIREMENT_AGE = 10;   /* min. age (# sweeps) for retirement */
+constexpr std::int32_t LRU_RESOLUTION     = 16;    // resolution (in secs) of LRU timer
+constexpr std::int32_t LRU_RETIREMENT_AGE = 10;   // min. age (# sweeps) for retirement
 #define LRU_MAX_VISITED    min(numberOfNativeMethods(), LRUMaxVisited)
 
-/* max. # nativeMethods visited per sweep */
-constexpr std::int32_t LRU_MAX_RECLAIMED = 250000; /* stop after having found this amount of */
+// max. # nativeMethods visited per sweep
+constexpr std::int32_t LRU_MAX_RECLAIMED = 250000; // stop after having found this amount of
 
-/* Space occupied by replacement candidates */
-constexpr std::int32_t LRU_CUTOFF      = 32;  /* max. length (bytes) of "small" methods */
-constexpr std::int32_t LRU_SMALL_BOOST = 3;  /* small methods live this many times longer */
+// Space occupied by replacement candidates
+constexpr std::int32_t LRU_CUTOFF      = 32;  // max. length (bytes) of "small" methods
+constexpr std::int32_t LRU_SMALL_BOOST = 3;  // small methods live this many times longer
 // (because access methods don't clear their unused bit)
 
-constexpr float COMPACT_OVERHEAD = 0.05; /* desired max. overhead for zone compaction */
+constexpr float COMPACT_OVERHEAD = 0.05; // desired max. overhead for zone compaction
 
 
 // Trade-offs for blocksizes/queue length below:
@@ -39,18 +39,18 @@ constexpr float COMPACT_OVERHEAD = 0.05; /* desired max. overhead for zone compa
 // - longer free lists cover a wider range of allocations but can slow down
 //   allocation (when most lists are empty but still have to be scanned).
 
-constexpr std::int32_t CODE_BLOCK_SIZE                = 64;  /* block size for nativeMethods */
-constexpr std::int32_t POLYMORPHIC_INLINE_CACHE_BLOCK = 32;    /* block size for PICs */
+constexpr std::int32_t CODE_BLOCK_SIZE                = 64;  // block size for nativeMethods
+constexpr std::int32_t POLYMORPHIC_INLINE_CACHE_BLOCK = 32;    // block size for PICs
 
-constexpr std::int32_t FREE       = 20;        /* # of free lists */
-constexpr std::int32_t StubBlock  = 16;        /* block size for PolymorphicInlineCache zone */
-constexpr std::int32_t StubFree   = 20;        /* # of free lists for PolymorphicInlineCache zone */
-constexpr float        MaxExtFrag = 0.05;    /* max. tolerated ext. fragmentation */
+constexpr std::int32_t FREE       = 20;        // # of free lists
+constexpr std::int32_t StubBlock  = 16;        // block size for PolymorphicInlineCache zone
+constexpr std::int32_t StubFree   = 20;        // # of free lists for PolymorphicInlineCache zone
+constexpr float        MaxExtFrag = 0.05;    // max. tolerated ext. fragmentation
 
-#define FOR_ALL_NMETHODS( var )                              \
+#define FOR_ALL_NMETHODS( var ) \
     for (NativeMethod *var = first_nm(); var; var = next_nm(var))
 
-#define FOR_ALL_PICS( var )                              \
+#define FOR_ALL_PICS( var ) \
     for (PolymorphicInlineCache *var = first_pic(); var; var = next_pic(var))
 
 
@@ -76,7 +76,7 @@ void sweepTrigger() {
 
 
 static void idOverflowError( std::int32_t delta ) {
-    static_cast<void>(delta); // unused
+    st_unused( delta ); // unused
 
     // fix this - maybe eliminate NativeMethod IDs altogether?
     st_fatal( "zone: NativeMethod ID table overflowed" );
@@ -96,7 +96,7 @@ Zone::Zone( std::int32_t &size ) :
     compactDuration{ 0 },
     minFreeFrac{ 0 } {
 
-    static_cast<void>(size); // unused
+    st_unused( size ); // unused
 
     _methodHeap  = new ZoneHeap( Universe::current_sizes._code_size, CODE_BLOCK_SIZE );
     _picHeap     = new ZoneHeap( Universe::current_sizes._pic_heap_size, POLYMORPHIC_INLINE_CACHE_BLOCK );
@@ -186,7 +186,7 @@ void Zone::flush() {
 
 
 std::int32_t Zone::findReplCandidates( std::int32_t needed ) {
-    static_cast<void>(needed); // unused
+    st_unused( needed ); // unused
 
     // find replacement candidates; stop if > needed bytes found or if
     // there seem to be no more candidates
@@ -212,7 +212,7 @@ std::int32_t Zone::findReplCandidates( std::int32_t needed ) {
 
 // flush next replacement candidate; return # bytes freed
 std::int32_t Zone::flushNextMethod( std::int32_t needed ) {
-    static_cast<void>(needed); // unused
+    st_unused( needed ); // unused
     std::int32_t freed = 0;
     Unimplemented();
     return freed;
@@ -220,7 +220,7 @@ std::int32_t Zone::flushNextMethod( std::int32_t needed ) {
 
 
 void moveInsts( const char *from, char *to, std::int32_t size ) {
-    static_cast<void>(size); // unused
+    st_unused( size ); // unused
 
     NativeMethod *n   = (NativeMethod *) from;
     NativeMethod *nTo = (NativeMethod *) to;
@@ -326,7 +326,7 @@ void Zone::adjustPolicy() {
 }
 
 
-#define LRU_MAX_RECLAIMED 250000 /* stop after having found this amount of */
+#define LRU_MAX_RECLAIMED 250000 // stop after having found this amount of
 #define LRUMaxVisited     150
 
 
@@ -433,8 +433,8 @@ void Zone::verify() {
 
 
 void Zone::switch_pointers( Oop from, Oop to ) {
-    static_cast<void>(from); // unused
-    static_cast<void>(to); // unused
+    st_unused( from ); // unused
+    st_unused( to ); // unused
     Unimplemented();
 }
 
@@ -464,7 +464,7 @@ void Zone::PICs_do( void f( PolymorphicInlineCache *pic ) ) {
 }
 
 
-#define NMLINE( format, n, ntot, ntot2 )                      \
+#define NMLINE( format, n, ntot, ntot2 ) \
   _console->print(format, (n), 100.0 * (n) / (ntot), 100.0 * (n) / (ntot2))
 
 class nmsizes {
@@ -588,7 +588,7 @@ static std::int32_t compareCount( const void *m1, const void *m2 ) {
 
 
 void Zone::print_NativeMethod_histogram( std::int32_t size ) {
-    static_cast<void>(size); // unused
+    st_unused( size ); // unused
 #ifdef NOT_IMPLEMENTED
     ResourceMark resourceMark;
     nm_hist_elem* hist_array = NEW_RESOURCE_ARRAY(nm_hist_elem, numberOfNativeMethods());
@@ -660,7 +660,7 @@ void Zone::print_NativeMethod_histogram( std::int32_t size ) {
       }
     }
 
-    SPDLOG_INFO( "List of methods with more than %d nativeMethods compiled.\n", size);
+    SPDLOG_INFO( "List of methods with more than {:d} nativeMethods compiled.\n", size);
     SPDLOG_INFO( " ALL(#,Kb)  Compiler(#,Kb) Method:\n");
     for (std::int32_t i = 0; i < out; i++) {
       SPDLOG_INFO("%4d,%-4d   %4d,%-4d ",
@@ -776,23 +776,24 @@ NativeMethod *Zone::next_circular_nm( NativeMethod *nm ) {
 // called every LRU_RESOLUTION seconds or by reclaimNativeMethods if needed
 // returns time at which oldest non-reclaimed NativeMethod will be reclaimed
 std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std::int32_t *nvisited, std::int32_t *nbytesReclaimed ) {
-    static_cast<void>(maxVisit); // unused
-    static_cast<void>(maxReclaim); // unused
-    static_cast<void>(nvisited); // unused
-    static_cast<void>(nbytesReclaimed); // unused
-#ifdef NOT_IMPLEMENTED
+    st_unused( maxVisit ); // unused
+    st_unused( maxReclaim ); // unused
+    st_unused( nvisited ); // unused
+    st_unused( nbytesReclaimed ); // unused
+
+#if 0
     EventMarker  em( "LRU sweep" );
     ResourceMark resourceMark;
 
-    timer tmr;
-    std::int32_t   visited  = 0;
-    std::int32_t   nused    = 0;
-    std::int32_t   nbytes   = 0;
-    std::int32_t   nextTime = LRUtime + LRU_RETIREMENT_AGE;
-    NativeMethod * first = first_nm();
+    timer        tmr;
+    std::int32_t visited  = 0;
+    std::int32_t nused    = 0;
+    std::int32_t nbytes   = 0;
+    std::int32_t nextTime = LRUtime + LRU_RETIREMENT_AGE;
+    NativeMethod *first   = first_nm();
     if ( not first ) return -1;
 
-    NativeMethod * p = LRUhand ? LRUhand : first;
+    NativeMethod *p = LRUhand ? LRUhand : first;
     if ( PrintLRUSweep or PrintLRUSweep2 ) {
         SPDLOG_INFO( "*starting LRU sweep..." );
         fflush( stdout );
@@ -800,7 +801,9 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
     }
 
     do {
-        if ( PrintLRUSweep2 ) SPDLOG_INFO( "*inspecting 0x{0:x} (id %ld): ", p, p->id );
+        if ( PrintLRUSweep2 ) {
+            SPDLOG_INFO( "*inspecting 0x{0:x} (id {}): ", p, p->id );
+        }
 
         if ( ( p->isZombie() or
                p->isDebug() or
@@ -808,9 +811,9 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
              p->frame_chain == nullptr ) {
             // can be flushed - nobody will ever use it again
             if ( PrintLRUSweep2 )
-                SPDLOG_INFO( " %s; flushed",
-                        p->isZombie() ? "zombie":
-                        ( p->isDebug() ? "debug" : "unreachable" ) );
+                SPDLOG_INFO( " {}; flushed",
+                             p->isZombie() ? "zombie" :
+                             ( p->isDebug() ? "debug" : "unreachable" ) );
             nbytes += iZone->sizeOfBlock( p );
             p->flush();
         } else if ( p->isUsed() ) {
@@ -819,7 +822,9 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
             if ( PrintLRUSweep2 ) {
                 SPDLOG_INFO( "used" );
                 std::int32_t diff = useCount[ p->id ] - p->oldCount;
-                if ( diff ) SPDLOG_INFO( " %ld times", diff );
+                if ( diff ) {
+                    SPDLOG_INFO( " {} times", diff );
+                }
             }
             if ( LRUDecayFactor > 1 ) {
                 useCount[ p->id ] = std::int32_t( useCount[ p->id ] / LRUDecayFactor );
@@ -848,13 +853,15 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
             }
         }
 
-        NativeMethod * oldp = p;
+        NativeMethod *oldp = p;
         p = next_circular_nm( p );
         if ( p < oldp ) {                // wrap around
             LRUtime++;
             // The LRU scheme will actually fail if LRUtime > 2^16, but that
             // won't happen very often (every 20*LRU_RESOLUTION CPU hours).
-            if ( PrintLRUSweep2 ) SPDLOG_INFO( "*new LRU time: %ld", LRUtime );
+            if ( PrintLRUSweep2 ) {
+                SPDLOG_INFO( "*new LRU time: {}", LRUtime );
+            }
         }
     } while ( ++visited < maxVisit and nbytes < maxReclaim and p );
 
@@ -867,7 +874,7 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
     _needsSweep = false;
     if ( PrintLRUSweep or PrintLRUSweep2 ) {
         SPDLOG_INFO( " done: %ld/%ld visits, %ld bytes, %ld ms.\n",
-                nused, visited, nbytes, tmr.time() );
+                     nused, visited, nbytes, tmr.time() );
         fflush( stdout );
     }
     if ( nvisited ) *nvisited               = visited;
@@ -889,19 +896,4 @@ void printAllNativeMethods() {
             m->scopes()->print_partition();
         }
     }
-}
-
-
-
-
-// On the x86, the I cache is consistent after the next branch or call, so don't need to do any flushing.
-
-void flushICacheWord( void *addr ) {
-    static_cast<void>(addr); // unused
-}
-
-
-void flushICacheRange( void *start, void *end ) {
-    static_cast<void>(start); // unused
-    static_cast<void>(end); // unused
 }

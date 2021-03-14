@@ -4,15 +4,9 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/runtime/Delta.hpp"
-#include "vm/runtime/Process.hpp"
-#include "vm/code/StubRoutines.hpp"
-#include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/OopFactory.hpp"
-#include "vm/oop/ObjectArrayOopDescriptor.hpp"
-#include "vm/oop/KlassOopDescriptor.hpp"
-#include "vm/runtime/ResourceMark.hpp"
-#include "vm/memory/Scavenge.hpp"
+#include "vm/lookup/LookupCache.hpp"
+#include "vm/runtime/DeltaCallCache.hpp"
+#include "vm/oop/SymbolOopDescriptor.hpp"
 
 
 DeltaCallCache::DeltaCallCache() :
@@ -36,4 +30,25 @@ void DeltaCallCache::clearAll() {
         p->clear();
         p = p->_link;
     }
+}
+
+
+LookupResult DeltaCallCache::lookup( KlassOop klass, SymbolOop selector ) {
+    if ( not match( klass, selector ) ) {
+        _result = interpreter_normal_lookup( klass, selector );
+        if ( not _result.is_empty() ) {
+            _key.initialize( klass, selector );
+        }
+    }
+    return _result;
+}
+
+
+bool DeltaCallCache::match( KlassOop klass, SymbolOop selector ) {
+    return Oop( selector ) == _key.selector_or_method() and klass == _key.klass();
+}
+
+
+LookupResult DeltaCallCache::result() {
+    return _result;
 }

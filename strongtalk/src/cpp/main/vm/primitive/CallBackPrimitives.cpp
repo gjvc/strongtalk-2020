@@ -4,10 +4,10 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/primitive/CallBackPrimitives.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/oop/ProxyOopDescriptor.hpp"
 #include "vm/runtime/CallBack.hpp"
 
@@ -59,8 +59,6 @@ PRIM_DECL_1( CallBackPrimitives::unregister, Oop proxy ) {
     ProxyOop( proxy )->set_pointer( nullptr );
     return proxy;
 }
-
-
 
 
 PRIM_DECL_1( CallBackPrimitives::invokePascal, Oop proxy ) {

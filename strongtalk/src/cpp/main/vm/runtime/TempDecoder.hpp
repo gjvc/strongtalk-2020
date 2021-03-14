@@ -7,7 +7,7 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/oop/MemOopDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/oop/BlockClosureOopDescriptor.hpp"
 
 // TempDecoder decodes the method annotation describing the names of parameters and temporaries.
@@ -31,32 +31,32 @@ public:
 
     // arguments are numbered from 1 to n
     virtual void parameter( ByteArrayOop name, std::int32_t index ) {
-        static_cast<void>(name); // unused
-        static_cast<void>(index); // unused
+        st_unused( name ); // unused
+        st_unused( index ); // unused
     }
 
 
     virtual void stack_temp( ByteArrayOop name, std::int32_t no ) {
-        static_cast<void>(name); // unused
-        static_cast<void>(no); // unused
+        st_unused( name ); // unused
+        st_unused( no ); // unused
     }
 
 
     virtual void stack_float_temp( ByteArrayOop name, std::int32_t fno ) {
-        static_cast<void>(name); // unused
-        static_cast<void>(fno); // unused
+        st_unused( name ); // unused
+        st_unused( fno ); // unused
     }
 
 
     virtual void heap_temp( ByteArrayOop name, std::int32_t no ) {
-        static_cast<void>(name); // unused
-        static_cast<void>(no); // unused
+        st_unused( name ); // unused
+        st_unused( no ); // unused
     }
 
 
     virtual void heap_parameter( ByteArrayOop name, std::int32_t no ) {
-        static_cast<void>(name); // unused
-        static_cast<void>(no); // unused
+        st_unused( name ); // unused
+        st_unused( no ); // unused
     }
 
 

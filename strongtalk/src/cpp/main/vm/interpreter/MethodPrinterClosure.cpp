@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
 #include "vm/runtime/flags.hpp"
@@ -13,7 +13,7 @@
 #include "vm/oop/AssociationOopDescriptor.hpp"
 #include "vm/oop/MemOopDescriptor.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/interpreter/MethodPrinterClosure.hpp"
 #include "vm/oop/DoubleOopDescriptor.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
@@ -391,8 +391,8 @@ void MethodPrinterClosure::zap_scope() {
 
 
 void MethodPrinterClosure::predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
-    static_cast<void>(pdesc); // unused
-    static_cast<void>(failure_start); // unused
+    st_unused( pdesc ); // unused
+    st_unused( failure_start ); // unused
 
     indent();
     _outputStream->print_cr( "predicted prim method" );

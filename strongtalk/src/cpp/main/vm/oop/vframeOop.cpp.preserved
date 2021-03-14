@@ -1,5 +1,7 @@
 //
-/* Copyright (c) 2006, Sun Microsystems, Inc.
+/*
+
+Copyright (c) 2006, Sun Microsystems, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
@@ -18,21 +20,21 @@ THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENT
 INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 
-
 */
 
 #include "incls/_vframeOop.cpp.incl"
 
-// vframeOops (vfos for short) contain a pointer to the corresponding stack
-// frame.  Unfortunately, we can't just store the frame* pointer bacause
-// it is not constant (on the Sparc, the frame* is really the sp of the frame
-// below our frame).
+//
+// vframeOops (vfos for short) contain a pointer to the corresponding stack frame.
+// Unfortunately, we can't just store the frame* pointer because
+// it is not constant (on the Sparc, the frame* is really the sp of the frame below our frame).
 //
 // Thus we store the frame* of our activation (SPARC: sp) which is
 // constant EXCEPT for the bottommost frame: if we switch to an uncommon
 // branch, the frame size may change (and also the descOffset).
-// Process::handleVFrameOops checks for this situation and adjusts the
-// values accordingly.
+//
+// Process::handleVFrameOops checks for this situation and adjusts the values accordingly.
+//
 
 frame *vframeOopDesc::fr() {
     return localsInBottomHalfFrame ? (frame *) locals() : locals()->full_frame();
@@ -166,6 +168,7 @@ static std::int32_t createdVFrameProtos = 0;
 vframeOop create_vframeOop( oop method ) {
     if ( ++createdVFrameProtos > 3 )
         fatal( "should create only three VirtualFrame prototypes" );
+
     std::int32_t vtbl;
     switch ( method->kind() ) {
         case OuterMethodType: {
@@ -181,6 +184,7 @@ vframeOop create_vframeOop( oop method ) {
         default:
             fatal( "unexpected kind" );
     }
+
     assert( sizeof( vframeKlass ) == sizeof( bvframeKlass ) && sizeof( vframeKlass ) == sizeof( ovframeKlass ), "should be the same" );
     vframeKlass *m = (vframeKlass *) create_map( sizeof( vframeKlass ), 0, vtbl );
     vframeOop   p  = vframeOop( m->fill_in_slots( nullptr, 0 ) );

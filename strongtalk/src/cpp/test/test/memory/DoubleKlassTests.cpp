@@ -45,7 +45,7 @@ protected:
 
 
 TEST_F( DoubleKlassTests, floatShouldBeDoubleC ) {
-    ASSERT_TRUE( theClass->klass_part()->oop_is_double() );
+    ASSERT_TRUE( theClass->klass_part()->oopIsDouble() );
 }
 
 

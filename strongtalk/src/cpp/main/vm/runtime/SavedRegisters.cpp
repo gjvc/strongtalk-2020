@@ -24,7 +24,7 @@ static Oop          saved_edi;
 Oop SavedRegisters::fetch( std::int32_t register_number, std::int32_t *frame_pointer ) {
     if ( frame_pointer not_eq stored_frame_pointer ) {
         SPDLOG_INFO( "Cannot fetch register from non-bottom frame:" );
-        SPDLOG_INFO( " register number = {}, fp = 0x%lx", register_number, static_cast<const void *>(frame_pointer) );
+        SPDLOG_INFO( " register number = {}, fp = 0x{0:x}", register_number, static_cast<const void *>(frame_pointer) );
         st_fatal( "vm aborted" );
     }
     if ( register_number == eax.number() )

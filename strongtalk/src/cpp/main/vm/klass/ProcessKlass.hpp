@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/klass/MemOopKlass.hpp"
 #include "vm/oop/ProcessOopDescriptor.hpp"
 #include "vm/runtime/Process.hpp"

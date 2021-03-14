@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -14,16 +15,18 @@
 // Thus, many Expression objects may point to the same PseudoRegister.
 
 #define BASIC_FLAG_DEF( name, prot ) \
- protected:                                      \
-    static const std::int32_t CONC(name,Bit);                          \
- prot                                              \
- bool CONC(is,name)() const { return flags & CONC(name,Bit) ? true : false; }              \
-  void CONC(set,name)(bool b) {                              \
-    if (b) flags |= CONC(name,Bit); else flags &= ~CONC(name,Bit); }          \
+ protected: \
+    static const std::int32_t CONC(name,Bit); \
+ prot \
+ bool CONC(is,name)() const { return flags & CONC(name,Bit) ? true : false; } \
+  void CONC(set,name)(bool b) { \
+    if (b) flags |= CONC(name,Bit); else flags &= ~CONC(name,Bit); } \
 
 
 #define FLAG_DEF( name )          BASIC_FLAG_DEF(name, public:)
+
 #define PFLAG_DEF( name )      BASIC_FLAG_DEF(name, protected:)
+
 
 class ConstantExpression;
 
@@ -97,7 +100,7 @@ public:
     virtual std::int32_t nklasses() const = 0;    // number of klasses contained in expr
 
     virtual bool really_hasKlass( InlinedScope *s ) const {
-        static_cast<void>(s); // unused
+        st_unused( s ); // unused
         return hasKlass();
     }
 
@@ -123,7 +126,7 @@ public:
 
 
     virtual Expression *makeUnknownUnlikely( InlinedScope *s ) {
-        static_cast<void>(s); // unused
+        st_unused( s ); // unused
         ShouldNotCallThis();
         return 0;
     }
@@ -145,7 +148,7 @@ public:
 
 
     virtual Expression *findKlass( KlassOop map ) const {
-        static_cast<void>(map); // unused
+        st_unused( map ); // unused
         return nullptr;
     }
 
@@ -209,6 +212,7 @@ protected:
     void print_helper( const char *type );
 };
 
+
 // an expression whose type is unknown
 class UnknownExpression : public Expression {
 public:
@@ -249,7 +253,7 @@ FLAG_DEF( Unlikely );            // true e.g. if this is the "unknown" branch of
 
 
     Expression *copyWithout( Expression *e ) const {
-        static_cast<void>(e); // unused
+        st_unused( e ); // unused
         return (Expression *) this;
     }
 
@@ -295,7 +299,7 @@ public:
 
 
     Expression *copyWithout( Expression *e ) const {
-        static_cast<void>(e); // unused
+        st_unused( e ); // unused
         return (Expression *) this;
     }
 
@@ -382,6 +386,7 @@ public:
 
     virtual void verify() const;
 };
+
 
 // a cloned block literal (result of BlockClone node)
 class BlockExpression : public KlassExpression {
@@ -628,23 +633,23 @@ public:
 
 
     Expression *shallowCopy( PseudoRegister *p, Node *n ) const {
-        static_cast<void>(p); // unused
-        static_cast<void>(n); // unused
+        st_unused( p ); // unused
+        st_unused( n ); // unused
         ShouldNotCallThis();
         return (Expression *) this;
     }
 
 
     Expression *copyWithout( Expression *e ) const {
-        static_cast<void>(e); // unused
+        st_unused( e ); // unused
         ShouldNotCallThis();
         return (Expression *) this;
     }
 
 
     Expression *mergeWith( Expression *other, Node *n ) {
-        static_cast<void>(other); // unused
-        static_cast<void>(n); // unused
+        st_unused( other ); // unused
+        st_unused( n ); // unused
         ShouldNotCallThis();
         return (Expression *) this;
     }
@@ -656,7 +661,7 @@ public:
 
 
     bool equals( Expression *other ) const {
-        static_cast<void>(other); // unused
+        st_unused( other ); // unused
         ShouldNotCallThis();
         return false;
     }

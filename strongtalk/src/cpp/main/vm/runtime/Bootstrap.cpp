@@ -9,10 +9,10 @@
 #include "vm/memory/Universe.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/oop/MemOopDescriptor.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/memory/SymbolTable.hpp"
 #include "vm/klass/KlassKlass.hpp"
-#include "vm/klass/SMIKlass.hpp"
+#include "vm/klass/SmallIntegerKlass.hpp"
 #include "vm/klass/DoubleByteArrayKlass.hpp"
 #include "vm/klass/ObjectArrayKlass.hpp"
 #include "vm/klass/SymbolKlass.hpp"
@@ -67,8 +67,8 @@ void Bootstrap::initNameByTypeByte() {
     _nameByTypeByte[ 'A' ] = "klassKlass";
     _nameByTypeByte[ 'B' ] = "smiKlass";
     _nameByTypeByte[ 'C' ] = "memOopKlass";
-    _nameByTypeByte[ 'D' ] = "byteArrrayKlass";
-    _nameByTypeByte[ 'E' ] = "doubleByteArrrayKlass";
+    _nameByTypeByte[ 'D' ] = "byteArrayKlass";
+    _nameByTypeByte[ 'E' ] = "doubleByteArrayKlass";
     _nameByTypeByte[ 'F' ] = "objectArrayKlass";
     _nameByTypeByte[ 'G' ] = "symbolKlass";
     _nameByTypeByte[ 'H' ] = "doubleKlass";
@@ -81,7 +81,7 @@ void Bootstrap::initNameByTypeByte() {
     _nameByTypeByte[ 'O' ] = "weakArrayKlass";
     _nameByTypeByte[ 'P' ] = "processKlass";
     _nameByTypeByte[ 'Q' ] = "doubleValueArrayKlass";
-    _nameByTypeByte[ 'R' ] = "vframeKlass";
+    _nameByTypeByte[ 'R' ] = "VirtualFrameKlass";
 
     //
     _nameByTypeByte[ 'a' ] = "klass";
@@ -107,12 +107,10 @@ void Bootstrap::initNameByTypeByte() {
 // -----------------------------------------------------------------------------
 
 void Bootstrap::load() {
-    SPDLOG_INFO( "%booststrap-load: entry" );
     open_file();
     parse_file();
     close_file();
     summary();
-    SPDLOG_INFO( "%booststrap-load: exit" );
 }
 
 
@@ -120,10 +118,10 @@ void Bootstrap::open_file() {
     _stream.open( _filename, std::ifstream::binary );
 
     if ( not _stream.good() ) {
-        SPDLOG_INFO( "%bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
+        SPDLOG_INFO( "bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
         exit( EXIT_FAILURE );
     }
-    SPDLOG_INFO( "%bootstrap-file-open: [{}]", _filename.c_str() );
+    SPDLOG_INFO( "bootstrap-file-open: [{}]", _filename.c_str() );
 
     _version_number = read_uint32_t();
     check_version();
@@ -147,7 +145,7 @@ void Bootstrap::close_file() {
 
 void Bootstrap::summary() {
     for ( auto item : _countByType ) {
-        SPDLOG_INFO( "bootstrap-object-count:    {} {:24s} {}", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
+        SPDLOG_INFO( "bootstrap-object-count:    {} {:28s} {}", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
     }
 }
 
@@ -237,7 +235,7 @@ void Bootstrap::check_version() {
 
 void Bootstrap::parse_objects() {
 
-    SPDLOG_INFO( "%booststrap-parse-objects: entry" );
+    SPDLOG_INFO( "bootstrap-parse-objects: entry" );
 
     Universe::_systemDictionaryObject = ObjectArrayOop( readNextObject() );
     nilObject                         = MemOop( readNextObject() );
@@ -271,7 +269,7 @@ void Bootstrap::parse_objects() {
         platform_association->set_value( platform_klass );
     }
 
-    SPDLOG_INFO( "%booststrap-parse-objects: exit" );
+    SPDLOG_INFO( "bootstrap-parse-objects: exit" );
 
 }
 
@@ -333,11 +331,11 @@ Oop Bootstrap::readNextObject() {
 
     // if SMI or OOP, return it...
     switch ( typeByte ) {
-        case '0': //
-            return smiOopFromValue( read_uint32_t() );
-
         case '-': //
             return smiOopFromValue( -1 * read_uint32_t() );
+
+        case '0': //
+            return smiOopFromValue( read_uint32_t() );
 
         case '3': //
             return oopFromTable( read_uint32_t() );
@@ -524,7 +522,7 @@ bool Bootstrap::new_format() const {
 /*
 
     if ( TraceBootstrap )
-        SPDLOG_INFO( "%8i  address [0x%lx]  size [0x%04x]  type [%c]", _objectCount, m, size, type );
+        SPDLOG_INFO( "%8i  address [0x{0:x}]  size [0x%04x]  type [%c]", _objectCount, m, size, type );
     else
         if ( _objectCount % 1000 == 0 ) {
             if ( _objectCount % 10000 == 0 ) {

@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/code/NodeVisitor.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 #include "vm/code/PseudoRegisterMapping.hpp"
@@ -235,11 +235,11 @@ public:
 
 
     void aNopNode( NopNode *node ) {
-        static_cast<void>(node); // unused
+        st_unused( node ); // unused
     }
 
 
     void aCommentNode( CommentNode *node ) {
-        static_cast<void>(node); // unused
+        st_unused( node ); // unused
     }
 };

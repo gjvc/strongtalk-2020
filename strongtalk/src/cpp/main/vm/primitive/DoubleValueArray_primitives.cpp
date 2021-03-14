@@ -5,7 +5,7 @@
 
 #include "vm/primitive/DoubleValueArray_primitives.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/oop/DoubleOopDescriptor.hpp"
 #include "vm/memory/OopFactory.hpp"

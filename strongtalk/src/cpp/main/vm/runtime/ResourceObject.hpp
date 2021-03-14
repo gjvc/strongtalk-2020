@@ -9,33 +9,29 @@
 
 #include "vm/runtime/ResourceArea.hpp"
 
-/*
-  All classes in the virtual machine must be subclassed by one of the following allocation classes:
-
-   "For objects allocated in the resource area."
-   - ResourceObject
-     - PrintableResourceObject
-*/
-
-/*
-   "For objects allocated in the C-heap (managed by malloc & free)."
-   - CHeapAllocatedObject
-     - PrintableCHeapAllocatedObject
-
-   "For objects allocated on the stack."
-   - StackAllocatedObject
-     - PrintableStackAllocatedObject
-
-   "For embedded objects."
-   - ValueObject
-
-   "For classes used as name spaces."
-   - AllStatic
-
-   "The printable subclasses are used for debugging and define virtual
-    member functions for printing. Classes that avoid allocating the
-    vtbl entries in the objects should therefore not the printable subclasses"
-*/
+//  All classes in the virtual machine must be subclassed by one of the following allocation classes:
+//
+//   "For objects allocated in the resource area."
+//   - ResourceObject
+//     - PrintableResourceObject
+//
+//   "For objects allocated in the C-heap (managed by malloc & free)."
+//   - CHeapAllocatedObject
+//     - PrintableCHeapAllocatedObject
+//
+//   "For objects allocated on the stack."
+//   - StackAllocatedObject
+//     - PrintableStackAllocatedObject
+//
+//   "For embedded objects."
+//   - ValueObject
+//
+//   "For classes used as name spaces."
+//   - AllStatic
+//
+//   "The printable subclasses are used for debugging and define virtual
+//    member functions for printing. Classes that avoid allocating the
+//    vtbl entries in the objects should therefore not the printable subclasses"
 
 
 class ResourceObject {

@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/oop/MethodOopDescriptor.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
@@ -11,10 +11,10 @@
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/MethodPrinterClosure.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/system/dll.hpp"
 #include "vm/compiler/CostModel.hpp"
 #include "vm/lookup/LookupCache.hpp"
@@ -374,7 +374,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
                     break;
                 }
                 default:
-                    SPDLOG_INFO( "Format unknown %s", ByteCodes::format_as_string( c.format() ) );
+                    SPDLOG_INFO( "Format unknown {}", ByteCodes::format_as_string( c.format() ) );
                     st_fatal( "aborting" );
             }
         }
@@ -427,9 +427,9 @@ public:
 
 
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
-        static_cast<void>(type); // unused
-        static_cast<void>(nofArgs); // unused
-        static_cast<void>(meth); // unused
+        st_unused( type ); // unused
+        st_unused( nofArgs ); // unused
+        st_unused( meth ); // unused
         hasBlock = true;
     }
 };
@@ -808,7 +808,7 @@ public:
 
 
     void allocate_context( std::int32_t nofTemps, bool forMethod ) {
-        static_cast<void>(forMethod); // unused
+        st_unused( forMethod ); // unused
         st_assert( count == sentinel, "make sure it is not called more than one" );
         count = nofTemps;
     }
@@ -1057,13 +1057,13 @@ public:
 
 public:
     virtual void inlined_send( SymbolOop selector ) {
-        static_cast<void>(selector); // unused
+        st_unused( selector ); // unused
     }
 
 
 public:
     void allocate_temporaries( std::int32_t nofTemps ) {
-        static_cast<void>(nofTemps); // unused
+        st_unused( nofTemps ); // unused
     }
 
 
@@ -1076,84 +1076,84 @@ public:
 
 
     void push_literal( Oop obj ) {
-        static_cast<void>(obj); // unused
+        st_unused( obj ); // unused
     }
 
 
     void push_argument( std::int32_t no ) {
-        static_cast<void>(no); // unused
+        st_unused( no ); // unused
     }
 
 
     void push_temporary( std::int32_t no ) {
-        static_cast<void>(no); // unused
+        st_unused( no ); // unused
     }
 
 
     void push_temporary( std::int32_t no, std::int32_t context ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(context); // unused
+        st_unused( no ); // unused
+        st_unused( context ); // unused
     }
 
 
     void push_instVar( std::int32_t offset ) {
-        static_cast<void>(offset); // unused
+        st_unused( offset ); // unused
     }
 
 
     void push_instVar_name( SymbolOop name ) {
-        static_cast<void>(name); // unused
+        st_unused( name ); // unused
     }
 
 
     void push_classVar( AssociationOop assoc ) {
-        static_cast<void>(assoc); // unused
+        st_unused( assoc ); // unused
     }
 
 
     void push_classVar_name( SymbolOop name ) {
-        static_cast<void>(name); // unused
+        st_unused( name ); // unused
     }
 
 
     void push_global( AssociationOop obj ) {
-        static_cast<void>(obj); // unused
+        st_unused( obj ); // unused
     }
 
 
     void store_temporary( std::int32_t no ) {
-        static_cast<void>(no); // unused
+        st_unused( no ); // unused
     }
 
 
     void store_temporary( std::int32_t no, std::int32_t context ) {
-        static_cast<void>(no); // unused
-        static_cast<void>(context); // unused
+        st_unused( no ); // unused
+        st_unused( context ); // unused
     }
 
 
     void store_instVar( std::int32_t offset ) {
-        static_cast<void>(offset); // unused
+        st_unused( offset ); // unused
     }
 
 
     void store_instVar_name( SymbolOop name ) {
-        static_cast<void>(name); // unused
+        st_unused( name ); // unused
     }
 
 
     void store_classVar( AssociationOop assoc ) {
-        static_cast<void>(assoc); // unused
+        st_unused( assoc ); // unused
     }
 
 
     void store_classVar_name( SymbolOop name ) {
-        static_cast<void>(name); // unused
+        st_unused( name ); // unused
     }
 
 
     void store_global( AssociationOop obj ) {
-        static_cast<void>(obj); // unused
+        st_unused( obj ); // unused
     }
 
 
@@ -1162,17 +1162,17 @@ public:
 
 
     void normal_send( InterpretedInlineCache *ic ) {
-        static_cast<void>(ic); // unused
+        st_unused( ic ); // unused
     }
 
 
     void self_send( InterpretedInlineCache *ic ) {
-        static_cast<void>(ic); // unused
+        st_unused( ic ); // unused
     }
 
 
     void super_send( InterpretedInlineCache *ic ) {
-        static_cast<void>(ic); // unused
+        st_unused( ic ); // unused
     }
 
 
@@ -1185,12 +1185,12 @@ public:
 
 
     void method_return( std::int32_t nofArgs ) {
-        static_cast<void>(nofArgs); // unused
+        st_unused( nofArgs ); // unused
     }
 
 
     void nonlocal_return( std::int32_t nofArgs ) {
-        static_cast<void>(nofArgs); // unused
+        st_unused( nofArgs ); // unused
     }
 
 
@@ -1198,8 +1198,8 @@ public:
 
 
     void allocate_context( std::int32_t nofTemps, bool forMethod ) {
-        static_cast<void>(nofTemps); // unused
-        static_cast<void>(forMethod); // unused
+        st_unused( nofTemps ); // unused
+        st_unused( forMethod ); // unused
     }
 
 
@@ -1212,8 +1212,8 @@ public:
 
 
     void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
-        static_cast<void>(argNo); // unused
-        static_cast<void>(no); // unused
+        st_unused( argNo ); // unused
+        st_unused( no ); // unused
     }
 
 
@@ -1222,70 +1222,70 @@ public:
 
 
     void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
-        static_cast<void>(pdesc); // unused
-        static_cast<void>(failure_start); // unused
+        st_unused( pdesc ); // unused
+        st_unused( failure_start ); // unused
     }
 
 
     void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
-        static_cast<void>(nofFloatTemps); // unused
-        static_cast<void>(nofFloatExprs); // unused
+        st_unused( nofFloatTemps ); // unused
+        st_unused( nofFloatExprs ); // unused
     }
 
 
     void float_floatify( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(f); // unused
-        static_cast<void>(fno); // unused
+        st_unused( f ); // unused
+        st_unused( fno ); // unused
     }
 
 
     void float_move( std::int32_t fno, std::int32_t from ) {
-        static_cast<void>(fno); // unused
-        static_cast<void>(from); // unused
+        st_unused( fno ); // unused
+        st_unused( from ); // unused
     }
 
 
     void float_set( std::int32_t fno, DoubleOop value ) {
-        static_cast<void>(fno); // unused
-        static_cast<void>(value); // unused
+        st_unused( fno ); // unused
+        st_unused( value ); // unused
     }
 
 
     void float_nullary( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(f); // unused
-        static_cast<void>(fno); // unused
+        st_unused( f ); // unused
+        st_unused( fno ); // unused
     }
 
 
     void float_unary( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(f); // unused
-        static_cast<void>(fno); // unused
+        st_unused( f ); // unused
+        st_unused( fno ); // unused
     }
 
 
     void float_binary( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(f); // unused
-        static_cast<void>(fno); // unused
+        st_unused( f ); // unused
+        st_unused( fno ); // unused
     }
 
 
     void float_unaryToOop( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(f); // unused
-        static_cast<void>(fno); // unused
+        st_unused( f ); // unused
+        st_unused( fno ); // unused
     }
 
 
     void float_binaryToOop( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(f); // unused
-        static_cast<void>(fno); // unused
+        st_unused( f ); // unused
+        st_unused( fno ); // unused
     }
 
 };
 
 
 void TransitiveMethodClosure::allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
-    static_cast<void>(type); // unused
-    static_cast<void>(nofArgs); // unused
+    st_unused( type ); // unused
+    st_unused( nofArgs ); // unused
     MethodIterator iter( meth, this );
 }
 
@@ -1539,37 +1539,37 @@ public:
 
 
     void float_floatify( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(fno); // unused
+        st_unused( fno ); // unused
         float_op( f );
     }
 
 
     void float_nullary( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(fno); // unused
+        st_unused( fno ); // unused
         float_op( f );
     }
 
 
     void float_unary( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(fno); // unused
+        st_unused( fno ); // unused
         float_op( f );
     }
 
 
     void float_binary( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(fno); // unused
+        st_unused( fno ); // unused
         float_op( f );
     }
 
 
     void float_unaryToOop( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(fno); // unused
+        st_unused( fno ); // unused
         float_op( f );
     }
 
 
     void float_binaryToOop( Floats::Function f, std::int32_t fno ) {
-        static_cast<void>(fno); // unused
+        st_unused( fno ); // unused
         float_op( f );
     }
 

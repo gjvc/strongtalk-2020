@@ -12,11 +12,6 @@ class Console {
 public:
 
     template<typename... Args>
-    void info( const char *fmt, Args &... args );
-
-
-    void info( const char *msg ) {
-        this->info( "{}", msg );
-    }
+    static void info( Args &... args );
 
 };

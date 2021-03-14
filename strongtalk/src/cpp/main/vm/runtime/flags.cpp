@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/macros.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
@@ -39,13 +39,13 @@ public:
 };
 
 #define MATERIALIZE_BOOLEAN_FLAG( name, value, doc ) \
-  bool name = value;
+    bool name = value;
 
 APPLY_TO_BOOLEAN_FLAGS( MATERIALIZE_BOOLEAN_FLAG )
 
 
 #define MATERIALIZE_BOOLEAN_FLAG_STRUCT( name, value, doc ) \
-  { XSTR(name), &name, value, doc },
+    { XSTR(name), &name, value, doc },
 
 
 static BooleanFlag booleanDebugFlags[] = {
@@ -73,10 +73,9 @@ public:
 };
 
 #define MATERIALIZE_INTEGER_FLAG( name, value, doc ) \
-  std::int32_t name = value;
+    std::int32_t name = value;
 
 APPLY_TO_INTEGER_FLAGS( MATERIALIZE_INTEGER_FLAG )
-
 
 #define MATERIALIZE_INTEGER_FLAG_STRUCT( name, value, doc ) { XSTR(name), &name, value, doc },
 
@@ -113,7 +112,7 @@ bool debugFlags::boolAtPut( const char *name, std::int32_t len, bool *value ) {
         TraceDoublePrims          = *value;
         TraceByteArrayPrims       = *value;
         TraceDoubleByteArrayPrims = *value;
-        TraceObjectArrayPrims        = *value;
+        TraceObjectArrayPrims     = *value;
         TraceSmiPrims             = *value;
         TraceProxyPrims           = *value;
         TraceBehaviorPrims        = *value;
@@ -172,7 +171,7 @@ bool debugFlags::intAtPut( const char *name, std::int32_t len, std::int32_t *val
 void debugFlags::printFlags() {
 
     for ( BooleanFlag *b = &booleanDebugFlags[ 0 ]; b->_name; b++ )
-        SPDLOG_INFO( "%30s = %s", b->_name, *b->_value ? "true" : "false" );
+        SPDLOG_INFO( "%30s = {}", b->_name, *b->_value ? "true" : "false" );
 
     for ( IntegerFlag *i = &integerDebugFlags[ 0 ]; i->_name; i++ )
         SPDLOG_INFO( "%30s = 0x%08x", i->_name, *i->_value );

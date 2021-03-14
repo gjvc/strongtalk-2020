@@ -76,8 +76,10 @@ std::int32_t WeakArrayKlass::oop_scavenge_contents( Oop obj ) {
 
 
 std::int32_t WeakArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
+
     // header + instance variables
     MemOopKlass::oop_scavenge_tenured_contents( obj );
+
     // indexables
     WeakArrayOop o = WeakArrayOop( obj );
     if ( not WeakArrayRegister::scavenge_register( o ) ) {

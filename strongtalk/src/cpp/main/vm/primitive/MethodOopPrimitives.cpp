@@ -4,10 +4,10 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/primitive/ByteArrayPrimitives.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/Scavenge.hpp"
 #include "vm/klass/MemOopKlass.hpp"
 #include "vm/klass/MethodKlass.hpp"

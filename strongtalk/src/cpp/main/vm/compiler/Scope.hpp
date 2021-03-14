@@ -9,6 +9,7 @@
 #include "vm/compiler/NodeBuilder.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/code/ScopeDescriptorNode.hpp"
+#include "vm/assembler/IntegerFreeList.hpp"
 
 
 // Scopes represent the source-level scopes compiled by the compiler.
@@ -160,7 +161,7 @@ public:
 
 
     virtual bool isSenderOf( InlinedScope *s ) const {
-        static_cast<void>(s); // unused
+        st_unused( s ); // unused
         return false;
     } // isSenderOf = this is a proper caller of s
 
@@ -747,9 +748,9 @@ public:
 
 
     bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
-        static_cast<void>(method); // unused
-        static_cast<void>(rcvrKlass); // unused
-        static_cast<void>(n); // unused
+        st_unused( method ); // unused
+        st_unused( rcvrKlass ); // unused
+        st_unused( n ); // unused
         ShouldNotCallThis();
         return false;
     }
@@ -804,9 +805,9 @@ public:
 
 
     bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
-        static_cast<void>(method); // unused
-        static_cast<void>(rcvrKlass); // unused
-        static_cast<void>(n); // unused
+        st_unused( method ); // unused
+        st_unused( rcvrKlass ); // unused
+        st_unused( n ); // unused
         ShouldNotCallThis();
         return false;
     }

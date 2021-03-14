@@ -86,9 +86,11 @@ protected:
     void operator delete( void *ptr ) { (void)(ptr); }
 
 
-
     enum arith_op {
-        op_add, op_sub, op_mul, op_div
+        op_add, //
+        op_sub, //
+        op_mul, //
+        op_div  //
     };
 
     // add generators here

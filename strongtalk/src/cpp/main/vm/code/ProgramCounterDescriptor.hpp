@@ -10,7 +10,7 @@
 #include "vm/code/NativeMethod.hpp"
 
 
-// ProgramCounterDescriptor maps a physical PC (given as offset from start of NativeMethod) to the corresponding source scope and byte code index.
+// ProgramCounterDescriptor maps a physical PC (offset from start of NativeMethod) to the corresponding source scope and byte code index.
 
 class ProgramCounterDescriptor : public ValueObject {
 

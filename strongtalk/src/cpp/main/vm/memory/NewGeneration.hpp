@@ -47,7 +47,7 @@ public:
 
 
     static void *operator new( std::size_t size ) {
-        static_cast<void>(size); // unused
+        st_unused( size ); // unused
 
         ShouldNotCallThis();
         return static_cast<void *>(nilObject); // dummy to silence compiler warning
@@ -55,7 +55,7 @@ public:
 
 
     static void operator delete( void *p ) {
-        static_cast<void>(p); // unused
+        st_unused( p ); // unused
 
         ShouldNotCallThis();
     }

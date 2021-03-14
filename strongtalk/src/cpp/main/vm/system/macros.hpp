@@ -41,16 +41,16 @@
 // Warning: does not wrap in '{' and '}'!
 
 #define CHECKOOPTYPE( ref, typePredicate, newType, newRef ) \
-    if (not ref->typePredicate())                           \
-      return primitive_error(BADTYPEERROR);                 \
+    if (not ref->typePredicate()) \
+      return primitive_error(BADTYPEERROR); \
     newType newRef = newType(ref);
 
 
 // Check that ref is a SmallIntegerOop, and set up variable to hold value.
 // Warning: does not wrap in '{' and '}'!
 
-#define CHECKOOPSMI( ref, val )         \
-    if (not ref->isSmallIntegerOop())                  \
+#define CHECKOOPSMI( ref, val ) \
+    if (not ref->isSmallIntegerOop()) \
       return primitive_error(BADTYPEERROR); \
     smi val = SmallIntegerOop(ref)->value();
 
@@ -58,11 +58,11 @@
 // Check that ref is either trueObject or falseObject. Set up boolean var corresp.
 // Warning: does not wrap in '{' and '}'!
 
-#define CHECKOOPBOOL( ref, val )        \
-    bool val;                         \
-    if (ref == falseObject)                \
-      val = false;                      \
-    else if (ref == trueObject)            \
-      val = true;                       \
-    else                                \
+#define CHECKOOPBOOL( ref, val ) \
+    bool val; \
+    if (ref == falseObject) \
+      val = false; \
+    else if (ref == trueObject) \
+      val = true; \
+    else \
       return primitive_error(BADTYPEERROR);

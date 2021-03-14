@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 #include "vm/interpreter/MethodClosure.hpp"

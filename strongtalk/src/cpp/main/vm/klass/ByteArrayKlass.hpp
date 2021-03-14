@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/klass/MemOopKlass.hpp"
 #include "vm/oop/ByteArrayOopDescriptor.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
@@ -98,7 +98,7 @@ public:
     }
 
 
-    bool oop_is_indexable() const {
+    bool oopIsIndexable() const {
         return true;
     }
 

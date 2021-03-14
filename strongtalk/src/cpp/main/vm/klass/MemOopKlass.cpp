@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -8,13 +9,12 @@
 #include "vm/klass/ByteArrayKlass.hpp"
 #include "vm/klass/WeakArrayKlass.hpp"
 #include "vm/klass/DoubleByteArrayKlass.hpp"
-#include "vm/oop/MixinOopDescriptor.hpp"
 #include "vm/klass/MixinKlass.hpp"
 #include "vm/klass/ProxyKlass.hpp"
 #include "vm/klass/ProcessKlass.hpp"
 #include "vm/memory/PrintObjectClosure.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
 
@@ -117,16 +117,16 @@ Oop MemOopKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 Oop MemOopKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
-    static_cast<void>(size); // unused
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(permit_tenured); // unused
+    st_unused( size ); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( permit_tenured ); // unused
 
     return markSymbol( vmSymbols::not_indexable() );
 }
 
 
 KlassOop MemOopKlass::create_subclass( MixinOop mixin, KlassOop instSuper, KlassOop metaClass, Format format ) {
-    static_cast<void>(format); // unused
+    st_unused( format ); // unused
 
     MemOopKlass o;
     return create_generic_class( as_klassOop(), instSuper, metaClass, mixin, o.vtbl_value() );
@@ -159,6 +159,7 @@ KlassOop MemOopKlass::create_subclass( MixinOop mixin, Format format ) {
         return ProxyKlass::create_class( as_klassOop(), mixin );
     if ( format == Format::process_klass )
         return ProcessKlass::create_class( as_klassOop(), mixin );
+
     return nullptr;
 }
 
@@ -184,14 +185,15 @@ Oop MemOopKlass::oop_shallow_copy( Oop obj, bool tenured ) {
     Oop          *to    = clone;
     Oop          *from  = (Oop *) MemOop( obj )->addr();
     Oop          *end   = to + len;
-    while ( to < end )
+    while ( to < end ) {
         *to++ = *from++;
+    }
 
     if ( not as_memOop( clone )->is_new() ) {
         // Remember to update the remembered set if the clone is in old Space.
-        // Note:
-        //   should we do something special for arrays.
+        // Note: should we do something special for arrays?
         Universe::remembered_set->record_store( clone );
     }
+
     return as_memOop( clone );
 }

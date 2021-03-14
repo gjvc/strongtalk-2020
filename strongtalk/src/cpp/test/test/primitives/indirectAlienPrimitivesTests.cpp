@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/Array.hpp"
 #include "vm/code/NonInlinedBlockScopeNode.hpp"
@@ -15,7 +15,7 @@
 #include "vm/utility/IntegerOps.hpp"
 #include "vm/oop/DoubleOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
@@ -28,15 +28,15 @@ extern "C" std::int32_t expansion_count;
 class IndirectAlienPrimsTests : public ::testing::Test {
 
 public:
-    IndirectAlienPrimsTests() : ::testing::Test(),
-    heapResourceMark{nullptr},
-    alien{},
-    invalidAlien{},
-    largeUnsignedInteger{},
-    largeSignedInteger{},
-    alien_byte_region{},
-    doubleValue{}
-    {}
+    IndirectAlienPrimsTests() :
+        ::testing::Test(),
+        heapResourceMark{ nullptr },
+        alien{},
+        invalidAlien{},
+        largeUnsignedInteger{},
+        largeSignedInteger{},
+        alien_byte_region{},
+        doubleValue{} {}
 
 
 protected:

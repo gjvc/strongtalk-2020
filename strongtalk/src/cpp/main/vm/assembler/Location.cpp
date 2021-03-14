@@ -33,10 +33,10 @@ static std::array<const char *, 6> specialLocationNames{
 // Constructors
 
 void Location::overflow( LocationMode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) {
-    static_cast<void>(mode); // unused
-    static_cast<void>(f1); // unused
-    static_cast<void>(f2); // unused
-    static_cast<void>(f3); // unused
+    st_unused( mode ); // unused
+    st_unused( f1 ); // unused
+    st_unused( f2 ); // unused
+    st_unused( f3 ); // unused
 
     // should handle field overflow somehow - for now: fatal error
     st_fatal( "Location field overflow - please notify the compiler folks" );
@@ -122,66 +122,4 @@ bool Location::isTrashedRegister() const {
 
 bool Location::isLocalRegister() const {
     return isRegisterLocation() and Mapping::isLocalRegister( *this );
-}
-
-// Implementation of IntegerFreeList
-
-void IntegerFreeList::grow() {
-    _list->append( _first );
-    _first = _list->length() - 1;
-}
-
-
-IntegerFreeList::IntegerFreeList( std::int32_t size ) :
-    _first{ -1 },
-    _list{ new GrowableArray<std::int32_t>( 2 ) },
-    _vector{} {
-    st_assert( _list->length() == 0, "should be zero" );
-}
-
-
-std::int32_t IntegerFreeList::allocate() {
-
-    //
-    if ( _first < 0 ) {
-        grow();
-    }
-
-    //
-    std::int32_t i = _first;
-    _first = _list->at( i );
-    _list->at_put( i, -1 ); // for debugging only
-
-    return i;
-}
-
-
-std::int32_t IntegerFreeList::allocated() {
-    std::int32_t n = length();
-    std::int32_t i = _first;
-    while ( i >= 0 ) {
-        i = _list->at( i );
-        n--;
-    }
-
-    st_assert( n >= 0, "should be >= 0" );
-    return n;
-}
-
-
-void IntegerFreeList::release( std::int32_t i ) {
-    st_assert( _list->at( i ) == -1, "should have been allocated before" );
-    _list->at_put( i, _first );
-    _first = i;
-}
-
-
-std::size_t IntegerFreeList::length() {
-    return _list->length();
-}
-
-
-void IntegerFreeList::print() {
-    SPDLOG_INFO( "FreeList 0x{0:x}:", static_cast<const void *>(this) );
-    _list->print();
 }

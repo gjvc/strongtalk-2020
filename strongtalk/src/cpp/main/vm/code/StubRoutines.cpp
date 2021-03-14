@@ -13,7 +13,7 @@
 #include "vm/oop/ProxyOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/SavedRegisters.hpp"
-#include "vm/runtime/uncommonBranch.hpp"
+#include "vm/runtime/UncommonBranch.hpp"
 #include "vm/utility/EventLog.hpp"
 #include "vm/assembler/x86_mapping.hpp"
 #include "vm/interpreter/Interpreter.hpp"
@@ -313,7 +313,7 @@ static void deoptimize_context_and_patch_block( BlockClosureOop block ) {
     MethodOop    method = block->method();
     NativeMethod *nm    = block->jump_table_entry()->block_nativeMethod();
 
-    SPDLOG_INFO( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", static_cast<const void *>( nm ) );
+    SPDLOG_INFO( "Deoptimized context in blockClosure -> switch to methodOop 0x{0:x}", static_cast<const void *>( nm ) );
 
     ContextOop con = block->lexical_scope();
     block->set_method( method );
@@ -908,12 +908,14 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
 
     // reset last Delta frame
     masm->reset_last_delta_frame();
+
     // test for stack corruption
     masm->testl( edi, edi );
     masm->jcc( Assembler::Condition::equal, _stack_ok );
     masm->cmpl( esp, edi );
     masm->jcc( Assembler::Condition::less, _stack_ok );
-    // break because of stack corruption
+
+    // break in case of stack corruption
     //masm->int3();
 
     masm->bind( _stack_ok );
@@ -1429,7 +1431,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
 
 
 const char *StubRoutines::generate_allocate( MacroAssembler *masm, std::int32_t size ) {
-    static_cast<void>(size); // unused
+    st_unused( size ); // unused
 
     const char *entry_point = masm->pc();
     masm->hlt();
@@ -1825,7 +1827,7 @@ const char *StubRoutines::generateStubRoutine( MacroAssembler *masm, const char 
     const char *entry_point = gen( masm );
     const char *new_pc      = masm->pc();
 
-    SPDLOG_INFO( "%stubroutine-generate[{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, new_pc - old_pc, entry_point );
+    SPDLOG_INFO( "stubroutine-generate[{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, new_pc - old_pc, entry_point );
     if ( PrintStubRoutines ) {
         masm->code()->decode();
         _console->cr();
@@ -1841,7 +1843,7 @@ const char *StubRoutines::generateStubRoutine( MacroAssembler *masm, const char 
     const char *entry_point = gen( masm, argument );
     const char *new_pc      = masm->pc();
 
-    SPDLOG_INFO( "%stubroutine-generate[{}], argument [{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, argument, new_pc - old_pc, entry_point );
+    SPDLOG_INFO( "stubroutine-generate[{}], argument [{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, argument, new_pc - old_pc, entry_point );
     if ( PrintStubRoutines ) {
         masm->code()->decode();
         _console->cr();
@@ -1905,7 +1907,7 @@ void StubRoutines::init() {
     masm->finalize();
     st_assert( code->code_size() < _code_size, "Stub routines too large for allocated space" );
     _is_initialized = true;
-    SPDLOG_INFO( "%stubroutines-size: [0x{08:x}] bytes", masm->offset() );
+    SPDLOG_INFO( "stubroutines-size: [0x{08:x}] bytes", masm->offset() );
 }
 
 /*

@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "allocation.hpp"
 #include "vm/oop/SymbolOopDescriptor.hpp"
 #include "vm/oop/DoubleByteArrayOopDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/utility/GrowableArray.hpp"
 
 

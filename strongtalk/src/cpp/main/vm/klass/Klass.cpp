@@ -6,7 +6,7 @@
 #include "vm/klass/Klass.hpp"
 #include "vm/klass/KlassKlass.hpp"
 #include "vm/memory/OopFactory.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/oop/MixinOopDescriptor.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
@@ -27,16 +27,16 @@ void Klass::initialize() {
 
 
 Oop Klass::allocateObject( bool permit_scavenge, bool tenured ) {
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( tenured ); // unused
     return markSymbol( vmSymbols::not_oops() );
 }
 
 
 Oop Klass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
-    static_cast<void>(size); // unused
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(permit_tenured); // unused
+    st_unused( size ); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( permit_tenured ); // unused
     return markSymbol( vmSymbols::not_oops() );
 }
 
@@ -149,8 +149,8 @@ bool Klass::has_same_inst_vars_as( KlassOop klass ) {
 
 
 KlassOop Klass::create_subclass( MixinOop mixin, Format format ) {
-    static_cast<void>(mixin); // unused
-    static_cast<void>(format); // unused
+    st_unused( mixin ); // unused
+    st_unused( format ); // unused
 
     ShouldNotCallThis();
     return nullptr;
@@ -158,10 +158,10 @@ KlassOop Klass::create_subclass( MixinOop mixin, Format format ) {
 
 
 KlassOop Klass::create_subclass( MixinOop mixin, KlassOop instSuper, KlassOop metaClass, Format format ) {
-    static_cast<void>(mixin); // unused
-    static_cast<void>(instSuper); // unused
-    static_cast<void>(metaClass); // unused
-    static_cast<void>(format); // unused
+    st_unused( mixin ); // unused
+    st_unused( instSuper ); // unused
+    st_unused( metaClass ); // unused
+    st_unused( format ); // unused
 
     ShouldNotCallThis();
     return nullptr;
@@ -468,7 +468,7 @@ bool Klass::is_named_class() const {
 
 
 void Klass::print_klass() {
-    SPDLOG_INFO( "%sKlass (%s)", name(), name_from_format( format() ) );
+    SPDLOG_INFO( "{}Klass ({})", name(), name_from_format( format() ) );
 }
 
 
@@ -528,42 +528,42 @@ void Klass::print_name_on( ConsoleOutputStream *stream ) {
 
 
 std::int32_t Klass::oop_scavenge_contents( Oop obj ) {
-    static_cast<void>(obj); // unused
+    st_unused( obj ); // unused
     st_fatal( "should not call Klass::oop_scavenge_contents" );
     return 0;
 }
 
 
 std::int32_t Klass::oop_scavenge_tenured_contents( Oop obj ) {
-    static_cast<void>(obj); // unused
+    st_unused( obj ); // unused
     st_fatal( "should not call Klass::oop_scavenge_promotion" );
     return 0;
 }
 
 
 void Klass::oop_follow_contents( Oop obj ) {
-    static_cast<void>(obj); // unused
+    st_unused( obj ); // unused
     st_fatal( "should not call Klass::oop_follow_contents" );
 }
 
 
 void Klass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
-    static_cast<void>(obj); // unused
-    static_cast<void>(blk); // unused
+    st_unused( obj ); // unused
+    st_unused( blk ); // unused
     st_fatal( "should not call layout_iterate on Klass" );
 }
 
 
 void Klass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
-    static_cast<void>(obj); // unused
-    static_cast<void>(blk); // unused
+    st_unused( obj ); // unused
+    st_unused( blk ); // unused
     st_fatal( "should not call oop_iterate on Klass" );
 }
 
 
 void Klass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
-    static_cast<void>(obj); // unused
-    static_cast<void>(stream); // unused
+    st_unused( obj ); // unused
+    st_unused( stream ); // unused
     st_fatal( "should not call Klass::oop_print_on" );
 }
 
@@ -587,7 +587,7 @@ void Klass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
 
 
 bool Klass::oop_verify( Oop obj ) {
-    static_cast<void>(obj); // unused
+    st_unused( obj ); // unused
     // FIX LATER
     return true;
 }
@@ -608,22 +608,22 @@ void Klass::bootstrap_klass_part_two( Bootstrap *stream ) {
 
 
 Oop Klass::oop_primitive_allocate( Oop obj, bool allow_scavenge, bool tenured ) {
-    static_cast<void>(obj); // unused
-    static_cast<void>(allow_scavenge); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( obj ); // unused
+    st_unused( allow_scavenge ); // unused
+    st_unused( tenured ); // unused
     return markSymbol( vmSymbols::not_klass() );
 }
 
 
 Oop Klass::oop_primitive_allocate_size( Oop obj, std::int32_t size ) {
-    static_cast<void>(obj); // unused
-    static_cast<void>(size); // unused
+    st_unused( obj ); // unused
+    st_unused( size ); // unused
     return markSymbol( vmSymbols::not_klass() );
 }
 
 
 Oop Klass::oop_shallow_copy( Oop obj, bool tenured ) {
-    static_cast<void>(obj); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( obj ); // unused
+    st_unused( tenured ); // unused
     return markSymbol( vmSymbols::not_oops() );
 }

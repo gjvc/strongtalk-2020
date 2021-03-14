@@ -10,7 +10,7 @@
 
 #include "vm/runtime/flags.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 
 #include <cstring>
 
@@ -23,25 +23,25 @@ void printIndent() {
 }
 
 
-#define LOOP_UNROLL( count, body )                                            \
-    {                                                                         \
-    st_assert(count >= 0, "cannot have negative count in loop unroll");       \
-    std::int32_t __c1__ = count;                                                       \
-    for (std::int32_t __c__ = __c1__ >> 3; __c__; __c__ --) {                          \
-    body;       body;                                                         \
-    body;       body;                                                         \
-    body;       body;                                                         \
-    body;       body;                                                         \
-  }                                                                           \
-    switch (maskBits(__c1__, nthMask(3))) {                                   \
-   case 7:      body;                                                         \
-   case 6:      body;                                                         \
-   case 5:      body;                                                         \
-   case 4:      body;                                                         \
-   case 3:      body;                                                         \
-   case 2:      body;                                                         \
-   case 1:      body;                                                         \
-   case 0:      ;                                                             \
+#define LOOP_UNROLL( count, body ) \
+    { \
+    st_assert(count >= 0, "cannot have negative count in loop unroll"); \
+    std::int32_t __c1__ = count; \
+    for (std::int32_t __c__ = __c1__ >> 3; __c__; __c__ --) { \
+    body;       body; \
+    body;       body; \
+    body;       body; \
+    body;       body; \
+  } \
+    switch (maskBits(__c1__, nthMask(3))) { \
+   case 7:      body; \
+   case 6:      body; \
+   case 5:      body; \
+   case 4:      body; \
+   case 3:      body; \
+   case 2:      body; \
+   case 1:      body; \
+   case 0:      ; \
   } }
 
 #define DO_UP( from ) LOOP_UNROLL(count, *to++ = from)

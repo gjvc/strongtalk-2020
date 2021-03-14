@@ -18,7 +18,7 @@ void ClassChange::recustomize_methods() {
 
 
 struct KlassOopDescriptor *ClassChange::new_class_from( KlassOopDescriptor *old_klass, KlassOopDescriptor *new_super_klass, struct MixinOopDescriptor *new_mixin, Klass::Format new_format, struct MixinOopDescriptor *old_mixin ) {
-    static_cast<void>(old_mixin); // unused
+    st_unused( old_mixin ); // unused
 
     Klass::Format format = ( new_format not_eq Klass::Format::special_klass ) ? new_format : old_klass->klass_part()->format();
 

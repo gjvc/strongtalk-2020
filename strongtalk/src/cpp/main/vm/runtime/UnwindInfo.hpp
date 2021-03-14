@@ -7,7 +7,7 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/oop/MemOopDescriptor.hpp"
-#include "vm/oop/SMIOopDescriptor.hpp"
+#include "vm/oop/SmallIntegerOopDescriptor.hpp"
 #include "vm/oop/BlockClosureOopDescriptor.hpp"
 
 class CompiledVirtualFrame;

@@ -18,9 +18,10 @@ class ProxyKlassTests : public ::testing::Test {
 
 public:
     ProxyKlassTests() :
-    ::testing::Test(),
-    theClass{},
-    oldEdenTop{ nullptr } {}
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
+
 
 protected:
     void SetUp() override {

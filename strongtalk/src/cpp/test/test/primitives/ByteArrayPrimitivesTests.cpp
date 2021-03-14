@@ -1,9 +1,10 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/primitive/ByteArrayPrimitives.hpp"
@@ -11,7 +12,7 @@
 #include "vm/utility/IntegerOps.hpp"
 #include "test/utilities/testUtils.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
 
@@ -24,11 +25,11 @@ class ByteArrayPrimsTests : public ::testing::Test {
 
 public:
     ByteArrayPrimsTests() :
-    ::testing::Test(),
-    byteArrayClass{},
-    alien{},
-    alien_byte_region{}
-    {}
+        ::testing::Test(),
+        byteArrayClass{},
+        alien{},
+        alien_byte_region{} {}
+
 
 protected:
     void SetUp() override {

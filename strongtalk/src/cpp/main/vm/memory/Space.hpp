@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/memory/WaterMark.hpp"
 #include "vm/memory/util.hpp"

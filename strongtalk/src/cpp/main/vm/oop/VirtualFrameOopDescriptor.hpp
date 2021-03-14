@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/oop/OopDescriptor.hpp"
 #include "vm/oop/MemOopDescriptor.hpp"
-#include "vm/klass/SMIKlass.hpp"
+#include "vm/klass/SmallIntegerKlass.hpp"
 #include "vm/oop/VirtualFrameOopDescriptor.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 

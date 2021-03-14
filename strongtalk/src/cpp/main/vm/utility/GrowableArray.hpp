@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 

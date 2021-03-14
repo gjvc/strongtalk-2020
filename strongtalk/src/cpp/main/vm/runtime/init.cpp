@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/runtime/init.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -24,6 +24,8 @@ void init_globals() {
     eventlog_init();
     bytecodes_init();
     universe_init();
+
+    //
     generatedPrimitives_init_before_interpreter();
     interpreter_init();
     dispatchTable_init();
@@ -34,7 +36,7 @@ void init_globals() {
     preemption_init();
     generatedPrimitives_init_after_interpreter();
 
-    // compiler-related
+    // compiler
     compiler_init();
     mapping_init();
     opcode_init();

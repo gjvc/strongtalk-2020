@@ -69,7 +69,7 @@ public:
 
 
 // ensure that you surround the call with {} to prevent s leaking out!
-#define FOR_EACH_OLD_SPACE( s )   \
+#define FOR_EACH_OLD_SPACE( s ) \
     for ( OldSpace *s = Universe::old_gen._firstSpace; s not_eq nullptr; s = s->_nextSpace )
 
 //inline void FOR_EACH_OLD_SPACE( const auto & s )   {

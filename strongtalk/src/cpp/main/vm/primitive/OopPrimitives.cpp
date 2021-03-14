@@ -4,12 +4,12 @@
 //
 
 #include "vm/primitive/OopPrimitives.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/memory/Reflection.hpp"
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/oop/ProcessOopDescriptor.hpp"
-#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/VMOperation.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/klass/WeakArrayKlass.hpp"
 #include "vm/compiler/RecompilationScope.hpp"

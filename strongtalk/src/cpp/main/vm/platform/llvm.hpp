@@ -9,10 +9,11 @@
 
 // -----------------------------------------------------------------------------
 
-// https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc..html
+// https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc.html
 
 
 #if defined( __clang__ )
+
 
 #define __CALLING_CONVENTION __attribute__((stdcall))
 
@@ -28,5 +29,6 @@ extern "C" {
 #include <cfloat>
 #include <cmath>
 }
+
 
 #endif

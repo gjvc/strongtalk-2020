@@ -25,6 +25,7 @@ public:
         theClass{},
         oldEdenTop{ nullptr } {}
 
+
 protected:
     void SetUp() override {
         theClass   = KlassOop( Universe::find_global( "Object" ) );

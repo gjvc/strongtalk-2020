@@ -132,7 +132,7 @@ void MacroAssembler::call_C( const Register &entry, Label &nlrTestPoint ) {
     [argument 1 ]  |   extra stub in C land
     ...            |
     [argument n ] /
-    [return addr] <=== must be valid return address  \
+    [return addr] <=== must be valid return address \
     [...        ] <--- last_delta_sp                  |
      ...                                              | last Delta frame in Delta land
     [...        ]                                     |

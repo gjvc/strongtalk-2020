@@ -17,7 +17,9 @@ extern "C" Oop *eden_end;
 class ProcessKlassTests : public ::testing::Test {
 
 public:
-    ProcessKlassTests() : ::testing::Test() {}
+    ProcessKlassTests() :
+        ::testing::Test() {}
+
 
 protected:
     void SetUp() override {

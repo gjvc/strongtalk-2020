@@ -10,4 +10,4 @@
 
 
 #define as_large_integer( value ) \
-  ByteArrayPrimitives::largeIntegerFromSmallInteger(smiOopFromValue(value), KlassOop(Universe::find_global("LargeInteger")))
+    ByteArrayPrimitives::largeIntegerFromSmallInteger( smiOopFromValue( value ), KlassOop( Universe::find_global( "LargeInteger" ) ) )

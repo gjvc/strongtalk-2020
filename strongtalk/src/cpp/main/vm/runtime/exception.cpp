@@ -3,13 +3,13 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/runtime/except.hpp"
+#include "vm/runtime/exception.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/assembler/Assembler.hpp"
 #include "vm/runtime/Process.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 
@@ -100,13 +100,9 @@ void handle_exception( void *fp, void *sp, void *pc ) {
 }
 
 
-/*
-  Set up a new exception handler to catch unhandled exceptions BEFORE the debugger.
-  This is to allow the dumping of ST-level info about the exception location to aid
-  in debugging of the exception.
- */
+//  Set up a new exception handler to catch unhandled exceptions BEFORE the debugger.
+//  This is to allow the dumping of ST-level info about the exception location to aid
+//  in debugging of the exception.
 void except_init() {
-
-    SPDLOG_INFO( "%except-init:  add_exception_handler" );
     os::add_exception_handler( handle_exception );
 }

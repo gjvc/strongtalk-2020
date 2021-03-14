@@ -130,7 +130,7 @@ bool ConstantExpression::equals( Expression *other ) const {
 
 
 bool MergeExpression::equals( Expression *other ) const {
-    static_cast<void>(other); // unused
+    st_unused( other ); // unused
     return false; // for now -- fix this later
 }
 
@@ -157,8 +157,8 @@ Expression *UnknownExpression::mergeWith( Expression *other, Node *n ) {
 
 
 Expression *NoResultExpression::mergeWith( Expression *other, Node *n ) {
-    static_cast<void>(other); // unused
-    static_cast<void>(n); // unused
+    st_unused( other ); // unused
+    st_unused( n ); // unused
     return other;
 }
 
@@ -492,7 +492,7 @@ Expression *MergeExpression::findKlass( KlassOop klass ) const {
 
 
 Expression *UnknownExpression::makeUnknownUnlikely( InlinedScope *s ) {
-    static_cast<void>(s); // unused
+    st_unused( s ); // unused
     st_assert( DeferUncommonBranches, "shouldn't make unlikely" );
     // called on an UnknownExpression itself, this is a no-op; works only
     // with merge exprs
@@ -549,8 +549,8 @@ Expression *UnknownExpression::shallowCopy( PseudoRegister *p, Node *n ) const {
 
 
 Expression *NoResultExpression::shallowCopy( PseudoRegister *p, Node *n ) const {
-    static_cast<void>(p); // unused
-    static_cast<void>(n); // unused
+    st_unused( p ); // unused
+    st_unused( n ); // unused
     return new NoResultExpression();
 }
 
@@ -597,7 +597,7 @@ NameNode *Expression::nameNode( bool mustBeLegal ) const {
 
 
 NameNode *ConstantExpression::nameNode( bool mustBeLegal ) const {
-    static_cast<void>(mustBeLegal); // unused
+    st_unused( mustBeLegal ); // unused
 
     // return newValueName(constant()); }
     return 0;
@@ -609,12 +609,12 @@ void Expression::print_helper( const char *type ) {
     if ( next ) {
         SPDLOG_INFO( " (next 0x{0:x})", static_cast<void *>( next ) );
     }
-    SPDLOG_INFO( "    ((%s*)0x{0:x})", type, static_cast<void *>( this ) );
+    SPDLOG_INFO( "    (({}*)0x{0:x})", type, static_cast<void *>( this ) );
 }
 
 
 void UnknownExpression::print() {
-    SPDLOG_INFO( "UnknownExpression %s", isUnlikely() ? "unlikely" : "" );
+    SPDLOG_INFO( "UnknownExpression {}", isUnlikely() ? "unlikely" : "" );
     Expression::print_helper( "UnknownExpression" );
 }
 
@@ -626,33 +626,33 @@ void NoResultExpression::print() {
 
 
 void ContextExpression::print() {
-    SPDLOG_INFO( "ContextExpression %s", pseudoRegister()->safeName() );
+    SPDLOG_INFO( "ContextExpression {}", pseudoRegister()->safeName() );
     Expression::print_helper( "ContextExpression" );
 }
 
 
 void ConstantExpression::print() {
-    SPDLOG_INFO( "ConstantExpression %s", constant()->print_value_string() );
+    SPDLOG_INFO( "ConstantExpression {}", constant()->print_value_string() );
     Expression::print_helper( "ConstantExpression" );
 }
 
 
 void KlassExpression::print() {
-    SPDLOG_INFO( "KlassExpression %s", klass()->print_value_string() );
+    SPDLOG_INFO( "KlassExpression {}", klass()->print_value_string() );
     Expression::print_helper( "KlassExpression" );
 }
 
 
 void BlockExpression::print() {
-    SPDLOG_INFO( "BlockExpression %s", pseudoRegister()->name() );
+    SPDLOG_INFO( "BlockExpression {}", pseudoRegister()->name() );
     Expression::print_helper( "BlockExpression" );
 }
 
 
 void MergeExpression::print() {
-    SPDLOG_INFO( "MergeExpression %s(", isSplittable() ? "splittable " : "" );
+    SPDLOG_INFO( "MergeExpression {} (", isSplittable() ? "splittable " : "" );
     for ( std::size_t i = 0; i < exprs->length(); i++ ) {
-        SPDLOG_INFO( "\t0x{0:x}%s ", static_cast<void *>( exprs->at( i ) ), exprs->at( i )->next ? "*" : "" );
+        SPDLOG_INFO( "\t0x{0:x}{} ", static_cast<void *>( exprs->at( i ) ), exprs->at( i )->next ? "*" : "" );
         exprs->at( i )->print();
     }
     SPDLOG_INFO( ")" );

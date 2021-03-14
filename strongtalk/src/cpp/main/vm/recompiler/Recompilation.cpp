@@ -58,7 +58,7 @@ const char *Recompilation::methodOop_invocation_counter_overflow( Oop receiver, 
         // Possibly caused by a method sweeper bug: inline cache has been modified during the send.
         // To check: method is a JumpTable entry to an NativeMethod instead of a methodOop.
         const char *msg = Oop( method )->isSmallIntegerOop() ? "(method might be jump table entry)" : "";
-        SPDLOG_INFO( "invocation counter overflow with broken methodOop 0x{0:x} (recv = 0x{0:x}) %s", static_cast<const void *>( method ), static_cast<const void *>( receiver ), static_cast<const void *>( msg ) );
+        SPDLOG_INFO( "invocation counter overflow with broken methodOop 0x{0:x} (recv = 0x{0:x}) {}", static_cast<const void *>( method ), static_cast<const void *>( receiver ), static_cast<const void *>( msg ) );
         st_fatal( "invocation counter overflow with illegal method - internal error" );
         // fatal("invocation counter overflow with illegal method - tell Robert");
         // continuing here is probably catastrophal because the invocation counter
@@ -156,7 +156,7 @@ void Recompilation::init() {
 void Recompilation::doit() {
     ResourceMark resourceMark;
     if ( PrintRecompilation ) {
-        SPDLOG_INFO( "recompilation trigger: %s (0x{0:x})", _method->selector()->as_string(), isCompiled() ? (const char *) _nativeMethod : (const char *) _method );
+        SPDLOG_INFO( "recompilation trigger: {} (0x{0:x})", _method->selector()->as_string(), isCompiled() ? (const char *) _nativeMethod : (const char *) _method );
     }
 
     _deltaVirtualFrame = calling_process()->last_delta_vframe();
@@ -198,7 +198,7 @@ void Recompilation::doit() {
 
         if ( true or not _recompiledTrigger ) {      // fix this
             // reset the trigger's counter
-            if ( isCompiled() /*and not _nm->isUncommonRecompiled()*/) {
+            if ( isCompiled() /* and not _nm->isUncommonRecompiled() */ ) {
                 // don't
                 _nativeMethod->set_invocation_count( 1 );
             } else {

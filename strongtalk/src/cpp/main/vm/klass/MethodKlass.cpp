@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/utility/OutputStream.hpp"
@@ -24,8 +24,8 @@ void setKlassVirtualTableFromMethodKlass( Klass *k ) {
 
 
 KlassOop MethodKlass::create_subclass( MixinOop mixin, Format format ) {
-    static_cast<void>(mixin); // unused
-    static_cast<void>(format); // unused
+    st_unused( mixin ); // unused
+    st_unused( format ); // unused
     return nullptr;
 }
 
@@ -226,7 +226,7 @@ void MethodKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
 
 
 std::int32_t MethodKlass::oop_scavenge_contents( Oop obj ) {
-    static_cast<void>(obj); // unused
+    st_unused( obj ); // unused
     // Methods must reside in old Space
     ShouldNotCallThis();
     return -1;

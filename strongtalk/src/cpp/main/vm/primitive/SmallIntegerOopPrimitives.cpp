@@ -4,11 +4,11 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/primitive/SmallIntegerOopPrimitives.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 
 
 TRACE_FUNC( TraceSmiPrims, "small_int_t" )
@@ -18,11 +18,11 @@ std::int32_t SmallIntegerOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->isSmallIntegerOop(), "receiver must be small_int_t")
 
-#define SMI_RELATIONAL_OP( op )                                     \
-  if (not argument->isSmallIntegerOop())                                       \
-    return markSymbol(vmSymbols::first_argument_has_wrong_type());  \
-  std::int32_t a = (std::int32_t) receiver;                                           \
-  std::int32_t b = (std::int32_t) argument;                                           \
+#define SMI_RELATIONAL_OP( op ) \
+  if (not argument->isSmallIntegerOop()) \
+    return markSymbol(vmSymbols::first_argument_has_wrong_type()); \
+  std::int32_t a = (std::int32_t) receiver; \
+  std::int32_t b = (std::int32_t) argument; \
   return a op b ? trueObject : falseObject
 
 
@@ -168,50 +168,50 @@ static void trap() {
 
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_add( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_subtract( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_multiply( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_mod( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_div( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_quo( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_remainder( Oop receiver, Oop argument ) {
-    static_cast<void>(receiver); // unused
-    static_cast<void>(argument); // unused
+    st_unused( receiver ); // unused
+    st_unused( argument ); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }

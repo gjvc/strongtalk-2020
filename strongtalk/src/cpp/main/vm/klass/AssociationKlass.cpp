@@ -18,7 +18,7 @@ void setKlassVirtualTableFromAssociationKlass( Klass *k ) {
 
 
 Oop AssociationKlass::allocateObject( bool permit_scavenge, bool tenured ) {
-    static_cast<void>(tenured); // unused
+    st_unused( tenured ); // unused
 
     KlassOop     k    = as_klassOop();
     std::int32_t size = non_indexable_size();

@@ -4,7 +4,7 @@
 //
 
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/Array.hpp"
 #include "vm/code/NonInlinedBlockScopeNode.hpp"
@@ -16,25 +16,24 @@
 #include "vm/oop/MixinOopDescriptor.hpp"
 #include "vm/oop/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 #include <gtest/gtest.h>
 
 
-#define checkDoesntExist( className ) {\
-    ResourceMark resourceMark;\
-    char message[100];\
-    const char* name = as_symbol(className)->as_string();\
-    \
-    sprintf(message, "Class '%s' already exists", name);\
-    EXPECT_TRUE( !Universe::find_global(name) ) << message;\
+#define checkDoesntExist( className ) { \
+    ResourceMark resourceMark; \
+    char message[100]; \
+    const char* name = as_symbol(className)->as_string(); \
+    sprintf(message, "Class '%s' already exists", name); \
+    EXPECT_TRUE( !Universe::find_global(name) ) << message; \
   }
 
-#define checkClass( classHandle ) {\
-    EXPECT_TRUE( classHandle->as_oop()->isMemOop() ) << "Should be MemOop";\
-    EXPECT_TRUE( Universe::really_contains( classHandle->as_oop() ) ) << "Should be in Universe";\
+#define checkClass( classHandle ) { \
+    EXPECT_TRUE( classHandle->as_oop()->isMemOop() ) << "Should be MemOop"; \
+    EXPECT_TRUE( Universe::really_contains( classHandle->as_oop() ) ) << "Should be in Universe"; \
   }
 
 
@@ -55,6 +54,7 @@ public:
         subclassName{ nullptr },
         topClassName{ nullptr },
         superclassName{ nullptr } {}
+
 
 protected:
     void SetUp() override {

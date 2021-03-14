@@ -16,7 +16,8 @@
 class AssociationKlassTests : public ::testing::Test {
 
 public:
-    AssociationKlassTests() : ::testing::Test() {}
+    AssociationKlassTests() :
+        ::testing::Test() {}
 
 
 protected:

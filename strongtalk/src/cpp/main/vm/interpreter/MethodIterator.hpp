@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/utility/OutputStream.hpp"
 #include "vm/interpreter/Floats.hpp"
 #include "vm/runtime/ResourceObject.hpp"

@@ -18,14 +18,14 @@ typedef std::uint32_t address_t; //
 
 #if __SIZE_WIDTH__ == 64
 
-typedef std::uint64_t  address_t;    //
+typedef std::uint64_t  address_t; //
 
 #endif
 
 
 // -----------------------------------------------------------------------------
 
-typedef std::intptr_t small_int_t;        //
+typedef std::intptr_t small_int_t;  //
 
 static_assert( sizeof( small_int_t ) == sizeof( address_t ) );
 

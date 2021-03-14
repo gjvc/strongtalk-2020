@@ -7,7 +7,7 @@
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/utility/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/memory/Universe.hpp"
 
@@ -300,7 +300,7 @@ char *AllocatePageAligned( std::int32_t size, const char *name ) {
     std::int32_t page_size = Universe::page_size();
     char         *block    = (char *) align( os::malloc( size + page_size ), page_size );
     if ( PrintHeapAllocation )
-        SPDLOG_INFO( "Malloc (page-aligned) %s: 0x%08x = 0x{0:x}", name, size, block );
+        SPDLOG_INFO( "Malloc (page-aligned) {}: 0x%08x = 0x{0:x}", name, size, block );
 
     return block;
 }
@@ -310,7 +310,7 @@ char *AllocateHeap( std::int32_t size, const char *name ) {
 
     char *bytes = (char *) os::malloc( size );
     if ( PrintHeapAllocation )
-        SPDLOG_INFO( "Heap %7d %s", size, name );
+        SPDLOG_INFO( "Heap 0x{0:x} {}", size, name );
 
     return bytes;
 }

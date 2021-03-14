@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/DebugNotifier.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/runtime/ResourceObject.hpp"
@@ -24,9 +24,9 @@ private:
 
 public:
     TestNotifier() :
-    errors{ new GrowableArray<char *> },
-    warnings{ new GrowableArray<char *> },
-    compilerWarnings{ new GrowableArray<char *> } {
+        errors{ new GrowableArray<char *> },
+        warnings{ new GrowableArray<char *> },
+        compilerWarnings{ new GrowableArray<char *> } {
     }
 
 

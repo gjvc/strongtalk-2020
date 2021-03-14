@@ -27,7 +27,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISE
     ResourceMark resourceMark;                                  \
     vframeOop vfo = vframeOop(obj);                          \
     if (!vfo->is_live()) return prim_error(NOACTIVATIONERROR);              \
-    /* must check for dead vfos if current process */                  \
+    // must check for dead vfos if current process                   \
     if (vfo->process() == currentProcess)                      \
       currentProcess->handleVFrameOops(nullptr, true);
 

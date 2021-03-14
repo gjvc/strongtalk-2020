@@ -3,24 +3,22 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
-#include "vm/system/asserts.hpp"
 #include "vm/code/NativeMethod.hpp"
-#include "vm/compiler/Compiler.hpp"
-#include "vm/lookup/LookupCache.hpp"
-#include "vm/recompiler/Recompilation.hpp"
-#include "vm/runtime/vmOperations.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
-#include "vm/utility/EventLog.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/utility/disassembler.hpp"
-#include "vm/oop/KlassOopDescriptor.hpp"
-#include "vm/primitive/primitives.hpp"
-#include "vm/oop/SymbolOopDescriptor.hpp"
-#include "vm/oop/ObjectArrayOopDescriptor.hpp"
+#include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
+#include "vm/lookup/LookupCache.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
+#include "vm/oop/ObjectArrayOopDescriptor.hpp"
+#include "vm/primitive/Primitives.hpp"
+#include "vm/recompiler/Recompilation.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/runtime/VMOperation.hpp"
+#include "vm/system/asserts.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
+#include "vm/utility/disassembler.hpp"
+#include "vm/utility/EventLog.hpp"
 
 
 void NativeMethodFlags::clear() {
@@ -53,7 +51,7 @@ NativeMethod *new_nativeMethod( Compiler *c ) {
 
 
 void *NativeMethod::operator new( std::size_t size ) {
-    static_cast<void>(size); // unused
+    st_unused( size ); // unused
 
     st_assert( sizeof( NativeMethod ) % OOP_SIZE == 0, "NativeMethod size must be multiple of a word" );
     std::int32_t nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( std::uint16_t ), OOP_SIZE );
@@ -163,8 +161,8 @@ NativeMethod::NativeMethod( Compiler *c ) :
     // Fill in noninlined block scope table
     c->copy_noninlined_block_info( this );
 
-    flushICacheRange( instructionsStart(), instructionsEnd() );
-    flushICache();
+//    flushICacheRange( instructionsStart(), instructionsEnd() );
+//    flushICache();
 
     check_store();
 
@@ -272,8 +270,8 @@ KlassOop NativeMethod::receiver_klass() const {
 
 
 void NativeMethod::moveTo( void *p, std::int32_t size ) {
-    static_cast<void>(p); // unused
-    static_cast<void>(size); // unused
+    st_unused( p ); // unused
+    st_unused( size ); // unused
 
 #ifdef NOT_IMPLEMENTED
     NativeMethod* to = (NativeMethod*)p;
@@ -346,7 +344,7 @@ void NativeMethod::makeOld() {
 
 
 void NativeMethod::forwardLinkedSends( NativeMethod *to ) {
-    static_cast<void>(to); // unused
+    st_unused( to ); // unused
     // the to NativeMethod is about to replace the receiver; replace receiver in all inline caches
     Unimplemented();
 }
@@ -416,7 +414,7 @@ void NativeMethod::makeZombie( bool clearInlineCaches ) {
     p[ 2 ] = char( offset );
 
     if ( TraceZombieCreation ) {
-        SPDLOG_INFO( "%s NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), static_cast<const void *>(this) );
+        SPDLOG_INFO( "{} NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), static_cast<const void *>(this) );
         if ( WizardMode ) {
             SPDLOG_INFO( "entry code sequence:" );
             char *beg = (char *) min( std::int32_t( specialHandlerCall() ), std::int32_t( entryPoint() ), std::int32_t( verifiedEntryPoint() ) );
@@ -968,7 +966,7 @@ bool NativeMethod::in_delta_code_at( const char *pc ) const {
 // Support for preemption:
 
 void NativeMethod::overwrite_for_trapping( nativeMethod_patch *data ) {
-    static_cast<void>(data); // unused
+    st_unused( data ); // unused
 
     RelocationInformationIterator iter( this );
     while ( iter.next() ) {
@@ -989,7 +987,7 @@ void NativeMethod::overwrite_for_trapping( nativeMethod_patch *data ) {
 
 
 void NativeMethod::restore_from_patch( nativeMethod_patch *data ) {
-    static_cast<void>(data); // unused
+    st_unused( data ); // unused
     Unimplemented();
 }
 
@@ -1000,7 +998,7 @@ void NativeMethod::print_inlining_database() {
 
 
 void NativeMethod::print_inlining_database_on( ConsoleOutputStream *stream ) {
-    static_cast<void>(stream); // unused
+    st_unused( stream ); // unused
     // WARNING: this method is for debugging only -- it's not used to actually file out the DB
     ResourceMark                              rm;
     RecompilationScope                        *root     = NonDummyRecompilationScope::constructRScopes( this, false );

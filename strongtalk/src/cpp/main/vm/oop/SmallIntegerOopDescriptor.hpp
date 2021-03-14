@@ -6,32 +6,40 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/oop/OopDescriptor.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
 
 // -----------------------------------------------------------------------------
 
+inline auto taggedIntegerFromInteger( small_int_t value ) {
+    return ( value << TAG_SIZE ) + INTEGER_TAG;
+}
+
+
+inline SmallIntegerOop smiOopFromValue( small_int_t value ) {
+    return SmallIntegerOop( taggedIntegerFromInteger( value ) );
+}
+
+
+// -----------------------------------------------------------------------------
+
 // 0, 1 in SmallIntegerOop format
-inline auto smiOop_zero = reinterpret_cast<SmallIntegerOop>( ( 0L << TAG_SIZE ) + INTEGER_TAG );
-inline auto smiOop_one  = reinterpret_cast<SmallIntegerOop>( ( 1L << TAG_SIZE ) + INTEGER_TAG );
+inline auto smiOop_zero = reinterpret_cast<SmallIntegerOop>( taggedIntegerFromInteger( 0L ) );
+inline auto smiOop_one  = reinterpret_cast<SmallIntegerOop>( taggedIntegerFromInteger( 1L ) );
 
 // minimum and maximum smiOops
 constexpr auto SMI_MIN_VALUE = ( -( 1 << ( BITS_PER_WORD - 3 ) ) );      // -2^2
 constexpr auto SMI_MAX_VALUE = ( +( 1 << ( BITS_PER_WORD - 3 ) ) - 1 );  // +2^29 - 1
 
 //
-//inline auto smiOop_min = SmallIntegerOop( ( SMI_MIN_VALUE << TAG_SIZE ) + INTEGER_TAG );
-//inline auto smiOop_max = SmallIntegerOop( ( SMI_MAX_VALUE << TAG_SIZE ) + INTEGER_TAG );
+inline auto smiOop_min = SmallIntegerOop( taggedIntegerFromInteger( SMI_MIN_VALUE ) );
+inline auto smiOop_max = SmallIntegerOop( taggedIntegerFromInteger( SMI_MAX_VALUE ) );
+
 
 
 // -----------------------------------------------------------------------------
-
-inline SmallIntegerOop smiOopFromValue( small_int_t value ) {
-    return SmallIntegerOop( ( value << TAG_SIZE ) + INTEGER_TAG );
-}
-
 
 class SmallIntegerOopDescriptor : public OopDescriptor {
 

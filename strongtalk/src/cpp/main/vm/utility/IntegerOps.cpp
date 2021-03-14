@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/utility/Integer.hpp"
@@ -890,7 +890,7 @@ void IntegerOps::rem( Integer &x, Integer &y, Integer &z ) {
 
 #define copyInteger( x ) \
   (Integer*)memcpy((void*)NEW_RESOURCE_ARRAY(Digit, x.length() + 1), \
-                 (void*)&x._signed_length,\
+                 (void*)&x._signed_length, \
                  (x.length() + 1) * sizeof(Digit))
 
 
@@ -1343,7 +1343,7 @@ std::int32_t IntegerOps::unsigned_add_result_length( Integer &x, Integer &y ) {
 
 
 std::int32_t IntegerOps::unsigned_sub_result_length( Integer &x, Integer &y ) {
-    static_cast<void>(y); // unused
+    st_unused( y ); // unused
 
     return x.length();
 }
@@ -1360,7 +1360,7 @@ std::int32_t IntegerOps::unsigned_quo_result_length( Integer &x, Integer &y ) {
 
 
 std::int32_t IntegerOps::unsigned_rem_result_length( Integer &x, Integer &y ) {
-    static_cast<void>(x); // unused
+    st_unused( x ); // unused
 
     return y.length();
 }

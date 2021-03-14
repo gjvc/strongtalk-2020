@@ -4,7 +4,7 @@
 //
 
 #include "vm/system/asserts.hpp"
-#include "vm/compiler/slist.hpp"
+#include "slist.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
 

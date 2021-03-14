@@ -6,9 +6,9 @@
 #pragma once
 
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
@@ -150,7 +150,7 @@ public:
 
 
     std::int32_t width_of_char( char c ) {
-        static_cast<void>(c); // unused
+        st_unused( c ); // unused
         return 1;
     }
 

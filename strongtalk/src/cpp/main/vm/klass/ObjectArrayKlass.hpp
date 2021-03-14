@@ -87,7 +87,7 @@ public:
     }
 
 
-    bool oop_is_indexable() const {
+    bool oopIsIndexable() const {
         return true;
     }
 

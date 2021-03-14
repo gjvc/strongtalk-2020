@@ -16,5 +16,5 @@ void NonInlinedBlockScopeNode::generate( ScopeDescriptorRecorder *rec ) {
     rec->genValue( _offset - _parent->_offset );
 
     if ( WizardMode )
-        SPDLOG_INFO( "generating NonInlinedBlockScopeNode at %d", _offset );
+        SPDLOG_INFO( "generating NonInlinedBlockScopeNode at {:d}", _offset );
 }

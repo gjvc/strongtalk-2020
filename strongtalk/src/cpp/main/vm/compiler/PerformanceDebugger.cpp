@@ -8,7 +8,7 @@
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/utility/OutputStream.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/utility/StringOutputStream.hpp"
 
@@ -47,7 +47,7 @@ void PerformanceDebugger::stop_report() {
 void PerformanceDebugger::report_compile() {
     if ( not _compileAlreadyReported ) {
         _compileAlreadyReported = true;
-        SPDLOG_INFO( "*while compiling NativeMethod for %s:", _compiler->key->toString() );
+        SPDLOG_INFO( "*while compiling NativeMethod for {}:", _compiler->key->toString() );
     }
 }
 
@@ -90,10 +90,10 @@ void PerformanceDebugger::finish_reporting() {
             if ( i % 3 == 0 )
                 SPDLOG_INFO( "" );
             InlinedScope *s = _notInlinedBecauseNativeMethodTooBig->at( i );
-            SPDLOG_INFO( "%s  ", s->key()->toString() );
+            SPDLOG_INFO( "{}  ", s->key()->toString() );
         }
         if ( i < len )
-            SPDLOG_INFO( "    (%d more sends omitted)\n", len );
+            SPDLOG_INFO( "    ({:d} more sends omitted)\n", len );
 //        _stringStream->put( '\n' );
     }
 }
@@ -112,15 +112,15 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
             nused++;
     }
     if ( nused == 0 ) {
-        SPDLOG_INFO( "  could not eliminate context of scope %s (fixable compiler restriction; should be eliminated)\n", s->key()->toString() );
+        SPDLOG_INFO( "  could not eliminate context of scope {} (fixable compiler restriction; should be eliminated)\n", s->key()->toString() );
     } else {
-        SPDLOG_INFO( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->toString() );
+        SPDLOG_INFO( "  could not eliminate context of scope {}; temp(s) still used: ", s->key()->toString() );
         for ( std::size_t j = 0; j < len; j++ ) {
             PseudoRegister *r = temps->at( j )->pseudoRegister();
             if ( r->uplevelR() or r->uplevelW() ) {
-                SPDLOG_INFO( "%d ", j );
+                SPDLOG_INFO( "{:d} ", j );
             } else if ( r->isBlockPseudoRegister() and not r->isUnused() ) {
-                SPDLOG_INFO( "%d (non-inlined block)", j );
+                SPDLOG_INFO( "{:d} (non-inlined block)", j );
             }
         }
         SPDLOG_INFO( "" );
@@ -155,7 +155,7 @@ void PerformanceDebugger::report_primitive_failure( PrimitiveDescriptor *pd ) {
     if ( not DebugPerformance or theCompiler->is_uncommon_compile() )
         return;
     Reporter r( this );
-    SPDLOG_INFO( " primitive failure of %s not uncommon\n", pd->name() );
+    SPDLOG_INFO( " primitive failure of {} not uncommon\n", pd->name() );
 }
 
 

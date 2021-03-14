@@ -65,7 +65,7 @@ public:
 
     // predicates
     static bool isTemporaryRegister( const Location loc ) {
-        static_cast<void>(loc); // unused
+        st_unused( loc ); // unused
         return false;
     }    // fix this
 
@@ -75,7 +75,7 @@ public:
 
 
     static bool isTrashedRegister( const Location loc ) {
-        static_cast<void>(loc); // unused
+        st_unused( loc ); // unused
         return true;
     }    // fix this
 

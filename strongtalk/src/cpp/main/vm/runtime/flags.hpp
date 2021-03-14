@@ -8,6 +8,7 @@
 
 #include "vm/utility/OutputStream.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
+#include "vm/runtime/FlagSettings.hpp"
 
 #include <cstring>
 
@@ -18,14 +19,14 @@
 class FlagSetting {
 
 private:
-    bool *_flag;
-    bool _value;
+    bool *_flag;    //
+    bool _value;    //
 
 public:
-    FlagSetting( bool &fl, bool newValue ) :
-        _flag{ &fl },
-        _value{ fl } {
-        fl = newValue;
+    FlagSetting( bool &flag, bool newValue ) :
+        _flag{ &flag },
+        _value{ flag } {
+        flag = newValue;
     }
 
 
@@ -127,13 +128,12 @@ public:
     develop( CountParentLinksAsOne,                true, "Count going up to parent frame as 1 when checking MaxInterpretedSearchLength during recompilee search" ) \
     develop( GenerateSmalltalk,                   false, "Generate Smalltalk output for file_in"                                       ) \
     develop( GenerateHTML,                        false, "Generate HTML output for documentation"                                      ) \
-\
+ \
     develop( UseTimers,                            true, "Tells whether the VM should use timers (only used at startup)"               ) \
     develop( SweeperUseTimer,                      true, "Tells whether the sweeper should use timer interrupts or compile events"     ) \
     develop( EnableProcessPreemption,             false, "Enables or disables preemption of running Smalltalk processes"               ) \
-\
-\
-    /* tracing */       \
+ \
+ \
     develop( GenTraceCalls,                       false, "Generate code for TraceCalls"                                                ) \
     develop( TraceOopPrims,                       false, "Trace Oop primitives"                                                        ) \
     develop( TraceDoublePrims,                    false, "Trace Double primitives"                                                     ) \
@@ -173,23 +173,23 @@ public:
     develop( TraceApplyChange,                    false, "Trace reflective operation"                                                  ) \
     develop( TraceInliningDatabase,               false, "Trace inlining database"                                                     ) \
     develop( TraceCanonicalContext,               false, "Trace canonical context construction"                                        ) \
-\
+ \
     develop( ActivationShowExpressionStack,       false, "Show expression stack for activation"                                        ) \
     develop( ActivationShowByteCodeIndex,         false, "Show current byteCodeIndex for activation"                                   ) \
     develop( ActivationShowFrame,                 false, "Show frame for activation"                                                   ) \
     develop( ActivationShowContext,               false, "Show context if any for activation"                                          ) \
     develop( ActivationShowCode,                  false, "Show pretty printed code for activation"                                     ) \
     develop( ActivationShowNameDescs,             false, "Show name desc in the printed code"                                          ) \
-\
+ \
     develop( ShowMessageBoxOnError,               false, "Show a message box on error"                                                 ) \
     develop( BreakAtWarning,                      false, "Interrupt execution at warning?"                                             ) \
     develop( PrintCompilerWarnings,                true, "Print compiler warning?"                                                     ) \
     develop( PrintInliningDatabaseCompilation,    false, "Print inlining database compilations?"                                       ) \
-\
+ \
     develop( CountBytecodes,                      false, "Count number of bytecodes executed"                                          ) \
-\
+ \
     develop( ProfilerShowMethodHolder,             true, "Show method holder for method"                                               ) \
-\
+ \
     develop( UseMICs,                              true, "Use MEGAMORPHIC PICs (MegamorphicInlineCache)"                               ) \
     develop( UseLRUInterrupts,                     true, "User timers for zone LRU info"                                               ) \
     develop( UseNewBackend,                       false, "Use new backend"                                                             ) \
@@ -203,7 +203,7 @@ public:
     develop( PrintCodeCompaction,                 false, "Print code compaction"                                                       ) \
     develop( PrintMethodFlushing,                 false, "Print method flushing"                                                       ) \
     develop( MakeBlockMethodZombies,              false, "Make block NativeMethod zombies if needed"                                   ) \
-\
+ \
     develop( CompilerDebug,                       false, "Make compiler debugging easier"                                              ) \
     develop( EnableInt3,                           true, "Enables/disables code generation for int3 instructions"                      ) \
     develop( VerifyCode,                          false, "Generates verification code in compiled code"                                ) \
@@ -252,7 +252,7 @@ public:
     develop( PrintStackAfterUnpacking,            false, "Print stack after unpacking deoptimized frames"                              ) \
     develop( PrintDebugInfo,                      false, "Print debugging info of ScopeDescs generated for NativeMethod"               ) \
     develop( PrintDebugInfoGeneration,            false, "Print debugging info generation"                                             ) \
-\
+ \
     develop( PrintCodeGeneration,                 false, "Print code generation with new backend"                                      ) \
     develop( PrintPseudoRegisterMapping,          false, "Print PseudoRegisterMapping during code generation"                          ) \
     develop( PrintMakeConformantCode,             false, "Print code generated by makeConformant"                                      ) \
@@ -262,11 +262,11 @@ public:
 
 
 #define APPLY_TO_INTEGER_FLAGS( develop ) \
-\
+ \
     develop( EventLogLength,                       1000, "Length of internal event log"                                                ) \
     develop( StackPrintLimit,                        64, "Number of stack frames to print in VM-level stack dump"                      ) \
     develop( MaxElementPrintSize,                    64, "Maximum number of elements to print"                                         ) \
-\
+ \
     develop( ReservedHeapSize,                  50*1024, "Maximum size for object heap in Kbytes"                                      ) \
     develop( ObjectHeapExpandSize,                  512, "Chunk size (in Kbytes) by which the object heap grows"                       ) \
     develop( EdenSize,                              512, "size of eden (in Kbytes)"                                                    ) \
@@ -278,19 +278,19 @@ public:
     develop( PICSize,                               128, "size of PolymorphicInlineCache cache (in Kbytes)"                            ) \
     develop( JumpTableSize,                      8*1024, "size of jump table"                                                          ) \
     develop( ThreadStackSize,                       512, "Size (in 1024) of each thread's stack"                                       ) \
-\
+ \
     develop( CompilerInstrsSize,                50*1024, "max. size of NativeMethod instrs"                                            ) \
     develop( CompilerScopesSize,                50*1024, "max. size of debugging info per NativeMethod"                                ) \
     develop( CompilerPCsSize,                   15*1024, "max. size of relocation info info per NativeMethod"                          ) \
-\
+ \
     develop( MaxFnInlineCost,                        40, "max. cost of normal inlined method"                                          ) \
     develop( MaxBlockInlineCost,                     70, "max. cost of block method"                                                   ) \
     develop( MinBlockCostFraction,                   50, "(in %) inline block if makes up more than this fraction of parent's cost"    ) \
     develop( BlockArgAdditionalAllowedInlineCost,    35, "additional allowed cost for each block arg"                                  ) \
-\
+ \
     develop( InvocationCounterLimit,              10000, "max. number of method invocations before (re-)compiling"                     ) \
     develop( LoopCounterLimit,                    10000, "max. number of loop iterations before (re-)compiling"                        ) \
-\
+ \
     develop( MaxNmInstrSize,                      12000, "max. desired size (in instr bytes) of an method"                             ) \
     develop( MinSendsBeforeRecompile,              2000, "min number of sends a method must have performed before being recompiled"            ) \
     develop( MaxFnInstrSize,                        300, "max. inline size (in instr bytes) of normal method"                          ) \
@@ -307,22 +307,22 @@ public:
     develop( MaxInterpretedSearchLength,             10, "max. number of interpreted stack frames to traverse searching for recompilee"     ) \
     develop( CounterHalfLifeTime,                    30, "time (in seconds) in which invocation counters decay by half"                ) \
     develop( MaxCustomization,                       10, "max. number of customized method copies to create"                                   ) \
-\
+ \
     develop( StopInterpreterAt,                       0, "Stops interpreter execution at specified bytecode number"                    ) \
     develop( TraceInterpreterFramesAt,                0, "Trace interpreter frames at specified bytecode number"                       ) \
-\
+ \
     develop( NumberOfContextAllocations,              0, "Number of allocated block contexts"                                          ) \
     develop( NumberOfBlockAllocations,                0, "Number of allocated blocks"                                                  ) \
     develop( NumberOfBytecodesExecuted,               0, "Number of bytecodes executed by interpreter (if tracing)"                    ) \
-\
+ \
     develop( ProfilerNumberOfInterpreterMethods,     10, "Max. number of interpreter methods to print"                                 ) \
     develop( ProfilerNumberOfCompiledMethods,        10, "Max. number of compiled methods to print"                                    ) \
-\
+ \
     develop( HeapSweeperInterval,                   120, "Time interval (sec) between starting heap sweep"                             ) \
     develop( PrintProgress,                           0, "No. of compilations that cause a . to be printed out (0 means turned off)"   ) \
-\
+ \
     develop( InliningDatabasePruningLimit,            3, "Min. number of nodes in inlining structure to qualify for database"          ) \
-\
+ \
 
 // declaration of boolean flags
 #define DECLARE_BOOLEAN_FLAG( name, value, doc ) \

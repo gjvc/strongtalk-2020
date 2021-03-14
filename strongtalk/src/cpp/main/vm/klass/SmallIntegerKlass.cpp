@@ -9,8 +9,8 @@
 
 
 KlassOop SMIKlass::create_subclass( MixinOop mixin, Format format ) {
-    static_cast<void>(mixin); // unused
-    static_cast<void>(format); // unused
+    st_unused( mixin ); // unused
+    st_unused( format ); // unused
 
     return nullptr;
 }
@@ -23,7 +23,7 @@ void setKlassVirtualTableFromSmiKlass( Klass *k ) {
 
 
 Oop SMIKlass::oop_shallow_copy( Oop obj, bool tenured ) {
-    static_cast<void>(tenured); // unused
+    st_unused( tenured ); // unused
 
     return obj;
 }

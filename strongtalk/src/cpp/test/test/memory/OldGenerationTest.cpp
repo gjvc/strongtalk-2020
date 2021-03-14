@@ -12,7 +12,9 @@
 class OldGenerationTest : public ::testing::Test {
 
 public:
-    OldGenerationTest() : ::testing::Test() {}
+    OldGenerationTest() :
+        ::testing::Test() {}
+
 
 protected:
     void SetUp() override {

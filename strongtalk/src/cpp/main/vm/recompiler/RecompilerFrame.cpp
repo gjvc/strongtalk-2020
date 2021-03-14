@@ -391,8 +391,8 @@ public:
 
 
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) { // recursively search nested blocks
-        static_cast<void>(type); // unused
-        static_cast<void>(nofArgs); // unused
+        st_unused( type ); // unused
+        st_unused( nofArgs ); // unused
 
         MethodOop savedMethod = method;
         method = meth;

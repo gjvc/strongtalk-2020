@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/allocation.hpp"
 
 #include <cstring>
@@ -204,13 +204,14 @@ T *new_c_heap_array( std::int32_t size ) {
 // -----------------------------------------------------------------------------
 
 
-// One of the following macros must be used when allocating an array to
-// determine which area the array should reside in.
+//
+// One of the following macros must be used when allocating an array to determine which area the array should reside in.
+//
 #define NEW_RESOURCE_ARRAY( type, size ) \
     (type*) allocateResource( (size) * sizeof(type))
 
 #define NEW_C_HEAP_ARRAY( type, size ) \
-    (type*) malloc( (size) * sizeof(type)); //XSTR(type) " in " __FILE__)
+    (type*) malloc( (size) * sizeof(type)); // XSTR(type) " in " __FILE__)
 
 #define NEW_RESOURCE_OBJ( type ) NEW_RESOURCE_ARRAY( type, 1 )
 #define NEW_C_HEAP_OBJ( type )   NEW_C_HEAP_ARRAY( type, 1 )

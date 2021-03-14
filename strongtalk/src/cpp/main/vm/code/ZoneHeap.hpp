@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/code/ZoneHeap.hpp"
 #include "vm/runtime/flags.hpp"
 

@@ -25,8 +25,8 @@ void setKlassVirtualTableFromContextKlass( Klass *k ) {
 
 
 Oop ContextKlass::allocateObjectSize( std::int32_t num_of_temps, bool permit_scavenge, bool tenured ) {
-    static_cast<void>(permit_scavenge); // unused
-    static_cast<void>(tenured); // unused
+    st_unused( permit_scavenge ); // unused
+    st_unused( tenured ); // unused
 
     KlassOop     k        = as_klassOop();
     std::int32_t obj_size = ContextOopDescriptor::header_size() + num_of_temps;
@@ -45,8 +45,8 @@ Oop ContextKlass::allocateObjectSize( std::int32_t num_of_temps, bool permit_sca
 
 
 KlassOop ContextKlass::create_subclass( MixinOop mixin, Format format ) {
-    static_cast<void>(mixin); // unused
-    static_cast<void>(format); // unused
+    st_unused( mixin ); // unused
+    st_unused( format ); // unused
     return nullptr;
 }
 

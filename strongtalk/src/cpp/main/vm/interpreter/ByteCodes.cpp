@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/utility/OutputStream.hpp"
@@ -1095,9 +1095,9 @@ void ByteCodes::print() {
     for ( std::size_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         Code code = Code( i );
         if ( is_defined( code ) ) {
-            SPDLOG_INFO( "%s", name( code ) );
-            SPDLOG_INFO( "  %s", code_type_as_string( code_type( code ) ) );
-            SPDLOG_INFO( "  %s", send_type_as_string( send_type( code ) ) );
+            SPDLOG_INFO( "{}", name( code ) );
+            SPDLOG_INFO( "  {}", code_type_as_string( code_type( code ) ) );
+            SPDLOG_INFO( "  {}", send_type_as_string( send_type( code ) ) );
             _console->cr();
         }
     }
@@ -1131,7 +1131,7 @@ static void generate_instr_method() {
         for ( std::int32_t l = 0; l < 0x10; l++ ) {
             ByteCodes::Code code = ByteCodes::Code( h * 0x10 + l );
             if ( actually_generated( code ) ) {
-                SPDLOG_INFO( "\t\tl = 16r{0:x}\tifTrue:\t[ ^ '%s' ].", l, ByteCodes::name( code ) );
+                SPDLOG_INFO( "\t\tl = 16r{0:x}\tifTrue:\t[ ^ '{}' ].", l, ByteCodes::name( code ) );
             }
         }
         SPDLOG_INFO( "\t\t^ ''" );
@@ -1143,7 +1143,7 @@ static void generate_instr_method() {
 
 
 static void print_table_entry_for( const char *selector, ByteCodes::Code code ) {
-    SPDLOG_INFO( "\tselector = #%s\t\tifTrue: [ ^ 16r%02X ].", selector, code );
+    SPDLOG_INFO( "\tselector = #{}\t\tifTrue: [ ^ 16r%02X ].", selector, code );
 }
 
 
@@ -1236,7 +1236,7 @@ static void generate_gen_method( ByteCodes::Code code ) {
 
 
 static void generate_float_function_constant_method( Floats::Function f ) {
-    SPDLOG_INFO( "float_%s", Floats::function_name_for( f ) );
+    SPDLOG_INFO( "float_{}", Floats::function_name_for( f ) );
     generate_comment();
     SPDLOG_INFO( "\t^ {}", f );
     SPDLOG_INFO( "" );
@@ -1360,7 +1360,7 @@ static void generate_HTML_for( ByteCodes::CodeType type ) {
 
     {
         Markup tag( "h3" );
-        SPDLOG_INFO( "%s bytecodes", ByteCodes::code_type_as_string( type ) );
+        SPDLOG_INFO( "{} bytecodes", ByteCodes::code_type_as_string( type ) );
     }
     {
         Markup tag( "table" );

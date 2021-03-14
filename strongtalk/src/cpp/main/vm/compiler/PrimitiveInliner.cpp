@@ -284,7 +284,7 @@ public:
 
 
     void check_send( InterpretedInlineCache *ic ) {
-        static_cast<void>(ic); // unused
+        st_unused( ic ); // unused
 
         GrowableArray<RecompilationScope *> *sub = _recompilationScope->subScopes( byteCodeIndex() );
         if ( sub->length() == 1 and sub->first()->isUntakenScope() ) {
@@ -393,7 +393,7 @@ Expression *PrimitiveInliner::smi_ArithmeticOp( ArithOpCode op, Expression *arg1
     // continuation
     if ( shouldUseUncommonTrap() ) {
         // uncommon branch instead of failure code
-        failureStart->append( NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /*_failure_block->begin_byteCodeIndex()*/) );
+        failureStart->append( NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /* _failure_block->begin_byteCodeIndex() */ ) );
     } else {
         st_assert( n2Expression not_eq nullptr, "no error message defined" );
         Expression *error;
@@ -442,7 +442,7 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
         // failure can occur
         if ( shouldUseUncommonTrap() ) {
             // simply do an uncommon trap
-            n1Err->append( NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /*_failure_block->begin_byteCodeIndex()*/) );
+            n1Err->append( NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /* _failure_block->begin_byteCodeIndex() */ ) );
         } else {
             // treat failure case
             result = merge_failure_block( n1, result, n1Err, n1Expression, false );
@@ -592,7 +592,7 @@ Expression *PrimitiveInliner::smi_Comparison( BranchOpCode cond, Expression *arg
         // failure can occur
         if ( shouldUseUncommonTrap() ) {
             // simply do an uncommon trap
-            n1Err->append( NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /*_failure_block->begin_byteCodeIndex()*/) );
+            n1Err->append( NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /* _failure_block->begin_byteCodeIndex() */ ) );
         } else {
             // treat failure case
             result = merge_failure_block( result->node(), result, n1Err, n1Expression, false );
@@ -654,7 +654,7 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
     if ( at->canFail() ) {
         if ( shouldUseUncommonTrap() ) {
             // uncommon branch instead of failure code
-            at->append( 1, NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /*_failure_block->begin_byteCodeIndex()*/) );
+            at->append( 1, NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /* _failure_block->begin_byteCodeIndex() */ ) );
         } else {
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
@@ -696,7 +696,7 @@ Expression *PrimitiveInliner::array_at_put_ifFail( ArrayAtPutNode::AccessType ac
     if ( atPut->canFail() ) {
         if ( shouldUseUncommonTrap() ) {
             // uncommon branch instead of failure code
-            atPut->append( 1, NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /*_failure_block->begin_byteCodeIndex()*/) );
+            atPut->append( 1, NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /* _failure_block->begin_byteCodeIndex() */ ) );
         } else {
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
@@ -715,7 +715,7 @@ Expression *PrimitiveInliner::obj_new() {
     if ( not receiver->isConstantExpression() or not receiver->constant()->is_klass() )
         return nullptr;
     Klass *klass = KlassOop( receiver->constant() )->klass_part();    // class being instantiated
-    if ( klass->oop_is_indexable() )
+    if ( klass->oopIsIndexable() )
         return nullptr;            // would fail (extremely unlikely)
     std::int32_t size = klass->non_indexable_size();            // size in words
 
@@ -845,7 +845,7 @@ Expression *PrimitiveInliner::proxy_byte_at() {
     if ( at->canFail() ) {
         if ( shouldUseUncommonTrap() ) {
             // uncommon branch instead of failure code
-            at->append( 1, NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /*_failure_block->begin_byteCodeIndex()*/) );
+            at->append( 1, NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /* _failure_block->begin_byteCodeIndex() */ ) );
         } else {
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
@@ -877,7 +877,7 @@ Expression *PrimitiveInliner::proxy_byte_at_put() {
     if ( atPut->canFail() ) {
         if ( shouldUseUncommonTrap() ) {
             // uncommon branch instead of failure code
-            atPut->append( 1, NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /*_failure_block->begin_byteCodeIndex()*/) );
+            atPut->append( 1, NodeFactory::UncommonNode( _gen->copyCurrentExprStack(), _byteCodeIndex /* _failure_block->begin_byteCodeIndex() */ ) );
         } else {
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();

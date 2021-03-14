@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/GrowableArray.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/lookup/LookupKey.hpp"

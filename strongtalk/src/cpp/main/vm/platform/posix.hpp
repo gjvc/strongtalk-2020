@@ -7,7 +7,6 @@
 
 #ifdef __linux__
 
-
 #include "vm/memory/allocation.hpp"
 
 #include "vm/system/posix.hpp"

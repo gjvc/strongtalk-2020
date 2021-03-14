@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/code/ScopeDescriptorNode.hpp"
 #include "vm/code/ScopeDescriptorRecorder.hpp"
 #include "vm/code/ScopeDescriptor.hpp"

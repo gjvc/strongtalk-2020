@@ -8,7 +8,7 @@
 
 #include <array>
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "allocation.hpp"
 #include "vm/oop/SymbolOopDescriptor.hpp"
 

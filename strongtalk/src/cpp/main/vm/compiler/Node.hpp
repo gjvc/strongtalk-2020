@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/compiler/Scope.hpp"
 #include "vm/compiler/BitVector.hpp"
 #include "vm/compiler/BasicBlock.hpp"
@@ -300,8 +300,8 @@ public:
 
 protected:
     virtual Node *clone( PseudoRegister *from, PseudoRegister *to ) const {
-        static_cast<void>(from); // unused
-        static_cast<void>(to); // unused
+        st_unused( from ); // unused
+        st_unused( to ); // unused
         SubclassResponsibility();
         return nullptr;
     }
@@ -389,12 +389,12 @@ public:
 
 
     virtual void makeUses( BasicBlock *bb ) {
-        static_cast<void>(bb); // unused
+        st_unused( bb ); // unused
     }
 
 
     virtual void removeUses( BasicBlock *bb ) {
-        static_cast<void>(bb); // unused
+        st_unused( bb ); // unused
     }
 
 
@@ -407,7 +407,7 @@ public:
 
 
     virtual void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *lst ) {
-        static_cast<void>(lst); // unused
+        st_unused( lst ); // unused
     }
 
 
@@ -419,7 +419,7 @@ public:
 
 
     virtual void apply( NodeVisitor *v ) {
-        static_cast<void>(v); // unused
+        st_unused( v ); // unused
         ShouldNotCallThis();
     }
 
@@ -442,22 +442,22 @@ public:
     }          // does handle unknown cases? (with real code, not uncommon branch)
 
     virtual void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
-        static_cast<void>(regs); // unused
-        static_cast<void>(klasses); // unused
+        st_unused( regs ); // unused
+        st_unused( klasses ); // unused
         ShouldNotCallThis();
     }
 
 
     // return a list of pseudoRegisters tested and, for each pseudoRegister, a list of its types
     virtual void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
-        static_cast<void>( r ); // unused
-        static_cast<void>( klasses ); // unused
-        static_cast<void>( n ); // unused
+        st_unused(  r  ); // unused
+        st_unused(  klasses  ); // unused
+        st_unused(  n  ); // unused
     } // assert that the klass of r (used by the receiver) is oneof(klasses)
 
     virtual void assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n ) {
-        static_cast<void>( r ); // unused
-        static_cast<void>( n ); // unused
+        st_unused(  r  ); // unused
+        st_unused(  n  ); // unused
     }// assert that r (used by the reciver) is within array bounds
 
     virtual void print_short();
@@ -614,7 +614,7 @@ public:
 
 
     virtual void setNext1( Node *n ) {
-        static_cast<void>(n); // unused
+        st_unused( n ); // unused
         ShouldNotCallThis();
     }
 
@@ -713,17 +713,17 @@ public:
 
 
     bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false ) {
-        static_cast<void>(bb); // unused
-        static_cast<void>(u); // unused
-        static_cast<void>(d); // unused
-        static_cast<void>(replace); // unused
+        st_unused( bb ); // unused
+        st_unused( u ); // unused
+        st_unused( d ); // unused
+        st_unused( replace ); // unused
         return false;
     }
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
-        static_cast<void>(use_count); // unused
-        static_cast<void>(def_count); // unused
+        st_unused( use_count ); // unused
+        st_unused( def_count ); // unused
     }
 
 
@@ -820,7 +820,7 @@ public:
 
 
     void removeUses( BasicBlock *bb ) {
-        static_cast<void>(bb); // unused
+        st_unused( bb ); // unused
         ShouldNotCallThis();
     }
 
@@ -839,8 +839,8 @@ public:
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
-        static_cast<void>(use_count); // unused
-        static_cast<void>(def_count); // unused
+        st_unused( use_count ); // unused
+        st_unused( def_count ); // unused
     }
 
 
@@ -1121,7 +1121,7 @@ public:
     virtual const char *action() const = 0;        // for debugging messages
 
     virtual void setStoreCheck( bool ncs ) {
-        static_cast<void>(ncs); // unused
+        st_unused( ncs ); // unused
 
     }
 
@@ -1472,8 +1472,8 @@ public:
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
-        static_cast<void>(use_count); // unused
-        static_cast<void>(def_count); // unused
+        st_unused( use_count ); // unused
+        st_unused( def_count ); // unused
     }
 
 
@@ -1838,7 +1838,7 @@ protected:
 
 
     virtual void removePrev( Node *n ) {
-        /* cut the _prev link between this and n	*/
+        // cut the _prev link between this and n
         _prevs->remove( n );
     }
 
@@ -2210,7 +2210,7 @@ private:
 
 
 protected:
-    GrowableArray<Node *> *_nxt;            /* elem 0 is next1 */
+    GrowableArray<Node *> *_nxt;            // elem 0 is next1
 
 public:
 
@@ -2662,7 +2662,7 @@ public:
 
 
     void apply( NodeVisitor *v ) {
-        static_cast<void>(v); // unused
+        st_unused( v ); // unused
         Unimplemented();
     }
 
@@ -2764,8 +2764,8 @@ public:
 
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const {
-        static_cast<void>(from); // unused
-        static_cast<void>(to); // unused
+        st_unused( from ); // unused
+        st_unused( to ); // unused
         ShouldNotCallThis();
         return nullptr;
     }
@@ -3302,8 +3302,8 @@ public:
 
     // void eliminate(BasicBlock* bb, PseudoRegister* r, bool removing = false, bool cp = false);
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
-        static_cast<void>( use_count ); // unused
-        static_cast<void>( def_count ); // unused
+        st_unused(  use_count  ); // unused
+        st_unused(  def_count  ); // unused
     };
 
     Node *likelySuccessor() const;
@@ -3362,8 +3362,8 @@ public:
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
-        static_cast<void>(use_count); // unused
-        static_cast<void>(def_count); // unused
+        st_unused( use_count ); // unused
+        st_unused( def_count ); // unused
     }
 
 
@@ -4025,8 +4025,8 @@ public:
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
-        static_cast<void>(use_count); // unused
-        static_cast<void>(def_count); // unused
+        st_unused( use_count ); // unused
+        st_unused( def_count ); // unused
     }
 
 

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/klass/MemOopKlass.hpp"
 #include "vm/oop/ByteArrayOopDescriptor.hpp"
 #include "vm/oop/SymbolOopDescriptor.hpp"
@@ -27,7 +27,7 @@ public:
     friend void setKlassVirtualTableFromAssociationKlass( Klass *k );
 
 
-    bool oop_is_association() const {
+    bool oopIsAssociation() const {
         return true;
     }
 

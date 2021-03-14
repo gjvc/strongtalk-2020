@@ -1,17 +1,18 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
 #include "vm/klass/BlockClosureKlass.hpp"
+#include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/oop/BlockClosureOopDescriptor.hpp"
-#include "vm/memory/MarkSweep.hpp"
-#include "vm/runtime/flags.hpp"
+#include "vm/oop/ContextOopDescriptor.hpp"
+#include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/oop/MethodOopDescriptor.hpp"
 #include "vm/oop/SymbolOopDescriptor.hpp"
-#include "vm/oop/KlassOopDescriptor.hpp"
-#include "vm/oop/ContextOopDescriptor.hpp"
+#include "vm/runtime/flags.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
 
@@ -85,8 +86,8 @@ Oop BlockClosureKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 KlassOop BlockClosureKlass::create_subclass( MixinOop mixin, Format format ) {
-    static_cast<void>(mixin); // unused
-    static_cast<void>(format); // unused
+    st_unused( mixin ); // unused
+    st_unused( format ); // unused
     return nullptr;
 }
 

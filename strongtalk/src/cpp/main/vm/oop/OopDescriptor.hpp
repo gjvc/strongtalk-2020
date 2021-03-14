@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/oop/Oop.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 
@@ -28,7 +28,9 @@
 
 //
 class Klass;
+
 class Generation;
+
 extern "C" Oop nilObject;
 
 typedef class ScopeDescriptorNode *ScopeInfo;
@@ -36,18 +38,9 @@ typedef class ScopeDescriptorNode *ScopeInfo;
 //
 class OopDescriptor {
 
-protected:
-
-public:
-    // The _mark instance variable is here rather than in MemOop (where it belongs) because many C++ compilers have trouble with empty objects (size 0),
-    // i.e., give them nonzero length which messes up all the subclasses.
-
-    // So, to be perfectly clear, not all oopDescriptor classes truly have a _mark word; only the ones below MemOop do.
-    MarkOop _mark;
-
 public:
     // Called during bootstrappingInProgress for computing vtbl values see (create_*Klass)
-    OopDescriptor();
+//    OopDescriptor() = 0;
 
 
     // tag checks

@@ -4,8 +4,8 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
-#include "vm/system/os.hpp"
+#include "vm/platform/platform.hpp"
+#include "vm/platform/os.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/code/ZoneHeap.hpp"
 #include "vm/runtime/flags.hpp"
@@ -278,7 +278,7 @@ bool ZoneHeap::addToFreeList( ChunkKlass *m ) {
     } else {
         _bigList->append( p );
         p->size = sz;
-        return true;
+        return true; // "big"
     }
 }
 
@@ -311,11 +311,11 @@ void *ZoneHeap::allocFromLists( std::int32_t wantedBytes ) {
         m->markUsed( wantedBlocks );
         if ( blocks > wantedBlocks ) {
 
-//#ifdef LOG_LOTSA_STUFF
+#ifdef LOG_LOTSA_STUFF
             if ( not bootstrappingInProgress ) {
                 SPDLOG_INFO( "zoneHeap: splitting allocated block" );
             }
-//#endif
+#endif
             std::int32_t freeChunkSize = blocks - wantedBlocks;
             ChunkKlass   *freeChunk    = m->next();
             freeChunk->markUnused( freeChunkSize );

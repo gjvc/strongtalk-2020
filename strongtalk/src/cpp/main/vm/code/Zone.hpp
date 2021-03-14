@@ -11,39 +11,6 @@
 
 
 
-// Handle "self-modifying" code on processors with separate I-caches.
-// To minimize the performance penalty of the flushes, the VM always does a sequence of selective flushes followed by a flushICache().
-// If the CPU supports line-by-line flushes, implement flushICacheWord, otherwise flushICache.
-
-#define HAVE_LINE_FLUSH        /* x86: don't need any flushing */
-
-
-// For processors with a small I-cache / without selective cache invalidation,
-// define flushICache to flush the entire I-cache.  Otherwise, make it a no-op.
-#ifdef HAVE_LINE_FLUSH
-
-
-inline void flushICache() {
-}
-
-
-#else
-void flushICache();
-#endif
-
-// For processors with selective cache invalidation, define the following two routines:
-#ifdef HAVE_LINE_FLUSH
-
-void flushICacheWord( void *addr );                 // flush one word (instruction)
-void flushICacheRange( void *start, void *end );    // flush range [start, end)
-#else
-inline void flushICacheWord(void * addr) {}
-inline void flushICacheRange(void * start, void * end) {}
-#endif
-
-
-
-
 
 // The zone implements the code cache for optimized methods and contains:
 //   1) a lookup table:      "Lookup key -> NativeMethod"

@@ -5,16 +5,16 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/compiler/NodeBuilder.hpp"
 #include "vm/utility/GrowableArray.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/compiler/Expression.hpp"
 #include "vm/compiler/OpCode.hpp"
 #include "vm/compiler/Node.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 

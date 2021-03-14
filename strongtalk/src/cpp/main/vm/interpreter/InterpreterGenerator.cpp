@@ -16,7 +16,7 @@
 #include "vm/primitive/PrimitivesGenerator.hpp"
 #include "vm/interpreter/Floats.hpp"
 #include "vm/oop/DoubleOopDescriptor.hpp"
-#include "vm/primitive/primitives.hpp"
+#include "vm/primitive/Primitives.hpp"
 #include "vm/system/dll.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/oop/ProxyOopDescriptor.hpp"

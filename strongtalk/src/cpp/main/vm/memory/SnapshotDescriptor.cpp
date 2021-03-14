@@ -14,7 +14,7 @@ class ReadClosure : public OopClosure {
 
 private:
     void do_oop( Oop *o ) {
-        static_cast<void>(o); // unused
+        st_unused( o ); // unused
     }
 
 
@@ -141,7 +141,7 @@ void SnapshotDescriptor::write_zone() {
 
 
 void SnapshotDescriptor::read_from( const char *name ) {
-    static_cast<void>(name); // unused
+    st_unused( name ); // unused
 
     read_header();
     read_spaces();
@@ -151,7 +151,7 @@ void SnapshotDescriptor::read_from( const char *name ) {
 
 
 void SnapshotDescriptor::write_on( const char *name ) {
-    static_cast<void>(name); // unused
+    st_unused( name ); // unused
 
     write_header();
     write_spaces();

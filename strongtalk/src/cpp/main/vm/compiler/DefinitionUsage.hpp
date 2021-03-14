@@ -15,6 +15,7 @@
 
 // Definition represents the definition of a PseudoRegister.
 // Usage represents the usage of a PseudoRegister.
+//
 // Each PseudoRegister has a list of the BasicBlocks in which is it used or defined.
 // Each BasicBlock has a list of the Definitions and Usages it contains.
 
@@ -46,6 +47,7 @@ public:
 
 
 class Definition : public DefinitionUsage {
+
 public:
     Definition( NonTrivialNode *n ) :
         DefinitionUsage( n ) {
@@ -66,6 +68,7 @@ public:
 
 
 class Usage : public DefinitionUsage {
+
 public:
     Usage( NonTrivialNode *n ) :
         DefinitionUsage( n ) {
@@ -89,8 +92,10 @@ public:
     void print();
 };
 
+
 // a debugger-related use; doesn't prevent block elimination
 class PSoftUsage : public Usage {
+
 public:
     PSoftUsage( NonTrivialNode *n ) :
         Usage( n ) {
@@ -129,7 +134,7 @@ public:
     PseudoRegisterBasicBlockIndex( BasicBlock *b, std::int32_t i, PseudoRegister *pr ) :
         _basicBlock{ b },
         _index{ i } {
-            static_cast<void>(pr);
+            st_unused( pr );
     }
 
 

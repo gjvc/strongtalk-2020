@@ -5,10 +5,9 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/code/JumpTable.hpp"
 #include "vm/code/NativeCode.hpp"
 #include "vm/code/NativeMethodScopes.hpp"
-#include "vm/code/JumpTable.hpp"
 #include "vm/code/Zone.hpp"
 #include "vm/utility/ConsoleOutputStream.hpp"
 

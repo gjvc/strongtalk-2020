@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/utility/ObjectIDTable.hpp"
 #include "vm/primitive/primitive_declarations.hpp"
 #include "vm/primitive/primitive_tracing.hpp"

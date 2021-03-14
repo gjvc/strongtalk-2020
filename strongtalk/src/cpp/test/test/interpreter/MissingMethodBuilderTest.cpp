@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/assembler/Displacement.hpp"
@@ -204,23 +204,23 @@ TEST_F( MissingMethodBuilderTests, buildWithOneArgSelectorShouldBuildCorrectMeth
     SymbolOop            selector     = OopFactory::new_symbol( "value:" );
     MissingMethodBuilder builder( selector );
     builder.build();
-    MethodOop      method         = builder.method();
-    KlassOop       objectClass    = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
-    KlassOop       messageClass   = KlassOop( Universe::find_global( "Message" ) );
-    Oop            fixture        = objectClass->klass_part()->allocateObject();
-    Oop            arg1in         = smiOopFromValue( 53 );
-    MemOop         result         = MemOop( _call_delta( method, fixture, 1, &arg1in ) );
+    MethodOop       method         = builder.method();
+    KlassOop        objectClass    = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
+    KlassOop        messageClass   = KlassOop( Universe::find_global( "Message" ) );
+    Oop             fixture        = objectClass->klass_part()->allocateObject();
+    Oop             arg1in         = smiOopFromValue( 53 );
+    MemOop          result         = MemOop( _call_delta( method, fixture, 1, &arg1in ) );
     EXPECT_TRUE( result->isMemOop() ) << "Wrong type";
     EXPECT_TRUE( result->klass() == messageClass ) << "Wrong class";
-    std::int32_t   receiverIndex  = instVarIndex( messageClass, "receiver" );
-    std::int32_t   selectorIndex  = instVarIndex( messageClass, "selector" );
-    std::int32_t   argumentsIndex = instVarIndex( messageClass, "arguments" );
+    std::int32_t    receiverIndex  = instVarIndex( messageClass, "receiver" );
+    std::int32_t    selectorIndex  = instVarIndex( messageClass, "selector" );
+    std::int32_t    argumentsIndex = instVarIndex( messageClass, "arguments" );
     EXPECT_TRUE( fixture == result->instVarAt( receiverIndex ) ) << "Wrong receiver";
     EXPECT_TRUE( selector == result->instVarAt( selectorIndex ) ) << "Wrong selector";
-    ObjectArrayOop arguments      = ObjectArrayOop( result->instVarAt( argumentsIndex ) );
+    ObjectArrayOop  arguments      = ObjectArrayOop( result->instVarAt( argumentsIndex ) );
     EXPECT_TRUE( arguments->isObjectArray() ) << "Arguments has wrong type";
     EXPECT_TRUE( 1 == arguments->length() ) << "Wrong argument count";
-    SmallIntegerOop arg1 = SmallIntegerOop( arguments->obj_at( 1 ) );
+    SmallIntegerOop arg1           = SmallIntegerOop( arguments->obj_at( 1 ) );
     EXPECT_TRUE( arg1->isSmallIntegerOop() ) << "Argument 1 has wrong type";
     EXPECT_EQ( 53, arg1->value() ) << "Argument 1 has wrong value";
 }
@@ -232,26 +232,26 @@ TEST_F( MissingMethodBuilderTests, buildWithTwoArgSelectorShouldBuildCorrectMeth
     SymbolOop            selector     = OopFactory::new_symbol( "value:value:" );
     MissingMethodBuilder builder( selector );
     builder.build();
-    MethodOop      method         = builder.method();
-    KlassOop       objectClass    = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
-    KlassOop       messageClass   = KlassOop( Universe::find_global( "Message" ) );
-    Oop            fixture        = objectClass->klass_part()->allocateObject();
-    Oop            args[]         = { smiOopFromValue( 42 ), smiOopFromValue( 53 ) };
-    MemOop         result         = MemOop( _call_delta( method, fixture, 2, args ) );
+    MethodOop       method         = builder.method();
+    KlassOop        objectClass    = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
+    KlassOop        messageClass   = KlassOop( Universe::find_global( "Message" ) );
+    Oop             fixture        = objectClass->klass_part()->allocateObject();
+    Oop             args[]         = { smiOopFromValue( 42 ), smiOopFromValue( 53 ) };
+    MemOop          result         = MemOop( _call_delta( method, fixture, 2, args ) );
     EXPECT_TRUE( result->isMemOop() ) << "Wrong type";
     EXPECT_TRUE( result->klass() == messageClass ) << "Wrong class";
-    std::int32_t   receiverIndex  = instVarIndex( messageClass, "receiver" );
-    std::int32_t   selectorIndex  = instVarIndex( messageClass, "selector" );
-    std::int32_t   argumentsIndex = instVarIndex( messageClass, "arguments" );
+    std::int32_t    receiverIndex  = instVarIndex( messageClass, "receiver" );
+    std::int32_t    selectorIndex  = instVarIndex( messageClass, "selector" );
+    std::int32_t    argumentsIndex = instVarIndex( messageClass, "arguments" );
     EXPECT_TRUE( fixture == result->instVarAt( receiverIndex ) ) << "Wrong receiver";
     EXPECT_TRUE( selector == result->instVarAt( selectorIndex ) ) << "Wrong selector";
-    ObjectArrayOop arguments      = ObjectArrayOop( result->instVarAt( argumentsIndex ) );
+    ObjectArrayOop  arguments      = ObjectArrayOop( result->instVarAt( argumentsIndex ) );
     EXPECT_TRUE( arguments->isObjectArray() ) << "Arguments has wrong type";
     EXPECT_TRUE( 2 == arguments->length() ) << "Wrong argument count";
-    SmallIntegerOop arg1 = SmallIntegerOop( arguments->obj_at( 1 ) );
+    SmallIntegerOop arg1           = SmallIntegerOop( arguments->obj_at( 1 ) );
     EXPECT_TRUE( arg1->isSmallIntegerOop() ) << "Argument 1 has wrong type";
     EXPECT_EQ( 42, arg1->value() ) << "Argument 1 has wrong value";
-    SmallIntegerOop arg2 = SmallIntegerOop( arguments->obj_at( 2 ) );
+    SmallIntegerOop arg2           = SmallIntegerOop( arguments->obj_at( 2 ) );
     EXPECT_TRUE( arg2->isSmallIntegerOop() ) << "Argument 2 has wrong type";
     EXPECT_EQ( 53, arg2->value() ) << "Argument 2 has wrong value";
 }
@@ -263,29 +263,29 @@ TEST_F( MissingMethodBuilderTests, buildWithThreeArgSelectorShouldBuildCorrectMe
     SymbolOop            selector     = OopFactory::new_symbol( "value:value:value:" );
     MissingMethodBuilder builder( selector );
     builder.build();
-    MethodOop      method         = builder.method();
-    KlassOop       objectClass    = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
-    KlassOop       messageClass   = KlassOop( Universe::find_global( "Message" ) );
-    Oop            fixture        = objectClass->klass_part()->allocateObject();
-    Oop            args[]         = { smiOopFromValue( 11 ), smiOopFromValue( 42 ), smiOopFromValue( 53 ) };
-    MemOop         result         = MemOop( _call_delta( method, fixture, 3, args ) );
+    MethodOop       method         = builder.method();
+    KlassOop        objectClass    = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
+    KlassOop        messageClass   = KlassOop( Universe::find_global( "Message" ) );
+    Oop             fixture        = objectClass->klass_part()->allocateObject();
+    Oop             args[]         = { smiOopFromValue( 11 ), smiOopFromValue( 42 ), smiOopFromValue( 53 ) };
+    MemOop          result         = MemOop( _call_delta( method, fixture, 3, args ) );
     EXPECT_TRUE( result->isMemOop() ) << "Wrong type";
     EXPECT_TRUE( result->klass() == messageClass ) << "Wrong class";
-    std::int32_t   receiverIndex  = instVarIndex( messageClass, "receiver" );
-    std::int32_t   selectorIndex  = instVarIndex( messageClass, "selector" );
-    std::int32_t   argumentsIndex = instVarIndex( messageClass, "arguments" );
+    std::int32_t    receiverIndex  = instVarIndex( messageClass, "receiver" );
+    std::int32_t    selectorIndex  = instVarIndex( messageClass, "selector" );
+    std::int32_t    argumentsIndex = instVarIndex( messageClass, "arguments" );
     EXPECT_TRUE( fixture == result->instVarAt( receiverIndex ) ) << "Wrong receiver";
     EXPECT_TRUE( selector == result->instVarAt( selectorIndex ) ) << "Wrong selector";
-    ObjectArrayOop arguments      = ObjectArrayOop( result->instVarAt( argumentsIndex ) );
+    ObjectArrayOop  arguments      = ObjectArrayOop( result->instVarAt( argumentsIndex ) );
     EXPECT_TRUE( arguments->isObjectArray() ) << "Arguments has wrong type";
     EXPECT_TRUE( 3 == arguments->length() ) << "Wrong argument count";
-    SmallIntegerOop arg1 = SmallIntegerOop( arguments->obj_at( 1 ) );
+    SmallIntegerOop arg1           = SmallIntegerOop( arguments->obj_at( 1 ) );
     EXPECT_TRUE( arg1->isSmallIntegerOop() ) << "Argument 1 has wrong type";
     EXPECT_EQ( 11, arg1->value() ) << "Argument 1 has wrong value";
-    SmallIntegerOop arg2 = SmallIntegerOop( arguments->obj_at( 2 ) );
+    SmallIntegerOop arg2           = SmallIntegerOop( arguments->obj_at( 2 ) );
     EXPECT_TRUE( arg2->isSmallIntegerOop() ) << "Argument 2 has wrong type";
     EXPECT_EQ( 42, arg2->value() ) << "Argument 2 has wrong value";
-    SmallIntegerOop arg3 = SmallIntegerOop( arguments->obj_at( 3 ) );
+    SmallIntegerOop arg3           = SmallIntegerOop( arguments->obj_at( 3 ) );
     EXPECT_TRUE( arg3->isSmallIntegerOop() ) << "Argument 3 has wrong type";
     EXPECT_EQ( 53, arg3->value() ) << "Argument 3 has wrong value";
 }
@@ -420,7 +420,7 @@ TEST_F( MissingMethodBuilderTests, buildWithOneArgSelectorShouldBuildCorrectOops
     };
     MissingMethodBuilder builder( selector );
     builder.build();
-    ObjectArrayOop     oops  = builder.oops();
+    ObjectArrayOop    oops  = builder.oops();
     for ( std::size_t index = 0; index < 20; index++ ) {
         CHECK_OOPS( expectedOops, oops, index );
     }
@@ -531,7 +531,7 @@ TEST_F( MissingMethodBuilderTests, buildWithTwoArgSelectorShouldBuildCorrectByte
 
     MissingMethodBuilder builder( selector );
     builder.build();
-    ByteArrayOop bytes       = builder.bytes();
+    ByteArrayOop bytes      = builder.bytes();
     sprintf( msg, "Wrong length. Expected: %d, but was: %d", 93, bytes->length() );
     EXPECT_EQ( 96, bytes->length() ) << msg;
     for ( std::size_t index = 0; index < 96; index++ ) {
@@ -664,7 +664,7 @@ TEST_F( MissingMethodBuilderTests, buildWithThreeArgSelectorShouldBuildCorrectBy
     MissingMethodBuilder builder( selector );
     builder.build();
 
-    ByteArrayOop bytes       = builder.bytes();
+    ByteArrayOop bytes      = builder.bytes();
 
     sprintf( msg, "Wrong length. Expected: %d, but was: %d", 110, bytes->length() );
 

@@ -26,8 +26,6 @@ this-file-dir   := $(dir $(this-file))
 ROOT            := $(this-file-dir:/=)
 
 
-
-
 # ==== TOOLS ==================================================================
 
 # ccache ----------------------------------------------------------------------
@@ -129,8 +127,6 @@ object-root         := obj/$(object-path)
 object-root-cmake   := obj/$(toolchain-name)/cmake/$(build-type)
 
 
-
-
 # ==== EXTERNAL PACKAGES / DEPENDENCIES =======================================
 
 # third-party package object roots --------------------------------------------
@@ -206,7 +202,7 @@ cxx-define-flags            := $(addprefix -D,$(cxx-define-options))
 cxx-depends-options         := 
 cxx-depends-flags           = -MMD -MP -MT $@ -MF $(object-root)/$*.cpp.depends
 
-cxx-feature-options         := permissive
+cxx-feature-options         := permissive analyzer
 cxx-feature-flags           := $(addprefix -f,$(cxx-feature-options))
 
 cxx-language-options        := c++2a

@@ -9,8 +9,6 @@
 
 void KlassOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 
-
-    SPDLOG_INFO("KlassOopDescriptor::bootstrap_object");
     klass_part()->bootstrap_klass_part_one( stream );
     MemOopDescriptor::bootstrap_header( stream );
 

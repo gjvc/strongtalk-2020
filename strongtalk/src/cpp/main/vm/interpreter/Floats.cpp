@@ -8,7 +8,7 @@
 #include "vm/interpreter/Floats.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/utility/OutputStream.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "vm/runtime/flags.hpp"
 
 
@@ -180,17 +180,17 @@ void Floats::generate( MacroAssembler *masm, Function f ) {
             masm->fmul( 0 );
             break;
         case Floats::Function::sqrt:
-            masm->int3(); /* Unimplemented */        break;
+            masm->int3(); // Unimplemented         break;
         case Floats::Function::sin:
-            masm->int3(); /* Unimplemented */        break;
+            masm->int3(); // Unimplemented         break;
         case Floats::Function::cos:
-            masm->int3(); /* Unimplemented */        break;
+            masm->int3(); // Unimplemented         break;
         case Floats::Function::tan:
-            masm->int3(); /* Unimplemented */        break;
+            masm->int3(); // Unimplemented         break;
         case Floats::Function::exp:
-            masm->int3(); /* Unimplemented */        break;
+            masm->int3(); // Unimplemented         break;
         case Floats::Function::ln:
-            masm->int3(); /* Unimplemented */        break;
+            masm->int3(); // Unimplemented         break;
 
             // binary functions
         case Floats::Function::add:
@@ -218,7 +218,7 @@ void Floats::generate( MacroAssembler *masm, Function f ) {
             generate_tst( masm, Assembler::Condition::notZero );
             break;
         case Floats::Function::oopify:
-            masm->hlt();    /* see InterpreterGenerator */    break;
+            masm->hlt();    // see InterpreterGenerator     break;
 
             // binary functions to Oop
             // (Note: This is comparing ST(1) with ST while the bits in the FPU status word (assume comparison of ST with ST(1) -> reverse the conditions).
@@ -331,7 +331,7 @@ void Floats::print() {
     if ( _is_initialized ) {
         SPDLOG_INFO( "Float functions:" );
         for ( std::size_t i = 0; i < static_cast<std::int32_t>( Floats::Function::number_of_functions ); i++ ) {
-            SPDLOG_INFO( "%3d: 0x{0:x} %s", i, _function_table[ i ], function_name_for( Function( i ) ) );
+            SPDLOG_INFO( "%3d: 0x{0:x} {}", i, _function_table[ i ], function_name_for( Function( i ) ) );
         }
     } else {
         SPDLOG_INFO( "Floats not yet initialized" );

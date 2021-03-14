@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
+#include "vm/platform/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/utility/OutputStream.hpp"
 #include "vm/system/dll.hpp"
@@ -31,7 +31,7 @@ void Interpreted_DLLCache::print() {
     dll_name()->print_value();
     _console->print( "::" );
     funct_name()->print_value();
-    SPDLOG_INFO( " (0x{0:x}, %s, interpreted)", reinterpret_cast<void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
+    SPDLOG_INFO( " (0x{0:x}, {}, interpreted)", reinterpret_cast<void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
 }
 
 
@@ -65,7 +65,7 @@ void Compiled_DLLCache::print() {
     dll_name()->print_value();
     _console->print( "::" );
     function_name()->print_value();
-    SPDLOG_INFO( " (0x{0:x}, %s, compiled)", reinterpret_cast<const void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
+    SPDLOG_INFO( " (0x{0:x}, {}, compiled)", reinterpret_cast<const void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
 }
 
 
@@ -108,7 +108,7 @@ dll_func_ptr_t DLLs::lookup( SymbolOop dll_name, SymbolOop function_name ) {
     dll_func_ptr_t result = lookup_fail( dll_name, function_name );
     if ( result ) {
         if ( TraceDLLLookup ) {
-            SPDLOG_INFO( "address [0x%lx], DLL name[{}], function name[{}]", reinterpret_cast<void *>(result), dll_name->print_value_string(), function_name->print_value_string() );
+            SPDLOG_INFO( "address [0x{0:x}], DLL name[{}], function name[{}]", reinterpret_cast<void *>(result), dll_name->print_value_string(), function_name->print_value_string() );
         }
         return result;
     } else {
@@ -168,7 +168,7 @@ void DLLs::exit_async_call( DeltaProcess **addr ) {
 
 
 void DLLs::exit_sync_call( DeltaProcess **addr ) {
-    static_cast<void>(addr); // unused
+    st_unused( addr ); // unused
     // nothing to do here for now
 }
 

@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -115,8 +116,8 @@ void propagateTo( BasicBlock *useBasicBlock, Usage *use, NonTrivialNode *fromNod
     // r1 := r2; ...; r3 := op(r1)  -->  r1 := r2; ...; r3 := op(r2)
     if ( toNode->canCopyPropagate( fromNode ) ) {
         if ( not src->extendLiveRange( toNode ) ) {
-            if ( CompilerDebug ) {
-                cout( PrintCopyPropagation )->print( "*brute-force copy-propagation: cannot propagate %s from N%ld to N%ld because of extendLiveRange\n", src->name(), fromNode->id(), toNode->id() );
+            if ( CompilerDebug && PrintCopyPropagation ) {
+                SPDLOG_INFO( "*brute-force copy-propagation: cannot propagate {} from N{} to N{} because of extendLiveRange", src->name(), fromNode->id(), toNode->id() );
             }
             return;
         }
@@ -128,8 +129,8 @@ void propagateTo( BasicBlock *useBasicBlock, Usage *use, NonTrivialNode *fromNod
             return;
         }
         st_assert( ok, "should have worked" );
-        if ( CompilerDebug ) {
-            cout( PrintCopyPropagation )->print( "*brute-force copy-propagation: propagate %s from N%ld to N%ld\n", src->name(), fromNode->id(), toNode->id() );
+        if ( CompilerDebug && PrintCopyPropagation ) {
+            SPDLOG_INFO( "*brute-force copy-propagation: propagate {} from N{} to N{}", src->name(), fromNode->id(), toNode->id() );
         }
 
         // if this was the last use, make sure its value can be recovered for debugging
@@ -140,8 +141,9 @@ void propagateTo( BasicBlock *useBasicBlock, Usage *use, NonTrivialNode *fromNod
         }
 
     } else {
-        if ( CompilerDebug )
-            cout( PrintCopyPropagation )->print( "*Node N%d cannot copy-propagate\n", toNode->id() );
+        if ( CompilerDebug && PrintCopyPropagation ) {
+            SPDLOG_INFO( "*Node N{} cannot copy-propagate", toNode->id() );
+        }
     }
 }
 
@@ -158,8 +160,10 @@ bool regAssignedBetween( const PseudoRegister *r, const Node *startNode, Node *e
         BasicBlock *bb = n->bb();
         if ( bb == bbWithoutDefs )
             continue; // no definitions here
-        bool               hasDefs = false;
-        for ( std::int32_t i       = 0; i < bb->duInfo.info->length(); i++ ) {// forall def/use info lists
+
+        bool hasDefs = false;
+
+        for ( std::int32_t i = 0; i < bb->duInfo.info->length(); i++ ) {// forall def/use info lists
             DefinitionUsageInfo *dui = bb->duInfo.info->at( i );
             if ( dui->_pseudoRegister == r and not dui->_definitions.isEmpty() ) {
                 // yes, it has a def
@@ -177,7 +181,8 @@ bool regAssignedBetween( const PseudoRegister *r, const Node *startNode, Node *e
             bbWithoutDefs = bb;
         }
     }
-    return false;        // no def found
+
+    return false; // no definition found
 }
 
 
@@ -334,9 +339,8 @@ void BasicBlock::renumber() {
 
 void BasicBlock::remove( Node *n ) {
     // remove this node and its definitions & uses
-    // NB: nodes aren't actually removed from the graph but just marked as
-    // deleted.  This is much simpler because the topology of the flow graph
-    // doesn't change this way
+    // NB: nodes aren't actually removed from the graph but just marked as deleted.
+    // This is much simpler because the topology of the flow graph doesn't change this way
     st_assert( contains( n ), "node isn't in this BasicBlock" );
     n->removeUses( this );
     n->_deleted = true;
@@ -502,8 +506,7 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
         }
     }
 
-    // now examine all candidates and allocate them to preferred register
-    // if possible
+    // now examine all candidates and allocate them to preferred register if possible
     while ( cands.nonEmpty() ) {
         RegCandidate *c = cands.pop();
         if ( def_count[ c->_location.number() ] == c->_ndefs ) {
@@ -641,8 +644,8 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
 
 
 void BasicBlock::doAlloc( PseudoRegister *r, Location l ) {
-    if ( CompilerDebug ) {
-        cout( PrintLocalAllocation )->print( "*assigning %s to local %s in BasicBlock%ld\n", l.name(), r->name(), id() );
+    if ( CompilerDebug and PrintLocalAllocation ) {
+        SPDLOG_INFO( "*assigning {} to local {} in BasicBlock{}", l.name(), r->name(), id() );
     }
     st_assert( not r->_debug, "should not allocate to temp reg" );
     r->_location = l;
@@ -691,7 +694,7 @@ bool BasicBlock::verifyLabels() {
             }
             if ( n->_label.is_unbound() ) {
                 ok = false;
-                SPDLOG_INFO( "unbound label at N%d", n->id() );
+                SPDLOG_INFO( "unbound label at N{:d}", n->id() );
             }
         }
     }
@@ -700,7 +703,7 @@ bool BasicBlock::verifyLabels() {
 
 
 static void printPrevBBs( BasicBlock *b, const char *str ) {
-    SPDLOG_INFO( "BasicBlock%ld%s", b->id(), str );
+    SPDLOG_INFO( "BasicBlock 0x{0:x} {}", b->id(), str );
 }
 
 
@@ -785,12 +788,12 @@ void BasicBlock::verify() {
     }
 
     if ( _loopDepth < 0 ) {
-        error( "BasicBlock 0x{0:x}: negative loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
+        error( "BasicBlock 0x{0:x}: negative loopDepth {}", static_cast<const void *>(this), _loopDepth );
     }
 
     // Fix this Urs, 3/11/96
     if ( _loopDepth > 9 ) {
-        SPDLOG_WARN( "BasicBlock 0x{0:x}: suspiciously high loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
+        SPDLOG_WARN( "BasicBlock 0x{0:x}: suspiciously high loopDepth {}", static_cast<const void *>(this), _loopDepth );
     }
 
 }
@@ -834,7 +837,7 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth 
     for ( std::size_t i = 0; i < n; i++ ) {
         Node       *next   = _last->next( i );
         BasicBlock *nextBB = next->newBasicBlock();
-        static_cast<void>( nextBB );
+        st_unused(  nextBB  );
     }
 
     //

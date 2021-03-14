@@ -8,7 +8,7 @@
 #include "vm/oop/KlassOopDescriptor.hpp"
 #include "vm/primitive/BehaviorPrimitives.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/VMSymbol.hpp"
 #include "test/memory/EdenMark.hpp"
 
 
@@ -40,6 +40,7 @@ protected:
     KlassOop objectClass;
 
 };
+
 
 TEST_F( BehaviorPrimitivesTests, allocateForMemOopShouldReportFailureWhenNoSpace ) {
     EXPECT_TRUE( Universe::new_gen.eden()->free() < ( 2 * OOP_SIZE ) ) << "Too much free Space";
